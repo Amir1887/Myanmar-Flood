@@ -38,21 +38,39 @@ model HealthData {
 
 
 model FloodData {
-  id        Int      @id @default(autoincrement())
-  region    String
-  severity  String
-  timestamp DateTime @default(now())
-  alerts    Alert[]
+  id              Int       @id @default(autoincrement())
+  region          String    // Region affected by the flood
+  severity        String    // Severity level (e.g., low, medium, high)
+  details         String    // Detailed information about the flood event
+  riskLevel       Float     // Predicted risk level (based on data science model)
+  affectedPeople  Int       // Number of people affected in the region
+  predictedDate   DateTime  // Date when the flood is predicted to occur
+  alerts          Alert[]
+  timestamp       DateTime  @default(now())
+  resources       Resource[]
+}
+
+model Resource {
+  id              Int        @id @default(autoincrement())
+  type            String     // Type of resource (e.g., food, water, shelter)
+  quantity        Int        // Amount of resource
+  status          ResourceStatus  @default(PENDING)
+  distributedTo   User?      @relation(fields: [userId], references: [id])
+  userId          Int?
+  floodDataId     Int
+  floodData       FloodData  @relation(fields: [floodDataId], references: [id])
+  createdAt       DateTime   @default(now())
 }
 
 model Alert {
-  id          Int      @id @default(autoincrement())
-  message     String
-  region      String
-  floodDataId Int
-  floodData   FloodData @relation(fields: [floodDataId], references: [id])
-  createdAt   DateTime  @default(now())
+  id              Int       @id @default(autoincrement())
+  message         String    // Alert message sent to users
+  region          String    // Region where alert is applicable
+  floodDataId     Int
+  floodData       FloodData @relation(fields: [floodDataId], references: [id])
+  createdAt       DateTime  @default(now())
 }
+
 
 model Donation {
   id        Int      @id @default(autoincrement())
@@ -68,5 +86,11 @@ enum Role {
   USER
   ADMIN
   DONOR // Users who can donate
+}
+
+enum ResourceStatus {
+  PENDING
+  DISTRIBUTED
+  IN_TRANSIT
 }
 
