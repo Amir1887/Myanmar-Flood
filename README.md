@@ -24,3 +24,10 @@ Before you begin, ensure you have the following requirements met:
    ```bash
    git clone https://github.com/Amir1887/Myanmar-Flood.git
    cd Myanmar-Flood
+
+2.Install server dependencies:
+   ```bash
+   cd server
+   npm install
+
+
