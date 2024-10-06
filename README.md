@@ -7,7 +7,8 @@ This project is focused on developing tech solutions to improve disaster respons
 - **PostgreSQL**: A SQL database for storing application data.  
 - **Express.js**: A web application framework for Node.js.  
 - **React**: A JavaScript library for building user interfaces.  
-- **Node.js**: A JavaScript runtime for server-side programming.  
+- **Node.js**: A JavaScript runtime for server-side programming.
+- **Prisma: An ORM for database modeling and querying with PostgreSQL.
 - **Retool**: A platform to build internal tools and dashboards for visualizing collected data.  
 - **Azure Web App**: PaaS by Azure to deploy the Express application.  
 - **Azure Static Web Apps**: PaaS by Azure to deploy static assets (React App).  
@@ -16,7 +17,8 @@ This project is focused on developing tech solutions to improve disaster respons
 ---------------------------------------  
 Before you begin, ensure you have the following requirements met:  
 - **Node.js**: Install Node.js from [nodejs.org](https://nodejs.org/).  
-- **PostgreSQL**: Set up a PostgreSQL database locally or using a cloud provider.  
+- **PostgreSQL**: Set up a PostgreSQL database locally or using a cloud provider.
+- **Prisma: Install Prisma CLI globally or locally in your project. 
 - **Docker (optional)**: Install Docker from [docker.com](https://www.docker.com/) for containerized deployment.  
 
 ## Installation  
@@ -38,14 +40,32 @@ Before you begin, ensure you have the following requirements met:
     DATABASE_URL=<your-postgresql-connection-string>  
     PORT=4000 
     ```  
+4. Initialize Prisma:
+    Create your Prisma schema file:
+    ```bash  
+       npx prisma init
+    ```
+    Add the PostgreSQL connection string in the newly created .env file:
+    ```bash  
+       DATABASE_URL=postgresql://<username>:<password>@localhost:5432/MyanmarFlood?schema=public
 
-4. Install client dependencies:  
+    ```
+
+5. Generate Prisma client and run migrations:  
+    ```bash  
+    npx prisma generate  
+    npx prisma migrate dev --name init  
+ 
+    ```
+   ** This will apply the migrations and set up your database schema.
+   
+6. Install client dependencies:  
     ```bash  
      cd ../front-end/myanmar-flood  # Navigate to the frontend directory   
     npm install  
     ```  
 
-5. Set up environment variables for the client in the client directory (.env file):  
+7. Set up environment variables for the client in the client directory (.env file):  
     ```bash  
     VITE_API_URL=http://localhost:3000  
     ```  
@@ -75,8 +95,28 @@ Before you begin, ensure you have the following requirements met:
 ---------------  
 1. Deploy the Express backend using Azure Web App.  
 2. Deploy the React frontend using Azure Static Web Apps.  
-3. Connect both services to ensure seamless communication between frontend and backend.  
+3. Connect both services to ensure seamless communication between frontend and backend.
 
+## Prisma Commands Cheat Sheet  
+---------------  
+1. Generate Prisma Client:
+     ```bash  
+    npx prisma generate    
+    ```  
+3.Run Migrations:  
+ ```bash  
+  npx prisma migrate dev --name <migration_name>  
+  ``` 
+4. Seed Database (optional):
+    **To populate the database with some initial data: 
+   ```bash  
+    npx prisma db seed      
+    ```  
+5. Prisma Studio (Database Browser):
+    **To view and interact with your database: 
+   ```bash  
+    npx prisma studio        
+    ```  
 ## Contributing  
 ---------------  
 1. Fork the repository.  
