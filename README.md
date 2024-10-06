@@ -26,8 +26,8 @@ Before you begin, ensure you have the following requirements met:
    cd Myanmar-Flood
 
 2.Install server dependencies:
-   ```bash
-   cd server
-   npm install
+      ```bash
+      cd server
+      npm install
 
 
