@@ -1,0 +1,56 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        Int      @id @default(autoincrement())
+  name      String
+  email     String   @unique
+  password  String
+  role      Role     @default(USER)
+  createdAt DateTime @default(now())
+  donations Donation[]
+}
+
+model FloodData {
+  id        Int      @id @default(autoincrement())
+  region    String
+  severity  String
+  timestamp DateTime @default(now())
+  alerts    Alert[]
+}
+
+model Alert {
+  id          Int      @id @default(autoincrement())
+  message     String
+  region      String
+  floodDataId Int
+  floodData   FloodData @relation(fields: [floodDataId], references: [id])
+  createdAt   DateTime  @default(now())
+}
+
+model Donation {
+  id        Int      @id @default(autoincrement())
+  donorName String
+  amount    Float
+  userId    Int
+  user      User      @relation(fields: [userId], references: [id])
+  createdAt DateTime  @default(now())
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
