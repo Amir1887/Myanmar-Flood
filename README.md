@@ -29,25 +29,25 @@ Before you begin, ensure you have the following requirements met:
 
 2. Install server dependencies:  
     ```bash  
-    cd server  
+    cd back-end  # Navigate to the backend directory  
     npm install  
     ```  
 
 3. Set up environment variables in the server directory (.env file):  
     ```bash  
     DATABASE_URL=<your-postgresql-connection-string>  
-    PORT=5050  
+    PORT=4000 
     ```  
 
 4. Install client dependencies:  
     ```bash  
-    cd ../client  
+     cd ../front-end/myanmar-flood  # Navigate to the frontend directory   
     npm install  
     ```  
 
 5. Set up environment variables for the client in the client directory (.env file):  
     ```bash  
-    VITE_API_URL=http://localhost:5050  
+    VITE_API_URL=http://localhost:3000  
     ```  
 
 ## Running the Application  
@@ -62,14 +62,14 @@ Before you begin, ensure you have the following requirements met:
     nodemon server.js  
     ```  
 
-   The backend should be running at http://localhost:5050.  
+   The backend should be running at http://localhost:4000.  
 
 2. Run the client (from the client directory):  
     ```bash  
     npm run dev  
     ```  
 
-   The frontend should be running at http://localhost:5173.  
+   The frontend should be running at http://localhost:3000.  
 
 ## Deploying to Azure  
 ---------------  
