@@ -14,14 +14,28 @@ datasource db {
 }
 
 model User {
-  id        Int      @id @default(autoincrement())
-  name      String
-  email     String   @unique
-  password  String
-  role      Role     @default(USER)
-  createdAt DateTime @default(now())
-  donations Donation[]
+  id          Int       @id @default(autoincrement())
+  name        String
+  email       String    @unique
+  password    String
+  role        Role      @default(USER)
+  location    String    // User's address or affected area
+  isInNeed    Boolean   @default(false) // Indicates if the user is in need of help
+  createdAt   DateTime  @default(now())
+  donations   Donation[]
+  healthData  HealthData[] // Link to health and sanitation data for users in need
 }
+
+model HealthData {
+  id            Int       @id @default(autoincrement())
+  userId        Int
+  user          User      @relation(fields: [userId], references: [id])
+  waterAccess   Boolean   // Does the user have access to clean water?
+  diseaseRisk   String    // Risk of disease (e.g., cholera, malaria)
+  healthNotes   String    // Health-related notes or alerts
+  createdAt     DateTime  @default(now())
+}
+
 
 model FloodData {
   id        Int      @id @default(autoincrement())
@@ -49,8 +63,10 @@ model Donation {
   createdAt DateTime  @default(now())
 }
 
+
 enum Role {
   USER
   ADMIN
+  DONOR // Users who can donate
 }
 
