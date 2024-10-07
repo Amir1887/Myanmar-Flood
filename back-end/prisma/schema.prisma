@@ -49,33 +49,45 @@ model DamageAssessment {
 
 
 model HealthData {
-  id              Int       @id @default(autoincrement())
-  userId          Int
-  user            User      @relation(fields: [userId], references: [id])
-  waterAccess     Boolean   // Does the user have access to clean water?
-  waterQuality    String?   // Optional: Water quality assessment (e.g., "safe", "contaminated")
-  diseaseRisk     String    // Risk of disease (e.g., cholera, malaria)
-  healthNotes     String    // Health-related notes or alerts
-  sanitationAccess Boolean  // Whether the user has access to proper sanitation
-  diseaseOutbreakId Int?    // Optional: Reference to DiseaseOutbreak
-  diseaseOutbreak DiseaseOutbreak? @relation(fields: [diseaseOutbreakId], references: [id])
-  createdAt       DateTime  @default(now())
+  id               Int        @id @default(autoincrement())
+  userId           Int
+  user             User       @relation(fields: [userId], references: [id])
+  waterAccess      Boolean    // Does the user have access to clean water?
+  waterQuality     String?    // Optional: Water quality assessment (e.g., "safe", "contaminated")
+  diseaseRisk      String     // Risk of disease (e.g., cholera, malaria)
+  healthNotes      String     // Health-related notes or alerts
+  sanitationAccess Boolean    // Whether the user has access to proper sanitation
+  diseaseOutbreakId Int?      // Optional: Reference to DiseaseOutbreak
+  diseaseOutbreak  DiseaseOutbreak? @relation(fields: [diseaseOutbreakId], references: [id])
+  
+  // Submitter information
+  submitterName    String     // Name of the person submitting the data
+  submitterEmail   String     // Email of the submitter
+  submitterRole    SubmitterRole // Role of the submitter (doctor, nurse, other)
+
+  createdAt        DateTime   @default(now())
 }
 
 
 
 model DiseaseOutbreak {
-  id              Int       @id @default(autoincrement())
-  region          String    // Region affected by the outbreak
-  disease         String    // Disease name (e.g., cholera, malaria)
-  confirmedCases  Int       // Number of confirmed cases
-  suspectedCases  Int?      // Optional: Number of suspected cases
-  fatalities      Int?      // Optional: Number of fatalities (if any)
-  waterContamination Boolean // Is the outbreak related to water contamination?
-  outbreakStatus  String    // Current status (e.g., "active", "contained")
-  healthData      HealthData[] // Reverse relation to track all associated HealthData records
-  timestamp       DateTime  @default(now())
-  createdAt       DateTime  @default(now())
+  id                Int        @id @default(autoincrement())
+  region            String     // Region affected by the outbreak
+  disease           String     // Disease name (e.g., cholera, malaria)
+  confirmedCases    Int        // Number of confirmed cases
+  suspectedCases    Int?       // Optional: Number of suspected cases
+  fatalities        Int?       // Optional: Number of fatalities (if any)
+  waterContamination Boolean   // Is the outbreak related to water contamination?
+  outbreakStatus    String     // Current status (e.g., "active", "contained")
+  healthData        HealthData[] // Reverse relation to track all associated HealthData records
+  
+  // Submitter information
+  submitterName     String     // Name of the person submitting the data
+  submitterEmail    String     // Email of the submitter
+  submitterRole     SubmitterRole // Role of the submitter (doctor, nurse, other)
+
+  timestamp         DateTime   @default(now())
+  createdAt         DateTime   @default(now())
 }
 
 
@@ -174,6 +186,12 @@ enum Role {
   USER
   ADMIN
   DONOR // Users who can donate
+}
+
+enum SubmitterRole {
+  DOCTOR
+  NURSE
+  OTHER
 }
 
 enum ResourceStatus {
