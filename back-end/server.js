@@ -11,6 +11,8 @@ const getDonationsRouter = require('./routes/dontationRoutes/getDonationsRoute')
 const postDonationsRouter = require('./routes/dontationRoutes/postDonationsRoute');
 const getAlertRouter = require('./routes/alertRoutes/getAlertRoute');
 const postAlertRouter = require('./routes/alertRoutes/postAlertRoute');
+const getCommuinityResRouter = require('./routes/commuinityResilienceRoutes/getCommuinityResRoute');
+const postCommuinityResRouter = require('./routes/commuinityResilienceRoutes/postCommuinityResRoute');
 
 
 
@@ -35,6 +37,8 @@ app.use('/', getDonationsRouter);
 app.use('/', postDonationsRouter);
 app.use('/', getAlertRouter);
 app.use('/', postAlertRouter);
+app.use('/', getCommuinityResRouter);
+app.use('/', postCommuinityResRouter);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
