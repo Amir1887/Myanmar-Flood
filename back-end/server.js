@@ -17,6 +17,8 @@ const getHealthRouteRouter = require('./routes/healthRoutes/getHealthRoute');
 const postHealthRouteRouter = require('./routes/healthRoutes/postHealthRoute');
 const getResourcesRouteRouter = require('./routes/resourceRoutes/getResourcesRoute');
 const postResourcesRouteRouter = require('./routes/resourceRoutes/postResourcesRoute');
+const getOrganiztionRouteRouter = require('./routes/organiztionRoutes/getOrganiztionRoute');
+const postOrganiztionRouteRouter = require('./routes/organiztionRoutes/postOrganiztionRoute');
 
 
 
@@ -47,6 +49,8 @@ app.use('/', getHealthRouteRouter);
 app.use('/', postHealthRouteRouter);
 app.use('/', getResourcesRouteRouter);
 app.use('/', postResourcesRouteRouter);
+app.use('/', getOrganiztionRouteRouter);
+app.use('/', postOrganiztionRouteRouter);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
