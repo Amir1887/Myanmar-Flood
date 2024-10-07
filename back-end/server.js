@@ -21,6 +21,8 @@ const getOrganiztionRouter = require('./routes/organiztionRoutes/getOrganiztionR
 const postOrganiztionRouter = require('./routes/organiztionRoutes/postOrganiztionRoute');
 const getDamageAssessmentRouter = require('./routes/damageAssessmentRoutes/getDamageAssessment');
 const postDamageAssessmentRouter = require('./routes/damageAssessmentRoutes/postDamageAssessment');
+const getOrganizationMemRouter = require('./routes/organizationMembersRoutes/getOrganizationMem');
+const postOrganizationMemRouter = require('./routes/organizationMembersRoutes/postOrganizationMem');
 
 
 
@@ -55,6 +57,8 @@ app.use('/', getOrganiztionRouter);
 app.use('/', postOrganiztionRouter);
 app.use('/', getDamageAssessmentRouter);
 app.use('/', postDamageAssessmentRouter);
+app.use('/', getOrganizationMemRouter);
+app.use('/', postOrganizationMemRouter);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
