@@ -30,18 +30,21 @@ model User {
 
 
 model DamageAssessment {
-  id              Int        @id @default(autoincrement())
-  floodDataId     Int        // Relates the assessment to specific flood data
-  floodData       FloodData  @relation(fields: [floodDataId], references: [id])
-  userId          Int        // User who is conducting or reporting the damage assessment
-  user            User       @relation(fields: [userId], references: [id])
-  severity        String     // Severity level of the damage (e.g., minor, severe, etc.)
-  estimatedLoss   Float      // Estimated financial loss due to the damage
-  needsAnalysis   String     // Description of the immediate needs (e.g., food, water, shelter)
-  additionalNotes String?    // Any additional comments or observations
-  timestamp       DateTime   @default(now())
-  createdAt       DateTime   @default(now())
+  id                    Int           @id @default(autoincrement())
+  floodDataId           Int           // Relates the assessment to specific flood data
+  floodData             FloodData     @relation(fields: [floodDataId], references: [id])
+  userId                Int?          // Optional: If a regular user submits the assessment
+  user                  User?         @relation(fields: [userId], references: [id])
+  organizationMemberId  Int?          // Optional: If an organization member submits the assessment
+  organizationMember    OrganizationMember? @relation(fields: [organizationMemberId], references: [id])
+  severity              String        // Severity level of the damage (e.g., minor, severe, etc.)
+  estimatedLoss         Float         // Estimated financial loss due to the damage
+  needsAnalysis         String        // Description of the immediate needs (e.g., food, water, shelter)
+  additionalNotes       String?       // Any additional comments or observations
+  timestamp             DateTime      @default(now())
+  createdAt             DateTime      @default(now())
 }
+
 
 
 
@@ -127,15 +130,17 @@ model Organization {
 }
 
 model OrganizationMember {
-  id              Int       @id @default(autoincrement())
-  name            String    // Name of the organization member
-  email           String    @unique // Unique email for the organizer login
-  password        String    // Password for the member to log in
-  role            MemberRole // Define the role within the organization (e.g., ORGANIZER, MANAGER, etc.)
-  organizationId  Int       // Link to the organization
-  organization    Organization @relation(fields: [organizationId], references: [id])
-  createdAt       DateTime   @default(now())
+  id              Int                @id @default(autoincrement())
+  name            String             // Name of the organization member
+  email           String             @unique // Unique email for the organizer login
+  password        String             // Password for the member to log in
+  role            MemberRole         // Define the role within the organization (e.g., ORGANIZER, MANAGER, etc.)
+  organizationId  Int                // Link to the organization
+  organization    Organization       @relation(fields: [organizationId], references: [id])
+  damageAssessments DamageAssessment[] // Reverse relation to track damage assessments submitted by this member
+  createdAt       DateTime           @default(now())
 }
+
 
 enum MemberRole {
   ORGANIZER
