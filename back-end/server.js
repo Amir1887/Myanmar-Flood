@@ -5,6 +5,8 @@ require('dotenv').config();
 
 const getFloodsRouter = require('./routes/floodRoutes/getFloodsRoute');
 const postFloodsRouter = require('./routes/floodRoutes/postFloodsRoute');
+const getUserRouter = require('./routes/userRoutes/getUserRoute');
+const postUserRouter = require('./routes/userRoutes/postUserRoute');
 
 
 
@@ -23,6 +25,8 @@ app.use(cors({
 
 app.use('/', getFloodsRouter);
 app.use('/', postFloodsRouter);
+app.use('/', getUserRouter);
+app.use('/', postUserRouter);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
