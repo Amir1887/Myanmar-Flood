@@ -56,14 +56,14 @@ model HealthData {
   waterQuality     String?    // Optional: Water quality assessment (e.g., "safe", "contaminated")
   diseaseRisk      String     // Risk of disease (e.g., cholera, malaria)
   healthNotes      String     // Health-related notes or alerts
-  sanitationAccess Boolean?    // Whether the user has access to proper sanitation
+  sanitationAccess Boolean   // Whether the user has access to proper sanitation
   diseaseOutbreakId Int?      // Optional: Reference to DiseaseOutbreak
   diseaseOutbreak  DiseaseOutbreak? @relation(fields: [diseaseOutbreakId], references: [id])
   
   // Submitter information
-  submitterName    String?     // Name of the person submitting the data
-  submitterEmail   String?     // Email of the submitter
-  submitterRole    SubmitterRole? // Role of the submitter (doctor, nurse, other)
+  submitterName    String   // Name of the person submitting the data
+  submitterEmail   String    // Email of the submitter
+  submitterRole    SubmitterRole // Role of the submitter (doctor, nurse, other)
 
   createdAt        DateTime   @default(now())
 }
