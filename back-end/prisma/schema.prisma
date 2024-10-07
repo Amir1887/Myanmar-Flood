@@ -98,17 +98,31 @@ model CommunityResilience {
 }
 
 model Organization {
-  id          Int        @id @default(autoincrement())
-  name        String     // Name of the organization
-  contactInfo String     // Contact information of the organization
-  location    String     // Organization's location or operational area
-  resources   Resource[] // Resources distributed by the organization
-  createdAt   DateTime   @default(now())
+  id          Int                   @id @default(autoincrement())
+  name        String                // Name of the organization
+  contactInfo String                // Contact information of the organization
+  location    String                // Organization's location or operational area
+  resources   Resource[]            // Resources distributed by the organization
+  members     OrganizationMember[]  // Members (organizers) of the organization
+  createdAt   DateTime              @default(now())
 }
 
+model OrganizationMember {
+  id              Int       @id @default(autoincrement())
+  name            String    // Name of the organization member
+  email           String    @unique // Unique email for the organizer login
+  password        String    // Password for the member to log in
+  role            MemberRole // Define the role within the organization (e.g., ORGANIZER, MANAGER, etc.)
+  organizationId  Int       // Link to the organization
+  organization    Organization @relation(fields: [organizationId], references: [id])
+  createdAt       DateTime   @default(now())
+}
 
-
-
+enum MemberRole {
+  ORGANIZER
+  MANAGER
+  VOLUNTEER
+}
 
 enum Role {
   USER
