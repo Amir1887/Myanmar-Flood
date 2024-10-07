@@ -9,6 +9,8 @@ const getUserRouter = require('./routes/userRoutes/getUserRoute');
 const postUserRouter = require('./routes/userRoutes/postUserRoute');
 const getDonationsRouter = require('./routes/dontationRoutes/getDonationsRoute');
 const postDonationsRouter = require('./routes/dontationRoutes/postDonationsRoute');
+const getAlertRouter = require('./routes/alertRoutes/getAlertRoute');
+const postAlertRouter = require('./routes/alertRoutes/postAlertRoute');
 
 
 
@@ -31,6 +33,8 @@ app.use('/', getUserRouter);
 app.use('/', postUserRouter);
 app.use('/', getDonationsRouter);
 app.use('/', postDonationsRouter);
+app.use('/', getAlertRouter);
+app.use('/', postAlertRouter);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
