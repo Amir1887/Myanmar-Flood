@@ -26,6 +26,37 @@ model User {
   healthData        HealthData[] // Link to health and sanitation data for users in need
   resources         Resource[] // Resources distributed to the user 
   damageAssessments DamageAssessment[] // Link to damage assessments reported by the user
+  UserPreference    UserPreference?
+}
+
+model UserPreference {
+  id     Int  @id @default(autoincrement())
+  userId Int  @unique
+  user   User @relation(fields: [userId], references: [id])
+
+  notificationMethod NotificationMethod // Enum for better consistency (email, SMS, app notification)
+  alertFrequency     AlertFrequency // Enum for frequency (immediate, daily, weekly)
+  language           String? // Optional: Preferred language for notifications (e.g., English, Burmese)
+  alertType          AlertType[] // A list of specific types of alerts they want to receive (e.g., flood, disease outbreaks)
+  createdAt          DateTime           @default(now())
+}
+
+enum NotificationMethod {
+  EMAIL
+  SMS
+  APP_NOTIFICATION
+}
+
+enum AlertFrequency {
+  IMMEDIATE
+  DAILY
+  WEEKLY
+}
+
+enum AlertType {
+  FLOOD_ALERT
+  DISEASE_OUTBREAK
+  RESOURCE_DISTRIBUTION
 }
 
 model DamageAssessment {
@@ -261,12 +292,12 @@ model DecisionMaker {
 }
 
 model Visualization {
-  id              Int       @id @default(autoincrement())
-  title           String    // Title of the visualization
-  description     String    // Description of the data being visualized
-  type            VisualizationType // Type of visualization (e.g., bar chart, map, etc.)
-  data            Json      // JSON data for rendering the visualization
-  createdAt       DateTime  @default(now())
+  id          Int               @id @default(autoincrement())
+  title       String // Title of the visualization
+  description String // Description of the data being visualized
+  type        VisualizationType // Type of visualization (e.g., bar chart, map, etc.)
+  data        Json // JSON data for rendering the visualization
+  createdAt   DateTime          @default(now())
 }
 
 enum VisualizationType {
@@ -274,7 +305,6 @@ enum VisualizationType {
   CHART
   TABLE
 }
-
 
 model Order {
   id              Int           @id @default(autoincrement())
