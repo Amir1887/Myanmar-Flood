@@ -146,13 +146,16 @@ model Alert {
 }
 
 model Donation {
-  id        Int      @id @default(autoincrement())
-  donorName String
-  amount    Float
-  userId    Int
-  user      User     @relation(fields: [userId], references: [id])
-  createdAt DateTime @default(now())
+  id            Int       @id @default(autoincrement())
+  donorName     String    // Name of the donor
+  amount        Float     // Donation amount
+  userId        Int       // Recipient user (if applicable)
+  user          User      @relation(fields: [userId], references: [id])
+  purpose       String    // Purpose of the donation (e.g., clean water, food, shelter)
+  impactReport  String?   // Optional: Report back to the donor on how the donation helped
+  createdAt     DateTime  @default(now())
 }
+
 
 model CommunityResilience {
   id            Int        @id @default(autoincrement())
