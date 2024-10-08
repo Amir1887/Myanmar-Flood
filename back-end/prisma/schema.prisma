@@ -36,9 +36,15 @@ model UserPreference {
 
   notificationMethod NotificationMethod // Enum for better consistency (email, SMS, app notification)
   alertFrequency     AlertFrequency // Enum for frequency (immediate, daily, weekly)
-  language           String? // Optional: Preferred language for notifications (e.g., English, Burmese)
+  preferredLanguage  Language // Preferred language for notifications
   alertType          AlertType[] // A list of specific types of alerts they want to receive (e.g., flood, disease outbreaks)
   createdAt          DateTime           @default(now())
+}
+enum Language {
+  ENGLISH
+  Burmese
+  FRENCH
+  SPANISH
 }
 
 enum NotificationMethod {
