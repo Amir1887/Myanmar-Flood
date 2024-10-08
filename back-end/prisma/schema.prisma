@@ -138,6 +138,22 @@ model FloodData {
   historicalFloodData HistoricalFloodData[]
   task                Task[]
   createdAt           DateTime              @default(now())
+  WeatherData         WeatherData[]
+}
+
+model WeatherData {
+  id             Int        @id @default(autoincrement())
+  region         String // The region for which weather data is fetched
+  temperature    Float // Current temperature
+  humidity       Float // Current humidity level
+  rainfall       Float // Rainfall amount in mm
+  windSpeed      Float // Wind speed in km/h
+  forecast       String // Weather forecast description
+  fetchedAt      DateTime   @default(now()) // Time when the data was fetched
+  floodRiskLevel Float // Calculated flood risk based on weather data (e.g., risk score)
+  floodDataId    Int? // Optional: Link to related flood data
+  floodData      FloodData? @relation(fields: [floodDataId], references: [id])
+  apiSource      String // The API source used (e.g., "OpenWeatherMap")
 }
 
 model HistoricalFloodData {
