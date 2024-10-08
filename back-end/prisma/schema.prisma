@@ -30,6 +30,25 @@ model User {
   Feedback           Feedback[]
   APILog             APILog[]
   SubmittedEmergency SubmittedEmergency[]
+  UserConsent        UserConsent?
+}
+
+model UserConsent {
+  id           Int         @id @default(autoincrement())
+  userId       Int         @unique
+  user         User        @relation(fields: [userId], references: [id]) //Who submitted or recorded the consent
+  consentGiven Boolean     @default(false) // Whether consent is given for using sensitive data
+  consentDate  DateTime    @default(now()) // Date when consent was given
+  consentType  ConsentType // Enum for types of consent (general, health-related, etc.)
+  consentInfo     String?
+  cancelledAt  DateTime? // Optional: If consent was cancelled, store the date
+  createdAt    DateTime    @default(now())
+}
+
+enum ConsentType {
+  GENERAL
+  HEALTH_DATA
+  LOCATION_DATA
 }
 
 model UserPreference {
