@@ -145,6 +145,7 @@ model Alert {
   region          String    // Region where alert is applicable
   floodDataId     Int
   floodData       FloodData @relation(fields: [floodDataId], references: [id])
+  status          AlertStatus @default(PENDING) // Status of the alert: sent, failed, etc.
   createdAt       DateTime  @default(now())
 }
 
@@ -268,5 +269,11 @@ enum ResourceStatus {
   PENDING
   DISTRIBUTED
   IN_TRANSIT
+}
+
+enum AlertStatus {
+  PENDING
+  SENT
+  FAILED
 }
 
