@@ -27,6 +27,7 @@ model User {
   resources         Resource[] // Resources distributed to the user 
   damageAssessments DamageAssessment[] // Link to damage assessments reported by the user
   UserPreference    UserPreference?
+  Feedback          Feedback[]
 }
 
 model UserPreference {
@@ -40,6 +41,7 @@ model UserPreference {
   alertType          AlertType[] // A list of specific types of alerts they want to receive (e.g., flood, disease outbreaks)
   createdAt          DateTime           @default(now())
 }
+
 enum Language {
   ENGLISH
   Burmese
@@ -163,6 +165,7 @@ model Resource {
   organizationId        Int? // Optional relation to the organization distributing the resource
   organization          Organization?        @relation(fields: [organizationId], references: [id])
   createdAt             DateTime             @default(now())
+  Feedback              Feedback[]
 }
 
 enum PriorityLevel {
@@ -343,6 +346,35 @@ enum TargetType {
   DONOR
   ADMIN // the decision-maker can also assign high-level administrative tasks or issue policy-level orders to app admins.
   OTHER // From SubmitterRole (catch-all for any other roles)
+}
+
+model Feedback {
+  id            Int            @id @default(autoincrement())
+  userId        Int
+  user          User           @relation(fields: [userId], references: [id])
+  feedbackType  FeedbackType // E.g., RESOURCE, GENERAL  
+  resourceId    Int?
+  resource      Resource?      @relation(fields: [resourceId], references: [id])
+  rating        Int // E.g., 1 to 5 stars  
+  comments      String? // Optional comments  
+  isAnonymous   Boolean        @default(false) //Allow users to submit feedback anonymously.
+  status        FeedbackStatus @default(PENDING) //To track whether feedback has been reviewed or acted upon (e.g., acknowledged, under review).
+  adminResponse String? // Optional admin response  
+  respondedAt   DateTime? // When response was provided  
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt //Track when feedback was updated.
+}
+
+enum FeedbackType {
+  RESOURCE
+  GENERAL
+}
+
+enum FeedbackStatus {
+  PENDING
+  ACKNOWLEDGED
+  UNDER_REVIEW
+  RESOLVED
 }
 
 enum MemberRole {
