@@ -14,128 +14,118 @@ datasource db {
 }
 
 model User {
-  id                Int               @id @default(autoincrement())
+  id                Int                @id @default(autoincrement())
   name              String
-  email             String            @unique
+  email             String             @unique
   password          String
-  role              Role              @default(USER)
-  location          String            // User's address or affected area
-  isInNeed          Boolean           @default(false) // Indicates if the user is in need of help
-  createdAt         DateTime          @default(now())
+  role              Role               @default(USER)
+  location          String // User's address or affected area
+  isInNeed          Boolean            @default(false) // Indicates if the user is in need of help
+  createdAt         DateTime           @default(now())
   donations         Donation[]
-  healthData        HealthData[]      // Link to health and sanitation data for users in need
-  resources         Resource[]        // Resources distributed to the user 
+  healthData        HealthData[] // Link to health and sanitation data for users in need
+  resources         Resource[] // Resources distributed to the user 
   damageAssessments DamageAssessment[] // Link to damage assessments reported by the user
 }
 
-
 model DamageAssessment {
-  id                    Int           @id @default(autoincrement())
-  floodDataId           Int           // Relates the assessment to specific flood data
-  floodData             FloodData     @relation(fields: [floodDataId], references: [id])
-  userId                Int?          // Optional: If a regular user submits the assessment
-  user                  User?         @relation(fields: [userId], references: [id])
-  organizationMemberId  Int?          // Optional: If an organization member submits the assessment
-  organizationMember    OrganizationMember? @relation(fields: [organizationMemberId], references: [id])
-  severity              String        // Severity level of the damage (e.g., minor, severe, etc.)
-  estimatedLoss         Float         // Estimated financial loss due to the damage
-  needsAnalysis         String        // Description of the immediate needs (e.g., food, water, shelter)
-  additionalNotes       String?       // Any additional comments or observations
-  timestamp             DateTime      @default(now())
-  createdAt             DateTime      @default(now())
+  id                   Int                 @id @default(autoincrement())
+  floodDataId          Int // Relates the assessment to specific flood data
+  floodData            FloodData           @relation(fields: [floodDataId], references: [id])
+  userId               Int? // Optional: If a regular user submits the assessment
+  user                 User?               @relation(fields: [userId], references: [id])
+  organizationMemberId Int? // Optional: If an organization member submits the assessment
+  organizationMember   OrganizationMember? @relation(fields: [organizationMemberId], references: [id])
+  severity             String // Severity level of the damage (e.g., minor, severe, etc.)
+  estimatedLoss        Float // Estimated financial loss due to the damage
+  needsAnalysis        String // Description of the immediate needs (e.g., food, water, shelter)
+  additionalNotes      String? // Any additional comments or observations
+  timestamp            DateTime            @default(now())
+  createdAt            DateTime            @default(now())
 }
-
-
-
 
 model HealthData {
-  id               Int        @id @default(autoincrement())
-  userId           Int
-  user             User       @relation(fields: [userId], references: [id])
-  waterAccess      Boolean    // Does the user have access to clean water?
-  waterQuality     String?    // Optional: Water quality assessment (e.g., "safe", "contaminated")
-  diseaseRisk      String     // Risk of disease (e.g., cholera, malaria)
-  healthNotes      String     // Health-related notes or alerts
-  sanitationAccess Boolean   // Whether the user has access to proper sanitation
-  diseaseOutbreakId Int?      // Optional: Reference to DiseaseOutbreak
-  diseaseOutbreak  DiseaseOutbreak? @relation(fields: [diseaseOutbreakId], references: [id])
-  
+  id                Int              @id @default(autoincrement())
+  userId            Int
+  user              User             @relation(fields: [userId], references: [id])
+  waterAccess       Boolean // Does the user have access to clean water?
+  waterQuality      String? // Optional: Water quality assessment (e.g., "safe", "contaminated")
+  diseaseRisk       String // Risk of disease (e.g., cholera, malaria)
+  healthNotes       String // Health-related notes or alerts
+  sanitationAccess  Boolean // Whether the user has access to proper sanitation
+  diseaseOutbreakId Int? // Optional: Reference to DiseaseOutbreak
+  diseaseOutbreak   DiseaseOutbreak? @relation(fields: [diseaseOutbreakId], references: [id])
+
   // Submitter information
-  submitterName    String   // Name of the person submitting the data
-  submitterEmail   String    // Email of the submitter
-  submitterRole    SubmitterRole // Role of the submitter (doctor, nurse, other)
+  submitterName  String // Name of the person submitting the data
+  submitterEmail String // Email of the submitter
+  submitterRole  SubmitterRole // Role of the submitter (doctor, nurse, other)
 
-  createdAt        DateTime   @default(now())
+  createdAt DateTime @default(now())
 }
-
-
 
 model DiseaseOutbreak {
-  id                Int        @id @default(autoincrement())
-  region            String     // Region affected by the outbreak
-  disease           String     // Disease name (e.g., cholera, malaria)
-  confirmedCases    Int        // Number of confirmed cases
-  suspectedCases    Int?       // Optional: Number of suspected cases
-  fatalities        Int?       // Optional: Number of fatalities (if any)
-  waterContamination Boolean   // Is the outbreak related to water contamination?
-  outbreakStatus    String     // Current status (e.g., "active", "contained")
-  healthData        HealthData[] // Reverse relation to track all associated HealthData records
-  
-  // Submitter information
-  submitterName     String     // Name of the person submitting the data
-  submitterEmail    String     // Email of the submitter
-  submitterRole     SubmitterRole // Role of the submitter (doctor, nurse, other)
+  id                 Int          @id @default(autoincrement())
+  region             String // Region affected by the outbreak
+  disease            String // Disease name (e.g., cholera, malaria)
+  confirmedCases     Int // Number of confirmed cases
+  suspectedCases     Int? // Optional: Number of suspected cases
+  fatalities         Int? // Optional: Number of fatalities (if any)
+  waterContamination Boolean // Is the outbreak related to water contamination?
+  outbreakStatus     String // Current status (e.g., "active", "contained")
+  healthData         HealthData[] // Reverse relation to track all associated HealthData records
 
-  timestamp         DateTime   @default(now())
-  createdAt         DateTime   @default(now())
+  // Submitter information
+  submitterName  String // Name of the person submitting the data
+  submitterEmail String // Email of the submitter
+  submitterRole  SubmitterRole // Role of the submitter (doctor, nurse, other)
+
+  timestamp DateTime @default(now())
+  createdAt DateTime @default(now())
 }
 
-
-
-
 model FloodData {
-  id                Int               @id @default(autoincrement())
-  region            String            // Region affected by the flood
-  severity          String            // Severity level (e.g., low, medium, high)
-  details           String            // Detailed information about the flood event
-  riskLevel         Float             // Predicted risk level (based on data science model)
-  affectedPeople    Int               // Number of people affected in the region
-  predictedDate     DateTime          // Date when the flood is predicted to occur
-  alerts            Alert[]
-  timestamp         DateTime          @default(now())
-  resources         Resource[]
-  damageAssessments DamageAssessment[] // Link to the damage assessments for this flood
+  id                  Int                   @id @default(autoincrement())
+  region              String // Region affected by the flood
+  severity            String // Severity level (e.g., low, medium, high)
+  details             String // Detailed information about the flood event
+  riskLevel           Float // Predicted risk level (based on data science model)
+  affectedPeople      Int // Number of people affected in the region
+  predictedDate       DateTime // Date when the flood is predicted to occur
+  alerts              Alert[]
+  timestamp           DateTime              @default(now())
+  resources           Resource[]
+  damageAssessments   DamageAssessment[] // Link to the damage assessments for this flood
   historicalFloodData HistoricalFloodData[]
-  createdAt         DateTime          @default(now()) 
+  task                Task[]
+  createdAt           DateTime              @default(now())
 }
 
 model HistoricalFloodData {
-  id              Int       @id @default(autoincrement())
-  region          String    // Region for the historical flood data
-  year            Int       // Year of the flood event
-  severity        String    // Severity level of past flood events
-  affectedPeople  Int       // Number of people affected
-  floodDataId     Int?
-  floodData       FloodData? @relation(fields: [floodDataId], references: [id])
+  id             Int        @id @default(autoincrement())
+  region         String // Region for the historical flood data
+  year           Int // Year of the flood event
+  severity       String // Severity level of past flood events
+  affectedPeople Int // Number of people affected
+  floodDataId    Int?
+  floodData      FloodData? @relation(fields: [floodDataId], references: [id])
 }
 
-
-
 model Resource {
-  id                    Int        @id @default(autoincrement())
-  type                  String     // Type of resource (e.g., food, water, shelter)
-  quantity              Int        // Amount of resource
-  status                ResourceStatus  @default(PENDING)
+  id                    Int                  @id @default(autoincrement())
+  type                  String // Type of resource (e.g., food, water, shelter)
+  quantity              Int // Amount of resource
+  status                ResourceStatus       @default(PENDING)
   priorityLevel         PriorityLevel // New: Level of priority for resource allocation
-  distributedTo         User?      @relation(fields: [userId], references: [id])
+  distributedTo         User?                @relation(fields: [userId], references: [id])
   userId                Int?
   floodDataId           Int
-  floodData             FloodData  @relation(fields: [floodDataId], references: [id])
-  communityResilienceId Int?       // Optional relation to CommunityResilience
+  floodData             FloodData            @relation(fields: [floodDataId], references: [id])
+  communityResilienceId Int? // Optional relation to CommunityResilience
   communityResilience   CommunityResilience? @relation(fields: [communityResilienceId], references: [id])
-  organizationId        Int?       // Optional relation to the organization distributing the resource
-  organization          Organization? @relation(fields: [organizationId], references: [id])
-  createdAt             DateTime   @default(now())
+  organizationId        Int? // Optional relation to the organization distributing the resource
+  organization          Organization?        @relation(fields: [organizationId], references: [id])
+  createdAt             DateTime             @default(now())
 }
 
 enum PriorityLevel {
@@ -145,101 +135,131 @@ enum PriorityLevel {
   CRITICAL
 }
 
-
-
-
 model Alert {
-  id              Int       @id @default(autoincrement())
-  message         String    // Alert message sent to users
-  region          String    // Region where alert is applicable
-  floodDataId     Int
-  floodData       FloodData @relation(fields: [floodDataId], references: [id])
-  status          AlertStatus @default(PENDING) // Status of the alert: sent, failed, etc.
-  createdAt       DateTime  @default(now())
+  id          Int         @id @default(autoincrement())
+  message     String // Alert message sent to users
+  region      String // Region where alert is applicable
+  floodDataId Int
+  floodData   FloodData   @relation(fields: [floodDataId], references: [id])
+  status      AlertStatus @default(PENDING) // Status of the alert: sent, failed, etc.
+  createdAt   DateTime    @default(now())
 }
-
 
 model Donation {
   id        Int      @id @default(autoincrement())
   donorName String
   amount    Float
   userId    Int
-  user      User      @relation(fields: [userId], references: [id])
-  createdAt DateTime  @default(now())
+  user      User     @relation(fields: [userId], references: [id])
+  createdAt DateTime @default(now())
 }
 
 model CommunityResilience {
-  id            Int       @id @default(autoincrement())
-  region        String    // Community region
-  recoveryPlans String    // Plans for long-term recovery
+  id            Int        @id @default(autoincrement())
+  region        String // Community region
+  recoveryPlans String // Plans for long-term recovery
   resources     Resource[] // Resources allocated to the community for recovery
-  createdAt     DateTime  @default(now()) 
+  createdAt     DateTime   @default(now())
 }
 
 model Organization {
-  id             Int                   @id @default(autoincrement())
-  name           String                // Name of the organization
-  contactInfo    String                // Contact information of the organization
-  location       String                // Organization's location or operational area
-  resources      Resource[]            // Resources distributed by the organization
-  members        OrganizationMember[]  // Members (organizers) of the organization
-  highLevelOrgId   Int?              // Optional link to the high-level organization
-  highLevelOrg     HighLevelOrganization? @relation(fields: [highLevelOrgId], references: [id])
-  createdAt      DateTime              @default(now())
+  id             Int                    @id @default(autoincrement())
+  name           String // Name of the organization
+  contactInfo    String // Contact information of the organization
+  location       String // Organization's location or operational area
+  resources      Resource[] // Resources distributed by the organization
+  members        OrganizationMember[] // Members (organizers) of the organization
+  highLevelOrgId Int? // Optional link to the high-level organization
+  highLevelOrg   HighLevelOrganization? @relation(fields: [highLevelOrgId], references: [id])
+  createdAt      DateTime               @default(now())
 }
 
 model OrganizationMember {
-  id              Int                @id @default(autoincrement())
-  name            String             // Name of the organization member
-  email           String             @unique // Unique email for the organizer login
-  password        String             // Password for the member to log in
-  role            MemberRole         // Define the role within the organization (e.g., ORGANIZER, MANAGER, etc.)
-  organizationId  Int                // Link to the organization
-  organization    Organization       @relation(fields: [organizationId], references: [id])
+  id                Int                @id @default(autoincrement())
+  name              String // Name of the organization member
+  email             String             @unique // Unique email for the organizer login
+  password          String // Password for the member to log in
+  role              MemberRole // Define the role within the organization (e.g., ORGANIZER, MANAGER, etc.)
+  organizationId    Int // Link to the organization
+  organization      Organization       @relation(fields: [organizationId], references: [id])
   damageAssessments DamageAssessment[] // Reverse relation to track damage assessments submitted by this member
-  createdAt       DateTime           @default(now())
+  createdAt         DateTime           @default(now())
+}
+
+model Volunteer {
+  id            Int           @id @default(autoincrement())
+  name          String // Name of the volunteer
+  email         String        @unique // Contact info
+  role          VolunteerRole // Role of the volunteer (e.g., medical, logistics)
+  availability  Boolean       @default(true) // Availability of the volunteer
+  assignedTasks Task[] // Tasks assigned to the volunteer
+  createdAt     DateTime      @default(now())
+}
+
+enum VolunteerRole {
+  MEDICAL
+  LOGISTICS
+  GENERAL
+}
+
+model Task {
+  id          Int        @id @default(autoincrement())
+  description String // Task description
+  floodDataId Int? // Related flood event (if applicable)
+  floodData   FloodData? @relation(fields: [floodDataId], references: [id])
+  assignedTo  Volunteer? @relation(fields: [volunteerId], references: [id]) // Volunteer assigned to the task
+  status      TaskStatus @default(PENDING) // Task status
+  createdAt   DateTime   @default(now())
+  volunteerId Int?
+}
+
+enum TaskStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
 }
 
 model HighLevelOrganization {
-  id               Int               @id @default(autoincrement())
-  name             String            // Ministry or high-level authority name
-  contactInfo      String            // Contact info for communication
-  region           String?           // Operating region
-  decisionMakers   DecisionMaker[]   // High-level decision makers (e.g., ministers)
-  subordinateOrgs  Organization[]    // Subordinate organizations (hospitals, NGOs, etc.)
-  createdAt        DateTime          @default(now())
+  id              Int             @id @default(autoincrement())
+  name            String // Ministry or high-level authority name
+  contactInfo     String // Contact info for communication
+  region          String? // Operating region
+  decisionMakers  DecisionMaker[] // High-level decision makers (e.g., ministers)
+  subordinateOrgs Organization[] // Subordinate organizations (hospitals, NGOs, etc.)
+  createdAt       DateTime        @default(now())
 }
 
 model DecisionMaker {
-  id               Int               @id @default(autoincrement())
-  name             String            // Decision maker's name
-  email            String            @unique
-  role             String            // Role or title (e.g., Minister of Health)
-  highLevelOrgId   Int?              // Reference to the high-level organization
-  highLevelOrg     HighLevelOrganization? @relation(fields: [highLevelOrgId], references: [id])
-  orders           Order[]           // Orders issued by this decision maker
-  createdAt        DateTime          @default(now())
+  id             Int                    @id @default(autoincrement())
+  name           String // Decision maker's name
+  email          String                 @unique
+  role           String // Role or title (e.g., Minister of Health)
+  highLevelOrgId Int? // Reference to the high-level organization
+  highLevelOrg   HighLevelOrganization? @relation(fields: [highLevelOrgId], references: [id])
+  orders         Order[] // Orders issued by this decision maker
+  createdAt      DateTime               @default(now())
 }
 
 model Order {
   id              Int           @id @default(autoincrement())
-  decisionMakerId Int           // Reference to the decision-maker issuing the order
+  decisionMakerId Int // Reference to the decision-maker issuing the order
   decisionMaker   DecisionMaker @relation(fields: [decisionMakerId], references: [id])
-  targetType      TargetType    // Who is the order targeted to? (e.g., doctor, organization, donor)
-  targetId        Int           // ID of the target (could be a doctor, organization, or donor)
-  message         String        // Content of the order
+  targetType      TargetType // Who is the order targeted to? (e.g., doctor, organization, donor)
+  targetId        Int // ID of the target (could be a doctor, organization, or donor)
+  message         String // Content of the order
   status          OrderStatus   @default(PENDING) // Status of the order (e.g., pending, in progress, done)
-  startDate       DateTime?     // Optional: When the order was started
-  completionDate  DateTime?     // Optional: When the order was completed
-  notes           String?       // Optional: Any additional notes regarding the order
+  startDate       DateTime? // Optional: When the order was started
+  completionDate  DateTime? // Optional: When the order was completed
+  notes           String? // Optional: Any additional notes regarding the order
   createdAt       DateTime      @default(now())
 }
 
 enum OrderStatus {
-  PENDING      // The order has been issued but not yet started
-  IN_PROGRESS  // The order is currently being worked on
-  DONE         // The order has been completed
-  CANCELLED    // The order was cancelled and is no longer active
+  PENDING // The order has been issued but not yet started
+  IN_PROGRESS // The order is currently being worked on
+  DONE // The order has been completed
+  CANCELLED // The order was cancelled and is no longer active
 }
 
 enum TargetType {
@@ -253,8 +273,6 @@ enum TargetType {
   ADMIN // the decision-maker can also assign high-level administrative tasks or issue policy-level orders to app admins.
   OTHER // From SubmitterRole (catch-all for any other roles)
 }
-
-
 
 enum MemberRole {
   ORGANIZER
@@ -285,4 +303,3 @@ enum AlertStatus {
   SENT
   FAILED
 }
-
