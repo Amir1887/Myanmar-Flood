@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post('/health', async (req, res) => {
     try {
-      const { userId, waterAccess, diseaseRisk, healthNotes, createdAt } = req.body;
+      const { userId, waterAccess, waterQuality, diseaseRisk, healthNotes,  sanitationAccess, diseaseOutbreakId, submitterName, submitterEmail, submitterRole, createdAt } = req.body;
       
       // Log request body for debugging
       console.log("Request Body: ", req.body);
@@ -16,8 +16,14 @@ router.post('/health', async (req, res) => {
         data: {
           userId,
           waterAccess,
+          waterQuality,
           diseaseRisk,
           healthNotes,
+          sanitationAccess,
+          diseaseOutbreakId,
+          submitterName,
+          submitterEmail,
+          submitterRole,
           createdAt,
         },
       });
