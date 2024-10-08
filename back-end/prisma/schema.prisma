@@ -21,7 +21,7 @@ model User {
   role               Role                 @default(USER)
   location           String // User's address or affected area
   isInNeed           Boolean              @default(false) // Indicates if the user is in need of help
-  privacyAgreement  Boolean   @default(false) // Track if the user has agreed to privacy terms
+  privacyAgreement   Boolean              @default(false) // Track if the user has agreed to privacy terms
   createdAt          DateTime             @default(now())
   donations          Donation[]
   healthData         HealthData[] // Link to health and sanitation data for users in need
@@ -41,7 +41,7 @@ model UserConsent {
   consentGiven Boolean     @default(false) // Whether consent is given for using sensitive data
   consentDate  DateTime    @default(now()) // Date when consent was given
   consentType  ConsentType // Enum for types of consent (general, health-related, etc.)
-  consentInfo     String?
+  consentInfo  String?
   cancelledAt  DateTime? // Optional: If consent was cancelled, store the date
   createdAt    DateTime    @default(now())
 }
@@ -121,12 +121,12 @@ model HealthData {
   submitterName  String // Name of the person submitting the data
   submitterEmail String // Email of the submitter
   submitterRole  SubmitterRole // Role of the submitter (doctor, nurse, other)
-  consentGranted    Boolean  // Whether the user has consented to use health data
+  consentGranted Boolean // Whether the user has consented to use health data
 
   // Additional fields for tracking updates
   fetchedAt DateTime? // Time when data was fetched from an API (optional for api submission)
   timestamp DateTime  @default(now()) // Time of submission
-  createdAt DateTime @default(now())
+  createdAt DateTime  @default(now())
 }
 
 model DiseaseOutbreak {
