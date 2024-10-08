@@ -260,6 +260,22 @@ model DecisionMaker {
   createdAt      DateTime               @default(now())
 }
 
+model Visualization {
+  id              Int       @id @default(autoincrement())
+  title           String    // Title of the visualization
+  description     String    // Description of the data being visualized
+  type            VisualizationType // Type of visualization (e.g., bar chart, map, etc.)
+  data            Json      // JSON data for rendering the visualization
+  createdAt       DateTime  @default(now())
+}
+
+enum VisualizationType {
+  MAP
+  CHART
+  TABLE
+}
+
+
 model Order {
   id              Int           @id @default(autoincrement())
   decisionMakerId Int // Reference to the decision-maker issuing the order
