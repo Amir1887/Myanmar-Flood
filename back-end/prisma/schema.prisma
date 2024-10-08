@@ -146,16 +146,15 @@ model Alert {
 }
 
 model Donation {
-  id            Int       @id @default(autoincrement())
-  donorName     String    // Name of the donor
-  amount        Float     // Donation amount
-  userId        Int       // Recipient user (if applicable)
-  user          User      @relation(fields: [userId], references: [id])
-  purpose       String    // Purpose of the donation (e.g., clean water, food, shelter)
-  impactReport  String?   // Optional: Report back to the donor on how the donation helped
-  createdAt     DateTime  @default(now())
+  id           Int      @id @default(autoincrement())
+  donorName    String // Name of the donor
+  amount       Float // Donation amount
+  userId       Int // Recipient user (if applicable)
+  user         User     @relation(fields: [userId], references: [id])
+  purpose      String // Purpose of the donation (e.g., clean water, food, shelter)
+  impactReport String? // Optional: Report back to the donor on how the donation helped
+  createdAt    DateTime @default(now())
 }
-
 
 model CommunityResilience {
   id            Int        @id @default(autoincrement())
@@ -175,6 +174,7 @@ model Organization {
   highLevelOrgId Int? // Optional link to the high-level organization
   highLevelOrg   HighLevelOrganization? @relation(fields: [highLevelOrgId], references: [id])
   createdAt      DateTime               @default(now())
+  Report         Report[]
 }
 
 model OrganizationMember {
@@ -187,6 +187,22 @@ model OrganizationMember {
   organization      Organization       @relation(fields: [organizationId], references: [id])
   damageAssessments DamageAssessment[] // Reverse relation to track damage assessments submitted by this member
   createdAt         DateTime           @default(now())
+}
+
+model Report {
+  id             Int           @id @default(autoincrement())
+  reportType     ReportType // Type of report (e.g., damage, resource distribution, disease outbreak)
+  generatedBy    Organization? @relation(fields: [organizationId], references: [id]) // Organization that generated the report
+  data           Json // Report data in JSON format
+  createdAt      DateTime      @default(now())
+  organizationId Int?
+}
+
+enum ReportType {
+  DAMAGE_ASSESSMENT
+  RESOURCE_DISTRIBUTION
+  HEALTH_MONITORING
+  DISEASE_OUTBREAK
 }
 
 model Volunteer {
