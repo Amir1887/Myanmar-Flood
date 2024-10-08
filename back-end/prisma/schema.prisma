@@ -105,7 +105,20 @@ model FloodData {
   timestamp         DateTime          @default(now())
   resources         Resource[]
   damageAssessments DamageAssessment[] // Link to the damage assessments for this flood
+  historicalFloodData HistoricalFloodData[]
+  createdAt         DateTime          @default(now()) 
 }
+
+model HistoricalFloodData {
+  id              Int       @id @default(autoincrement())
+  region          String    // Region for the historical flood data
+  year            Int       // Year of the flood event
+  severity        String    // Severity level of past flood events
+  affectedPeople  Int       // Number of people affected
+  floodDataId     Int?
+  floodData       FloodData? @relation(fields: [floodDataId], references: [id])
+}
+
 
 
 model Resource {
