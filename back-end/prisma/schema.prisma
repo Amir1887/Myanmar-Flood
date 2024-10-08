@@ -28,6 +28,7 @@ model User {
   damageAssessments DamageAssessment[] // Link to damage assessments reported by the user
   UserPreference    UserPreference?
   Feedback          Feedback[]
+  APILog            APILog[]
 }
 
 model UserPreference {
@@ -104,34 +105,33 @@ model HealthData {
 }
 
 model DiseaseOutbreak {
-  id                 Int          @id @default(autoincrement())
-  region             String       // Region affected by the outbreak
-  disease            String       // Disease name (e.g., cholera, malaria)
-  confirmedCases     Int          // Number of confirmed cases
-  suspectedCases     Int?         // Optional: Number of suspected cases
-  fatalities         Int?         // Optional: Number of fatalities (if any)
-  hospitalizations   Int?         // Optional: Number of hospitalizations due to the outbreak
-  recovered          Int?         // Optional: Number of recovered cases
-  criticalCondition  Int?         // Optional: Number of people in critical condition
-  vaccinationData    String?      // Optional: Vaccination data related to the outbreak (e.g., percent vaccinated)
-  newCases           Int?         // Optional: New cases reported since the last update
-  waterContamination Boolean      // Is the outbreak related to water contamination?
-  outbreakStatus     String       // Current status (e.g., "active", "contained", "ongoing")
-  apiSource          String?      // Optional: External API source (e.g., "WHO", "CDC")
-  
+  id                 Int     @id @default(autoincrement())
+  region             String // Region affected by the outbreak
+  disease            String // Disease name (e.g., cholera, malaria)
+  confirmedCases     Int // Number of confirmed cases
+  suspectedCases     Int? // Optional: Number of suspected cases
+  fatalities         Int? // Optional: Number of fatalities (if any)
+  hospitalizations   Int? // Optional: Number of hospitalizations due to the outbreak
+  recovered          Int? // Optional: Number of recovered cases
+  criticalCondition  Int? // Optional: Number of people in critical condition
+  vaccinationData    String? // Optional: Vaccination data related to the outbreak (e.g., percent vaccinated)
+  newCases           Int? // Optional: New cases reported since the last update
+  waterContamination Boolean // Is the outbreak related to water contamination?
+  outbreakStatus     String // Current status (e.g., "active", "contained", "ongoing")
+  apiSource          String? // Optional: External API source (e.g., "WHO", "CDC")
+
   // Submitter information
-  submitterName      String       // Name of the person submitting the data
-  submitterEmail     String       // Email of the submitter
-  submitterRole      SubmitterRole // Role of the submitter (doctor, nurse, other)
-  
+  submitterName  String // Name of the person submitting the data
+  submitterEmail String // Email of the submitter
+  submitterRole  SubmitterRole // Role of the submitter (doctor, nurse, other)
+
   // Additional fields for tracking updates
-  fetchedAt          DateTime?    // Time when data was fetched from an API (optional for manual submission)
-  timestamp          DateTime     @default(now()) // Time of submission
-  createdAt          DateTime     @default(now())
+  fetchedAt DateTime? // Time when data was fetched from an API (optional for manual submission)
+  timestamp DateTime  @default(now()) // Time of submission
+  createdAt DateTime  @default(now())
 
-  healthData         HealthData[] // Relation to additional health stats data, such as detailed trends
+  healthData HealthData[] // Relation to additional health stats data, such as detailed trends
 }
-
 
 model FloodData {
   id                  Int                   @id @default(autoincrement())
@@ -444,4 +444,20 @@ enum AlertStatus {
   PENDING
   SENT
   FAILED
+}
+
+model APILog {
+  id             Int      @id @default(autoincrement())
+  apiName        String // Name of the API (e.g., "OpenWeatherMap", "Google Maps")
+  endpoint       String // API endpoint used
+  responseCode   Int // HTTP response code from the API
+  responseTime   Int // Time taken for the API to respond (in ms)
+  requestPayload String? // Optional: Payload sent to the API (for debugging)
+  errorMessage   String? // Optional: Any error message returned from the API
+  retries        Int? // Number of times this API call was retried
+  createdAt      DateTime @default(now())
+
+  // Optional: Link API logs to a specific user action
+  userId Int? // Foreign key to User model (optional)
+  user   User? @relation(fields: [userId], references: [id])
 }
