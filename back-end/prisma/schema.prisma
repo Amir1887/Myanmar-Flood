@@ -14,21 +14,22 @@ datasource db {
 }
 
 model User {
-  id                Int                @id @default(autoincrement())
-  name              String
-  email             String             @unique
-  password          String
-  role              Role               @default(USER)
-  location          String // User's address or affected area
-  isInNeed          Boolean            @default(false) // Indicates if the user is in need of help
-  createdAt         DateTime           @default(now())
-  donations         Donation[]
-  healthData        HealthData[] // Link to health and sanitation data for users in need
-  resources         Resource[] // Resources distributed to the user 
-  damageAssessments DamageAssessment[] // Link to damage assessments reported by the user
-  UserPreference    UserPreference?
-  Feedback          Feedback[]
-  APILog            APILog[]
+  id                 Int                  @id @default(autoincrement())
+  name               String
+  email              String               @unique
+  password           String
+  role               Role                 @default(USER)
+  location           String // User's address or affected area
+  isInNeed           Boolean              @default(false) // Indicates if the user is in need of help
+  createdAt          DateTime             @default(now())
+  donations          Donation[]
+  healthData         HealthData[] // Link to health and sanitation data for users in need
+  resources          Resource[] // Resources distributed to the user 
+  damageAssessments  DamageAssessment[] // Link to damage assessments reported by the user
+  UserPreference     UserPreference?
+  Feedback           Feedback[]
+  APILog             APILog[]
+  SubmittedEmergency SubmittedEmergency[]
 }
 
 model UserPreference {
@@ -190,21 +191,23 @@ model MapData {
 }
 
 model Resource {
-  id                    Int                  @id @default(autoincrement())
-  type                  String // Type of resource (e.g., food, water, shelter)
-  quantity              Int // Amount of resource
-  status                ResourceStatus       @default(PENDING)
-  priorityLevel         PriorityLevel // New: Level of priority for resource allocation
-  distributedTo         User?                @relation(fields: [userId], references: [id])
-  userId                Int?
-  floodDataId           Int
-  floodData             FloodData            @relation(fields: [floodDataId], references: [id])
-  communityResilienceId Int? // Optional relation to CommunityResilience
-  communityResilience   CommunityResilience? @relation(fields: [communityResilienceId], references: [id])
-  organizationId        Int? // Optional relation to the organization distributing the resource
-  organization          Organization?        @relation(fields: [organizationId], references: [id])
-  createdAt             DateTime             @default(now())
-  Feedback              Feedback[]
+  id                      Int                    @id @default(autoincrement())
+  type                    String // Type of resource (e.g., food, water, shelter)
+  quantity                Int // Amount of resource
+  status                  ResourceStatus         @default(PENDING)
+  priorityLevel           PriorityLevel // New: Level of priority for resource allocation
+  distributedTo           User?                  @relation(fields: [userId], references: [id])
+  userId                  Int?
+  floodDataId             Int
+  floodData               FloodData              @relation(fields: [floodDataId], references: [id])
+  communityResilienceId   Int? // Optional relation to CommunityResilience
+  communityResilience     CommunityResilience?   @relation(fields: [communityResilienceId], references: [id])
+  organizationId          Int? // Optional relation to the organization distributing the resource
+  organization            Organization?          @relation(fields: [organizationId], references: [id])
+  createdAt               DateTime               @default(now())
+  Feedback                Feedback[]
+  EmergencyResponsePlan   EmergencyResponsePlan? @relation(fields: [emergencyResponsePlanId], references: [id])
+  emergencyResponsePlanId Int?
 }
 
 enum PriorityLevel {
@@ -244,16 +247,18 @@ model CommunityResilience {
 }
 
 model Organization {
-  id             Int                    @id @default(autoincrement())
-  name           String // Name of the organization
-  contactInfo    String // Contact information of the organization
-  location       String // Organization's location or operational area
-  resources      Resource[] // Resources distributed by the organization
-  members        OrganizationMember[] // Members (organizers) of the organization
-  highLevelOrgId Int? // Optional link to the high-level organization
-  highLevelOrg   HighLevelOrganization? @relation(fields: [highLevelOrgId], references: [id])
-  createdAt      DateTime               @default(now())
-  Report         Report[]
+  id                    Int                     @id @default(autoincrement())
+  name                  String // Name of the organization
+  contactInfo           String // Contact information of the organization
+  location              String // Organization's location or operational area
+  resources             Resource[] // Resources distributed by the organization
+  members               OrganizationMember[] // Members (organizers) of the organization
+  highLevelOrgId        Int? // Optional link to the high-level organization
+  highLevelOrg          HighLevelOrganization?  @relation(fields: [highLevelOrgId], references: [id])
+  createdAt             DateTime                @default(now())
+  Report                Report[]
+  EmergencyResponsePlan EmergencyResponsePlan[]
+  OrganizationResponse  OrganizationResponse[]
 }
 
 model OrganizationMember {
@@ -460,4 +465,89 @@ model APILog {
   // Optional: Link API logs to a specific user action
   userId Int? // Foreign key to User model (optional)
   user   User? @relation(fields: [userId], references: [id])
+}
+
+model EmergencyResponsePlan {
+  id                   Int                  @id @default(autoincrement())
+  region               String // Region for the plan  
+  planDetails          String // Description of the plan  
+  emergencyType        EmergencyType // Type of emergency (e.g., flood, earthquake, disease outbreak)
+  resourcesNeeded      Resource[] // Resources allocated for the plan  
+  responsibleOrgId     Int? // Organization responsible for executing the plan
+  responsibleOrg       Organization?        @relation(fields: [responsibleOrgId], references: [id])
+  contactPerson        String // Contact person for coordination
+  contactEmail         String // Contact person's email
+  status               PlanStatus           @default(PENDING) // Status of the plan (e.g., pending, active, completed)
+  timeline             DateTime? // Optional: Expected timeline for plan execution
+  riskLevel            RiskLevel? // Optional: Risk level (e.g., high, medium, low)
+  priority             PriorityLevelER? // Optional: Priority level of the plan (e.g., 1 for high priority)
+  createdAt            DateTime             @default(now())
+  submittedEmergencies SubmittedEmergency[] // Emergencies linked to this plan
+}
+
+model SubmittedEmergency {
+  id                   Int                    @id @default(autoincrement())
+  region               String // Region where the emergency was reported
+  emergencyType        EmergencyType // Type of emergency being reported
+  description          String // Detailed description of the emergency
+  submitterId          Int // User submitting the emergency
+  submitter            User                   @relation(fields: [submitterId], references: [id])
+  submissionStatus     SubmissionStatus       @default(PENDING) // Status of the submitted emergency
+  createdAt            DateTime               @default(now())
+  associatedPlanId     Int? // Link to an EmergencyResponsePlan if associated
+  associatedPlan       EmergencyResponsePlan? @relation(fields: [associatedPlanId], references: [id])
+  OrganizationResponse OrganizationResponse[]
+}
+
+model OrganizationResponse {
+  id              Int                @id @default(autoincrement())
+  organizationId  Int // Organization responding to the emergency
+  organization    Organization       @relation(fields: [organizationId], references: [id])
+  emergencyId     Int // Emergency being responded to
+  emergency       SubmittedEmergency @relation(fields: [emergencyId], references: [id])
+  responseDetails String // Details of the organization's response
+  responseStatus  ResponseStatus     @default(PENDING) // Status of the response
+  createdAt       DateTime           @default(now())
+}
+
+// Enums for better usability
+enum EmergencyType {
+  FLOOD
+  EARTHQUAKE
+  DISEASE_OUTBREAK
+  FIRE
+  OTHER
+}
+
+enum PlanStatus {
+  PENDING
+  ACTIVE
+  COMPLETED
+  CANCELLED
+}
+
+enum SubmissionStatus {
+  PENDING
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+}
+
+enum ResponseStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  FAILED
+}
+
+enum RiskLevel {
+  LOW
+  MEDIUM
+  HIGH
+}
+
+enum PriorityLevelER {
+  LOW
+  MEDIUM
+  HIGH
 }
