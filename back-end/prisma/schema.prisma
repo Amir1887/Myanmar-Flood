@@ -283,6 +283,7 @@ model Organization {
   Report                Report[]
   EmergencyResponsePlan EmergencyResponsePlan[]
   OrganizationResponse  OrganizationResponse[]
+  Order                 Order[]
 }
 
 model OrganizationMember {
@@ -355,6 +356,7 @@ model HighLevelOrganization {
   decisionMakers  DecisionMaker[] // High-level decision makers (e.g., ministers)
   subordinateOrgs Organization[] // Subordinate organizations (hospitals, NGOs, etc.)
   createdAt       DateTime        @default(now())
+  Order           Order[]
 }
 
 model DecisionMaker {
@@ -387,14 +389,21 @@ model Order {
   id              Int           @id @default(autoincrement())
   decisionMakerId Int // Reference to the decision-maker issuing the order
   decisionMaker   DecisionMaker @relation(fields: [decisionMakerId], references: [id])
-  targetType      TargetType // Who is the order targeted to? (e.g., doctor, organization, donor)
-  targetId        Int // ID of the target (could be a doctor, organization, or donor)
-  message         String // Content of the order
-  status          OrderStatus   @default(PENDING) // Status of the order (e.g., pending, in progress, done)
-  startDate       DateTime? // Optional: When the order was started
-  completionDate  DateTime? // Optional: When the order was completed
-  notes           String? // Optional: Any additional notes regarding the order
-  createdAt       DateTime      @default(now())
+
+  targetType TargetType // Specifies the type of target within the organization (e.g., doctor, volunteer)
+
+  organizationId Int // The organization responsible for handling the order
+  organization   Organization @relation(fields: [organizationId], references: [id]) // Relating the order to a specific organization
+
+  highLevelOrgId Int? // Reference to the high-level organization issuing the order
+  highLevelOrg   HighLevelOrganization? @relation(fields: [highLevelOrgId], references: [id])
+
+  message        String // Content of the order
+  status         OrderStatus @default(PENDING) // Status of the order
+  startDate      DateTime? // Optional: When the order was started
+  completionDate DateTime? // Optional: When the order was completed
+  notes          String? // Optional: Any additional notes regarding the order
+  createdAt      DateTime    @default(now())
 }
 
 enum OrderStatus {
@@ -405,15 +414,16 @@ enum OrderStatus {
 }
 
 enum TargetType {
-  DOCTOR //  Decision-makers can send specific health-related orders or instructions directly to medical staff 
+  ORGANIZATION // Assign orders to organizations for specific tasks
+  DOCTOR // Health-related instructions to medical staff
   NURSE
-  ORGANIZER // They can assign resource distribution tasks to different organizational roles
+  ORGANIZER // Task assignment to organizers within organizations
   MANAGER
   VOLUNTEER
-  USER // They can send alerts or requests for donations, updates, or emergency help to individual users or donors (e.g., during a flood or crisis).
+  USER // Alerts or emergency orders to individual users
   DONOR
-  ADMIN // the decision-maker can also assign high-level administrative tasks or issue policy-level orders to app admins.
-  OTHER // From SubmitterRole (catch-all for any other roles)
+  ADMIN // High-level tasks or policies to admins
+  OTHER // Catch-all for other roles
 }
 
 model Feedback {
