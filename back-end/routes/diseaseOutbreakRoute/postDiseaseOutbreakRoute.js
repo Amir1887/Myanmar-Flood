@@ -12,11 +12,18 @@ router.post("/disease-outbreak", async (req, res) => {
       confirmedCases,
       suspectedCases,
       fatalities,
+      hospitalizations,
+      recovered,
+      criticalCondition,
+      vaccinationData,
+      newCases,
       waterContamination,
       outbreakStatus,
+      apiSource,
       submitterName,
       submitterEmail,
       submitterRole,
+      fetchedAt,
       timestamp,
       createdAt,
     } = req.body;
@@ -32,11 +39,18 @@ router.post("/disease-outbreak", async (req, res) => {
         confirmedCases,
         suspectedCases,
         fatalities,
+        hospitalizations,
+        recovered,
+        criticalCondition,
+        vaccinationData,
+        newCases,
         waterContamination,
         outbreakStatus,
+        apiSource,
         submitterName,
         submitterEmail,
         submitterRole,
+        fetchedAt,
         timestamp,
         createdAt,
       },
@@ -45,12 +59,10 @@ router.post("/disease-outbreak", async (req, res) => {
     res.status(201).json(newdiseaseOutbreakData);
   } catch (error) {
     console.error("Error inserting new disease Outbreak Data: ", error);
-    res
-      .status(500)
-      .json({
-        error: "Failed to insert new disease Outbreak Data",
-        details: error.message,
-      });
+    res.status(500).json({
+      error: "Failed to insert new disease Outbreak Data",
+      details: error.message,
+    });
   }
 });
 
