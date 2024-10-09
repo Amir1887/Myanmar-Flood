@@ -41,6 +41,10 @@ const getMapDataRouter = require('./routes/MapDataRoutes/getMapData');
 const postMapDataRouter = require('./routes/MapDataRoutes/postMapData');
 const getOrderRouter = require('./routes/orderRoutes/getOrder');
 const postOrderRouter = require('./routes/orderRoutes/postOrder');
+const getOrganizationResponseRouter = require('./routes/organizationResponse/getOrganizationResponse');
+const postOrganizationResponseRouter = require('./routes/organizationResponse/postOrganizationResponse');
+const getSubmittedEmergencyRouter = require('./routes/submittedEmergency/getSubmittedEmergency');
+const postSubmittedEmergencyRouter = require('./routes/submittedEmergency/postSubmittedEmergency');
 
 
 
@@ -95,6 +99,10 @@ app.use('/', getMapDataRouter);
 app.use('/', postMapDataRouter);
 app.use('/', getOrderRouter);
 app.use('/', postOrderRouter);
+app.use('/', getOrganizationResponseRouter);
+app.use('/', postOrganizationResponseRouter);
+app.use('/', getSubmittedEmergencyRouter);
+app.use('/', postSubmittedEmergencyRouter);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
