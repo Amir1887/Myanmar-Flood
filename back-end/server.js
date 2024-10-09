@@ -25,6 +25,8 @@ const getOrganizationMemRouter = require('./routes/organizationMembersRoutes/get
 const postOrganizationMemRouter = require('./routes/organizationMembersRoutes/postOrganizationMem');
 const getDiseaseOutbreakRouteRouter = require('./routes/diseaseOutbreakRoute/getDiseaseOutbreakRoute');
 const postDiseaseOutbreakRouteRouter = require('./routes/diseaseOutbreakRoute/postDiseaseOutbreakRoute');
+const getApiLogRouter = require('./routes/apiLogRoutes/getApiLog');
+const postApiLogRouter = require('./routes/apiLogRoutes/postApiLog');
 
 
 
@@ -63,6 +65,8 @@ app.use('/', getOrganizationMemRouter);
 app.use('/', postOrganizationMemRouter);
 app.use('/', getDiseaseOutbreakRouteRouter);
 app.use('/', postDiseaseOutbreakRouteRouter);
+app.use('/', getApiLogRouter);
+app.use('/', postApiLogRouter);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
