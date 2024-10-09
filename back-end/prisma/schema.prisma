@@ -374,7 +374,8 @@ enum TaskStatus {
 model HighLevelOrganization {
   id              Int             @id @default(autoincrement())
   name            String // Ministry or high-level authority name
-  contactInfo     String // Contact info for communication
+  email           String? // Optional email contact
+  phoneNumber     String? // Optional phone number contact
   region          String? // Operating region
   decisionMakers  DecisionMaker[] // High-level decision makers (e.g., ministers)
   subordinateOrgs Organization[] // Subordinate organizations (hospitals, NGOs, etc.)
