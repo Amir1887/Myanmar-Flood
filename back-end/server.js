@@ -57,6 +57,8 @@ const getUserConsentRouter = require('./routes/userConsentRoutes/getUserConsent'
 const postUserConsentRouter = require('./routes/userConsentRoutes/postUserConsent');
 const getUserPreferenceRouter = require('./routes/userPreference/getUserPreference');
 const postUserPreferenceRouter = require('./routes/userPreference/postUserPreference');
+const getVisualizationRouter = require('./routes/visualizationRoutes/getVisualization');
+const postVisualizationRouter = require('./routes/visualizationRoutes/postVisualization');
 
 
 
@@ -127,6 +129,8 @@ app.use('/', getUserConsentRouter);
 app.use('/', postUserConsentRouter);
 app.use('/', getUserPreferenceRouter);
 app.use('/', postUserPreferenceRouter);
+app.use('/', getVisualizationRouter);
+app.use('/', postVisualizationRouter);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
