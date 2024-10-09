@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post('/floods', async (req, res) => {
     try {
-      const { region, severity, details, riskLevel, affectedPeople, predictedDate, timestamp } = req.body;
+      const { region, severity, details, riskLevel, affectedPeople, predictedDate, timestamp, createdAt } = req.body;
       
       // Log request body for debugging
       console.log("Request Body: ", req.body);
@@ -21,6 +21,7 @@ router.post('/floods', async (req, res) => {
           affectedPeople,
           predictedDate,
           timestamp: timestamp || new Date(),
+          createdAt
         },
       });
       
