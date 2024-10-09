@@ -35,6 +35,8 @@ const getEmergencyResponsePlanRouter = require('./routes/emergencyResponsePlan/g
 const postEmergencyResponsePlanRouter = require('./routes/emergencyResponsePlan/postEmergencyResponsePlan');
 const getFeedbackRouter = require('./routes/feedbackRoutes/getFeedback');
 const postFeedbackRouter = require('./routes/feedbackRoutes/postFeedback');
+const getHistoricalFloodDataRouter = require('./routes/historicalFloodData/getHistoricalFloodData');
+const postHistoricalFloodDataRouter = require('./routes/historicalFloodData/postHistoricalFloodData');
 
 
 
@@ -83,6 +85,8 @@ app.use('/', getEmergencyResponsePlanRouter);
 app.use('/', postEmergencyResponsePlanRouter);
 app.use('/', getFeedbackRouter);
 app.use('/', postFeedbackRouter);
+app.use('/', getHistoricalFloodDataRouter);
+app.use('/', postHistoricalFloodDataRouter);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
