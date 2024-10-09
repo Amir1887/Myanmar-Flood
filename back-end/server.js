@@ -29,6 +29,8 @@ const getApiLogRouter = require('./routes/apiLogRoutes/getApiLog');
 const postApiLogRouter = require('./routes/apiLogRoutes/postApiLog');
 const getHigherLevelOrgRouter = require('./routes/higherLevelOrg/getHigherLevelOrg');
 const postHigherLevelOrgRouter = require('./routes/higherLevelOrg/postHigherLevelOrg');
+const getDecisionMakerRouter = require('./routes/decisionMaker/getDecisionMaker');
+const postDecisionMakerRouter = require('./routes/decisionMaker/postDecisionMaker');
 
 
 
@@ -71,6 +73,8 @@ app.use('/', getApiLogRouter);
 app.use('/', postApiLogRouter);
 app.use('/', getHigherLevelOrgRouter);
 app.use('/', postHigherLevelOrgRouter);
+app.use('/', getDecisionMakerRouter);
+app.use('/', postDecisionMakerRouter);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
