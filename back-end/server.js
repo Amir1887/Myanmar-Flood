@@ -59,6 +59,8 @@ const getUserPreferenceRouter = require('./routes/userPreference/getUserPreferen
 const postUserPreferenceRouter = require('./routes/userPreference/postUserPreference');
 const getVisualizationRouter = require('./routes/visualizationRoutes/getVisualization');
 const postVisualizationRouter = require('./routes/visualizationRoutes/postVisualization');
+const getWeatherDataRouter = require('./routes/weatherDataRoute/getWeatherData');
+const postWeatherDataRouter = require('./routes/weatherDataRoute/postWeatherData');
 
 
 
@@ -131,6 +133,8 @@ app.use('/', getUserPreferenceRouter);
 app.use('/', postUserPreferenceRouter);
 app.use('/', getVisualizationRouter);
 app.use('/', postVisualizationRouter);
+app.use('/', getWeatherDataRouter);
+app.use('/', postWeatherDataRouter);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
