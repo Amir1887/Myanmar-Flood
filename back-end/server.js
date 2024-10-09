@@ -53,6 +53,8 @@ const getVolunteerRouter = require('./routes/volunteerRoutes/getVolunteer');
 const postVolunteerRouter = require('./routes/volunteerRoutes/postVolunteer');
 const getVolunteerApplicationRouter = require('./routes/volunteerApplicationRoutes/getVolunteerApplication');
 const postVolunteerApplicationRouter = require('./routes/volunteerApplicationRoutes/postVolunteerApplication');
+const getUserConsentRouter = require('./routes/userConsentRoutes/getUserConsent');
+const postUserConsentRouter = require('./routes/userConsentRoutes/postUserConsent');
 
 
 
@@ -119,6 +121,8 @@ app.use('/', getVolunteerRouter);
 app.use('/', postVolunteerRouter);
 app.use('/', getVolunteerApplicationRouter);
 app.use('/', postVolunteerApplicationRouter);
+app.use('/', getUserConsentRouter);
+app.use('/', postUserConsentRouter);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
