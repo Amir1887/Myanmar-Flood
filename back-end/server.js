@@ -33,6 +33,8 @@ const getDecisionMakerRouter = require('./routes/decisionMaker/getDecisionMaker'
 const postDecisionMakerRouter = require('./routes/decisionMaker/postDecisionMaker');
 const getEmergencyResponsePlanRouter = require('./routes/emergencyResponsePlan/getEmergencyResponsePlan');
 const postEmergencyResponsePlanRouter = require('./routes/emergencyResponsePlan/postEmergencyResponsePlan');
+const getFeedbackRouter = require('./routes/feedbackRoutes/getFeedback');
+const postFeedbackRouter = require('./routes/feedbackRoutes/postFeedback');
 
 
 
@@ -79,6 +81,8 @@ app.use('/', getDecisionMakerRouter);
 app.use('/', postDecisionMakerRouter);
 app.use('/', getEmergencyResponsePlanRouter);
 app.use('/', postEmergencyResponsePlanRouter);
+app.use('/', getFeedbackRouter);
+app.use('/', postFeedbackRouter);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
