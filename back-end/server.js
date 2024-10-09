@@ -37,6 +37,8 @@ const getFeedbackRouter = require('./routes/feedbackRoutes/getFeedback');
 const postFeedbackRouter = require('./routes/feedbackRoutes/postFeedback');
 const getHistoricalFloodDataRouter = require('./routes/historicalFloodData/getHistoricalFloodData');
 const postHistoricalFloodDataRouter = require('./routes/historicalFloodData/postHistoricalFloodData');
+const getMapDataRouter = require('./routes/MapDataRoutes/getMapData');
+const postMapDataRouter = require('./routes/MapDataRoutes/postMapData');
 
 
 
@@ -87,6 +89,8 @@ app.use('/', getFeedbackRouter);
 app.use('/', postFeedbackRouter);
 app.use('/', getHistoricalFloodDataRouter);
 app.use('/', postHistoricalFloodDataRouter);
+app.use('/', getMapDataRouter);
+app.use('/', postMapDataRouter);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
