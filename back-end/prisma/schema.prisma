@@ -275,7 +275,8 @@ model CommunityResilience {
 model Organization {
   id                    Int                     @id @default(autoincrement())
   name                  String // Name of the organization
-  contactInfo           String // Contact information of the organization
+  email                 String? // Optional email contact
+  phoneNumber           String? // Optional phone number contact
   location              String // Organization's location or operational area
   resources             Resource[] // Resources distributed by the organization
   members               OrganizationMember[] // Members (organizers) of the organization
