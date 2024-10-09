@@ -47,6 +47,10 @@ const getSubmittedEmergencyRouter = require('./routes/submittedEmergency/getSubm
 const postSubmittedEmergencyRouter = require('./routes/submittedEmergency/postSubmittedEmergency');
 const getReportRouter = require('./routes/reportRoutes/getReport');
 const postReportRouter = require('./routes/reportRoutes/postReport');
+const getTaskRouter = require('./routes/taskRoutes/getTask');
+const postTaskRouter = require('./routes/taskRoutes/postTask');
+const getVolunteerRouter = require('./routes/volunteerRoutes/getVolunteer');
+const postVolunteerRouter = require('./routes/volunteerRoutes/postVolunteer');
 
 
 
@@ -107,6 +111,10 @@ app.use('/', getSubmittedEmergencyRouter);
 app.use('/', postSubmittedEmergencyRouter);
 app.use('/', getReportRouter);
 app.use('/', postReportRouter);
+app.use('/', getTaskRouter);
+app.use('/', postTaskRouter);
+app.use('/', getVolunteerRouter);
+app.use('/', postVolunteerRouter);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
