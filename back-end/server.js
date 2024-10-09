@@ -39,6 +39,8 @@ const getHistoricalFloodDataRouter = require('./routes/historicalFloodData/getHi
 const postHistoricalFloodDataRouter = require('./routes/historicalFloodData/postHistoricalFloodData');
 const getMapDataRouter = require('./routes/MapDataRoutes/getMapData');
 const postMapDataRouter = require('./routes/MapDataRoutes/postMapData');
+const getOrderRouter = require('./routes/orderRoutes/getOrder');
+const postOrderRouter = require('./routes/orderRoutes/postOrder');
 
 
 
@@ -91,6 +93,8 @@ app.use('/', getHistoricalFloodDataRouter);
 app.use('/', postHistoricalFloodDataRouter);
 app.use('/', getMapDataRouter);
 app.use('/', postMapDataRouter);
+app.use('/', getOrderRouter);
+app.use('/', postOrderRouter);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
