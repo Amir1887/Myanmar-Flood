@@ -14,24 +14,25 @@ datasource db {
 }
 
 model User {
-  id                 Int                  @id @default(autoincrement())
-  name               String
-  email              String               @unique
-  password           String
-  role               Role                 @default(USER)
-  location           String // User's address or affected area
-  isInNeed           Boolean              @default(false) // Indicates if the user is in need of help
-  privacyAgreement   Boolean              @default(false) // Track if the user has agreed to privacy terms
-  createdAt          DateTime             @default(now())
-  donations          Donation[]
-  healthData         HealthData[] // Link to health and sanitation data for users in need
-  resources          Resource[] // Resources distributed to the user 
-  damageAssessments  DamageAssessment[] // Link to damage assessments reported by the user
-  UserPreference     UserPreference?
-  Feedback           Feedback[]
-  APILog             APILog[]
-  SubmittedEmergency SubmittedEmergency[]
-  UserConsent        UserConsent?
+  id                   Int                    @id @default(autoincrement())
+  name                 String
+  email                String                 @unique
+  password             String
+  role                 Role                   @default(USER)
+  location             String // User's address or affected area
+  isInNeed             Boolean                @default(false) // Indicates if the user is in need of help
+  privacyAgreement     Boolean                @default(false) // Track if the user has agreed to privacy terms
+  createdAt            DateTime               @default(now())
+  donations            Donation[]
+  healthData           HealthData[] // Link to health and sanitation data for users in need
+  resources            Resource[] // Resources distributed to the user 
+  damageAssessments    DamageAssessment[] // Link to damage assessments reported by the user
+  UserPreference       UserPreference?
+  Feedback             Feedback[]
+  APILog               APILog[]
+  SubmittedEmergency   SubmittedEmergency[]
+  UserConsent          UserConsent?
+  VolunteerApplication VolunteerApplication[]
 }
 
 model UserConsent {
@@ -284,6 +285,7 @@ model Organization {
   EmergencyResponsePlan EmergencyResponsePlan[]
   OrganizationResponse  OrganizationResponse[]
   Order                 Order[]
+  VolunteerApplication  VolunteerApplication[]
 }
 
 model OrganizationMember {
@@ -312,6 +314,25 @@ enum ReportType {
   RESOURCE_DISTRIBUTION
   HEALTH_MONITORING
   DISEASE_OUTBREAK
+}
+
+model VolunteerApplication {
+  id             Int               @id @default(autoincrement())
+  userId         Int // Reference to the user applying to volunteer
+  user           User              @relation(fields: [userId], references: [id])
+  organizationId Int // Organization reviewing the application
+  organization   Organization      @relation(fields: [organizationId], references: [id])
+  skills         String // Skills of the volunteer (comma-separated or JSON)
+  status         ApplicationStatus @default(PENDING) // Status of the application
+  createdAt      DateTime          @default(now())
+  reviewedAt     DateTime? // Optional: When the application was reviewed
+  notes          String? // Optional: Notes from the reviewer
+}
+
+enum ApplicationStatus {
+  PENDING // Application has been submitted and is under review
+  APPROVED // Application has been approved
+  REJECTED // Application has been rejected
 }
 
 model Volunteer {
