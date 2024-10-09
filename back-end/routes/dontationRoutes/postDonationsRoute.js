@@ -7,7 +7,7 @@ const router = express.Router();
 
 router.post('/donations', async (req, res) => {
     try {
-      const { donorName, amount, userId, createdAt } = req.body;
+      const { donorName, amount, userId, createdAt, purpose, impactReport } = req.body;
       
       // Log request body for debugging
       console.log("Request Body: ", req.body);
@@ -18,6 +18,8 @@ router.post('/donations', async (req, res) => {
           amount,
           userId,
           createdAt,
+          purpose,
+          impactReport
         },
       });
       
