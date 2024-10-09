@@ -51,6 +51,8 @@ const getTaskRouter = require('./routes/taskRoutes/getTask');
 const postTaskRouter = require('./routes/taskRoutes/postTask');
 const getVolunteerRouter = require('./routes/volunteerRoutes/getVolunteer');
 const postVolunteerRouter = require('./routes/volunteerRoutes/postVolunteer');
+const getVolunteerApplicationRouter = require('./routes/volunteerApplicationRoutes/getVolunteerApplication');
+const postVolunteerApplicationRouter = require('./routes/volunteerApplicationRoutes/postVolunteerApplication');
 
 
 
@@ -115,6 +117,8 @@ app.use('/', getTaskRouter);
 app.use('/', postTaskRouter);
 app.use('/', getVolunteerRouter);
 app.use('/', postVolunteerRouter);
+app.use('/', getVolunteerApplicationRouter);
+app.use('/', postVolunteerApplicationRouter);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
