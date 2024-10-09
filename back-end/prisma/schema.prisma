@@ -33,6 +33,7 @@ model User {
   SubmittedEmergency   SubmittedEmergency[]
   UserConsent          UserConsent?
   VolunteerApplication VolunteerApplication[]
+  Volunteer            Volunteer[]
 }
 
 model UserConsent {
@@ -337,11 +338,11 @@ enum ApplicationStatus {
 
 model Volunteer {
   id            Int           @id @default(autoincrement())
-  name          String // Name of the volunteer
-  email         String        @unique // Contact info
-  role          VolunteerRole // Role of the volunteer (e.g., medical, logistics)
-  availability  Boolean       @default(true) // Availability of the volunteer
-  assignedTasks Task[] // Tasks assigned to the volunteer
+  user          User          @relation(fields: [userId], references: [id])
+  userId        Int // Link to the user who is a volunteer
+  role          VolunteerRole // Role of the volunteer (medical, logistics, etc.)
+  availability  Boolean       @default(true)
+  assignedTasks Task[]
   createdAt     DateTime      @default(now())
 }
 
