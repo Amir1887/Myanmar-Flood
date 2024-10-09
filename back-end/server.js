@@ -45,6 +45,8 @@ const getOrganizationResponseRouter = require('./routes/organizationResponse/get
 const postOrganizationResponseRouter = require('./routes/organizationResponse/postOrganizationResponse');
 const getSubmittedEmergencyRouter = require('./routes/submittedEmergency/getSubmittedEmergency');
 const postSubmittedEmergencyRouter = require('./routes/submittedEmergency/postSubmittedEmergency');
+const getReportRouter = require('./routes/reportRoutes/getReport');
+const postReportRouter = require('./routes/reportRoutes/postReport');
 
 
 
@@ -103,6 +105,8 @@ app.use('/', getOrganizationResponseRouter);
 app.use('/', postOrganizationResponseRouter);
 app.use('/', getSubmittedEmergencyRouter);
 app.use('/', postSubmittedEmergencyRouter);
+app.use('/', getReportRouter);
+app.use('/', postReportRouter);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
