@@ -6,8 +6,8 @@ function Header() {
   const {isSignedIn} = useAuth()
   const classes = 'px-4 py-2 hover:text-black hover:underline hover:bg-blue-300 rounded-xl'
   return (
-    <div className='flex items-center justify-center mt-4 text-primary-dark'>
-      <ul className='flex  items-center gap-8 mt-6 text-primary text-xl '>
+    <div className='flex items-center justify-center text-primary-dark'>
+      <ul className='flex  items-center gap-8  text-primary text-xl '>
           <li className={classes}><Link to={"/dashboard/profile"}>Profile</Link></li>
           <li className={classes}><Link to={"/about"}>About</Link></li>
           <li className={classes}><Link to={"/contact"}>Contact</Link></li>
