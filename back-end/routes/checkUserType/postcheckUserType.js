@@ -19,10 +19,22 @@ router.post("/check-user-type", async (req, res) => {
     });
     if (organization) return res.json({ type: "organization" });
 
+    const organizationMember = await prisma.organizationMember.findUnique({
+      where: { email },
+    });
+    if (organizationMember) return res.json({ type: "organizationMember" });
+
+
+
     const highLevelOrg = await prisma.highLevelOrganization.findUnique({
       where: { email },
     });
     if (highLevelOrg) return res.json({ type: "highLevelOrganization" });
+
+    const decisionMaker = await prisma.decisionMaker.findUnique({
+      where: { email },
+    });
+    if (decisionMaker) return res.json({ type: "decisionMaker" });
 
     // If no match is found
     return res.json({ type: "unknown" }); // Or you can choose to send a 404 response
