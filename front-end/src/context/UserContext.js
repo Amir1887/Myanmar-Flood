@@ -10,9 +10,10 @@ const UsereContext = createContext();
 export const UsereProvider = ({ children }) => {
   const { user } = useUser();
   const [contextUserType, setContextUserType] = useState(null);
+  const [allUserData, setAllUserData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  const [roleSelection, setRoleSelection] = useState(null); // New state to store role selection
+  const [roleSelection, setRoleSelection] = useState(null); // State to store role selection
 
   useEffect(() => {
     let isMounted = true; // Track component mounted state
@@ -24,12 +25,14 @@ export const UsereProvider = ({ children }) => {
             email: user.emailAddresses[0].emailAddress,
           });
           console.log("Type of user:", res);
+
           if (res.data.type === "unknown") {
             // If user is unknown, ask for role selection
-            setRoleSelection(true); // Show a role selection component or form
+            setRoleSelection(true);
           } else {
             setContextUserType(res.data.type);
-            setLoading(false);
+            setAllUserData(res.data.userData);
+            fetchDataBasedOnUserType(res.data.type); // Fetch data based on user type
           }
         } catch (err) {
           console.error('Error checking user type:', err);
@@ -38,6 +41,43 @@ export const UsereProvider = ({ children }) => {
         }
       }
     };
+
+    // Function to fetch data based on user type
+    const fetchDataBasedOnUserType = async (type) => {
+      let endpoint;
+      switch (type) {
+        case 'user':
+          endpoint = 'http://localhost:4000/user';
+          break;
+        case 'organization':
+          endpoint = 'http://localhost:4000/organiztions';
+          break;
+        case 'organizationMember':
+          endpoint = 'http://localhost:4000/organiztion-members';
+          break;
+        case 'highLevelOrganization':
+          endpoint = 'http://localhost:4000/higher-level-org';
+          break;
+        case 'decisionMaker':
+          endpoint = 'http://localhost:4000/decision-maker';
+          break;
+        default:
+          console.error('Unknown user type');
+          return;
+      }
+
+      try {
+        const response = await axios.get(endpoint);
+        console.log(`Data for ${type}:`, response.data);
+        // Handle the data according to your requirements here
+      } catch (error) {
+        console.error(`Error fetching data for ${type}:`, error);
+        setError(error.response?.data?.message || "Failed to fetch data");
+      } finally {
+        setLoading(false);
+      }
+    };
+
     fetchUserType();
 
     return () => {
@@ -93,7 +133,7 @@ export const UsereProvider = ({ children }) => {
   };
 
   return (
-    <UsereContext.Provider value={{ contextUserType, setContextUserType, loading, error, roleSelection, handleRoleSelection }}>
+    <UsereContext.Provider value={{ contextUserType, setContextUserType, allUserData, loading, error, roleSelection, handleRoleSelection }}>
       {children}
     </UsereContext.Provider>
   );
