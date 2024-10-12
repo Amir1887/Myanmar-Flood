@@ -3,7 +3,7 @@ import { useUserType } from "../../context/UserContext";
 
 function UserForm() {
   const { handleRoleSelection, contextUserType, allUserData, loading, error } = useUserType(); // Use context's handleRoleSelection
-  console.log("frontend user data", allUserData);
+  console.log("frontend user data", allUserData)
   const [userType, setUserType] = useState(""); // Initialize userType
   const [userData, setUserData] = useState({
     phoneNumber: "",
@@ -40,6 +40,24 @@ function UserForm() {
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
+
+    // Render the user data if available
+    if (contextUserType && allUserData) {
+      return (
+        <div className="user-data-display p-4 bg-gray-50 rounded-lg shadow-inner">
+          <h2 className="text-xl font-bold mb-4">User Details</h2>
+          <p><strong>Name:</strong> {allUserData.name || "N/A"}</p>
+          <p><strong>Email:</strong> {allUserData.email}</p>
+          <p><strong>Location:</strong> {allUserData.location || "N/A"}</p>
+          <p><strong>Role:</strong> {allUserData.role}</p>
+          <p><strong>Phone Number:</strong> {allUserData.phoneNumber || "N/A"}</p>
+          <p><strong>In Need of Help:</strong> {allUserData.isInNeed ? "Yes" : "No"}</p>
+          <p><strong>Privacy Agreement:</strong> {allUserData.privacyAgreement ? "Agreed" : "Not Agreed"}</p>
+        </div>
+      );
+    }
+  
+    // Render the form if user data is not fully available or needs to be updated
 
   return (
     <form onSubmit={handleSubmit} className="mb-6 p-4 bg-gray-50 rounded-lg shadow-inner">
