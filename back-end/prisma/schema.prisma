@@ -274,7 +274,7 @@ model CommunityResilience {
 model Organization {
   id                    Int                     @id @default(autoincrement())
   name                  String // Name of the organization
-  username                  String? // Name of the organization
+  username              String? // Name of the organization
   imageUrl              String?
   email                 String                  @unique // Make email unique 
   phoneNumber           String? //  phone number contact
@@ -294,7 +294,7 @@ model Organization {
 model OrganizationMember {
   id                Int                @id @default(autoincrement())
   name              String // Name of the organization member
-  username              String? 
+  username          String?
   imageUrl          String?
   email             String             @unique // Unique email for the organizer login
   password          String // Password for the member to log in
@@ -377,9 +377,10 @@ enum TaskStatus {
 model HighLevelOrganization {
   id              Int             @id @default(autoincrement())
   name            String // Ministry or high-level authority name
-  username            String? // Ministry or high-level authority name
+  username        String? // Ministry or high-level authority name
   imageUrl        String?
   email           String          @unique // Make email unique 
+  password        String
   phoneNumber     String? // Optional phone number contact
   region          String? // Operating region
   decisionMakers  DecisionMaker[] // High-level decision makers (e.g., ministers)
@@ -391,9 +392,10 @@ model HighLevelOrganization {
 model DecisionMaker {
   id             Int                    @id @default(autoincrement())
   name           String // Decision maker's name
-  username           String? // Decision maker's name
+  username       String? // Decision maker's name
   imageUrl       String?
   email          String                 @unique
+  password       String
   role           String // Role or title (e.g., Minister of Health)
   highLevelOrgId Int? // Reference to the high-level organization
   highLevelOrg   HighLevelOrganization? @relation(fields: [highLevelOrgId], references: [id])
