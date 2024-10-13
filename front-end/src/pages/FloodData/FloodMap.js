@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { MapContainer, TileLayer, WMSTileLayer, LayersControl, Marker, Popup, Tooltip, useMapEvents } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
-import L from "leaflet"; //Used for defining custom map elements like marker icons.
+import L from "leaflet"; // Used for defining custom map elements like marker icons.
 import "./FloodMap.css";
 
 // Custom marker icon
@@ -11,7 +11,7 @@ const customIcon = new L.Icon({
 });
 
 // Function to handle map clicks and display a marker with a popup
-//Listens for clicks on the map and updates the state (setPopupData) with the latitude and longitude of the clicked location.
+// Listens for clicks on the map and updates the state (setPopupData) with the latitude and longitude of the clicked location.
 const ClickHandler = ({ setPopupData }) => {
   useMapEvents({
     click(e) {
@@ -31,13 +31,18 @@ const Legend = () => {
       <p><span className="legend-color" style={{ backgroundColor: "#0000FF", opacity: 0.6 }}></span> Accumulated Rainfall</p>
       <p><span className="legend-color" style={{ backgroundColor: "#FF0000", opacity: 0.6 }}></span> Flood Zones</p>
       <p><span className="legend-color" style={{ backgroundColor: "#FFA500", opacity: 0.6 }}></span> Flood Risk Areas</p>
+      <p><span className="legend-color" style={{ backgroundColor: "#00FF00", opacity: 0.6 }}></span> Reporting Points</p>
+      <p><span className="legend-color" style={{ backgroundColor: "#800080", opacity: 0.6 }}></span> Rapid Flood Mapping</p>
+      <p><span className="legend-color" style={{ backgroundColor: "#FFFF00", opacity: 0.6 }}></span> Flood Summary</p>
+      <p><span className="legend-color" style={{ backgroundColor: "#FF69B4", opacity: 0.6 }}></span> Rapid Impact Assessment</p>
+      <p><span className="legend-color" style={{ backgroundColor: "#8B4513", opacity: 0.6 }}></span> Observed Flood Extent</p>
     </div>
   );
 };
 
 // Main Component
 const FloodMap = () => {
-  const center = [20.0, 96.0]; // Initializes the center coordinates and zoom level for the map(Center of Myanmar)
+  const center = [20.0, 96.0]; // Initializes the center coordinates and zoom level for the map (Center of Myanmar)
   const zoomLevel = 5;
 
   // State for opacity control
@@ -50,7 +55,9 @@ const FloodMap = () => {
 
   return (
     <div style={{ position: "relative" }}>
-        {/* MapContainer Configuration: -Defines the map's center and zoom level. -Uses TileLayer for the default satellite base map.*/}
+      {/* MapContainer Configuration: 
+          - Defines the map's center and zoom level. 
+          - Uses TileLayer for the default satellite base map. */}
       <MapContainer center={center} zoom={zoomLevel} style={{ height: "100vh", width: "100%" }}>
         {/* Default base layer (MapTiler Satellite) */}
         <TileLayer
@@ -59,7 +66,7 @@ const FloodMap = () => {
         />
 
         {/* LayersControl for switching between base layers and WMS layers */}
-        {/* Allows users to switch between base layers (Satellite and Topographic) and overlay WMS layers for accumulated rainfall, flood zones, and flood risk areas*/}
+        {/* Allows users to switch between base layers (Satellite and Topographic) and overlay WMS layers for accumulated rainfall, flood zones, and flood risk areas */}
         <LayersControl position="topright">
 
           {/* Base Layers */}
@@ -77,8 +84,9 @@ const FloodMap = () => {
             />
           </LayersControl.BaseLayer>
 
+         {/* WMS Layers */}
           {/* WMS Layer for Accumulated Rainfall */}
-          <LayersControl.Overlay checked name="Accumulated Rainfall">
+         <LayersControl.Overlay checked name="Accumulated Rainfall">
             <WMSTileLayer
               url="https://ows.globalfloods.eu/glofas-ows/ows.py?"
               layers="AccRainEGE"
@@ -90,7 +98,6 @@ const FloodMap = () => {
             />
           </LayersControl.Overlay>
 
-          {/* WMS Layer for Flood Zones */}
           <LayersControl.Overlay name="Flood Zones">
             <WMSTileLayer
               url="https://ows.globalfloods.eu/glofas-ows/ows.py?"
@@ -103,7 +110,6 @@ const FloodMap = () => {
             />
           </LayersControl.Overlay>
 
-          {/* WMS Layer for Flood Risk Areas */}
           <LayersControl.Overlay name="Flood Risk Areas">
             <WMSTileLayer
               url="https://ows.globalfloods.eu/glofas-ows/ows.py?"
@@ -113,6 +119,61 @@ const FloodMap = () => {
               version="1.3.0"
               attribution="GloFAS Flood Risk Data"
               opacity={riskOpacity}
+            />
+          </LayersControl.Overlay>
+
+          <LayersControl.Overlay name="Reporting Points">
+            <WMSTileLayer
+              url="https://ows.globalfloods.eu/glofas-ows/ows.py?"
+              layers="reportingPoints"
+              format="image/png"
+              transparent={true}
+              version="1.3.0"
+              attribution="GloFAS Reporting Data"
+            />
+          </LayersControl.Overlay>
+
+          <LayersControl.Overlay name="Rapid Flood Mapping">
+            <WMSTileLayer
+              url="https://ows.globalfloods.eu/glofas-ows/ows.py?"
+              layers="RapidFloodMapping"
+              format="image/png"
+              transparent={true}
+              version="1.3.0"
+              attribution="GloFAS Rapid Mapping"
+            />
+          </LayersControl.Overlay>
+
+          <LayersControl.Overlay name="Flood Summary">
+            <WMSTileLayer
+              url="https://ows.globalfloods.eu/glofas-ows/ows.py?"
+              layers="sumAL41EGE"
+              format="image/png"
+              transparent={true}
+              version="1.3.0"
+              attribution="GloFAS Flood Summary"
+            />
+          </LayersControl.Overlay>
+
+          <LayersControl.Overlay name="Rapid Impact Assessment">
+            <WMSTileLayer
+              url="https://ows.globalfloods.eu/glofas-ows/ows.py?"
+              layers="RapidImpactAssessment"
+              format="image/png"
+              transparent={true}
+              version="1.3.0"
+              attribution="GloFAS Impact Assessment"
+            />
+          </LayersControl.Overlay>
+
+          <LayersControl.Overlay name="Observed Flood Extent">
+            <WMSTileLayer
+              url="https://ows.globalfloods.eu/glofas-ows/ows.py?"
+              layers="gfm:observed_flood_extent_group_layer"
+              format="image/png"
+              transparent={true}
+              version="1.3.0"
+              attribution="GloFAS Observed Extent"
             />
           </LayersControl.Overlay>
         </LayersControl>
@@ -135,7 +196,9 @@ const FloodMap = () => {
         )}
       </MapContainer>
 
-      {/* Map Legend : -Displays a map legend to explain the layers. - Includes range sliders to adjust the opacity of each map layer. */}
+      {/* Map Legend: 
+          - Displays a map legend to explain the layers. 
+          - Includes range sliders to adjust the opacity of each map layer. */}
       <Legend />
 
       {/* Dynamic Opacity Controls */}
