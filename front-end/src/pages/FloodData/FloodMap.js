@@ -26,19 +26,29 @@ const ClickHandler = ({ setPopupData }) => {
       const maxy = lat + delta;
 
       try {
-        // Construct the WMS GetFeatureInfo request URL with info_format=text/plain
-        const url = `https://ows.globalfloods.eu/glofas-ows/ows.py?service=WMS&request=GetFeatureInfo&layers=AccRainEGE&query_layers=AccRainEGE&info_format=text/plain&version=1.3.0&I=50&J=50&width=101&height=101&crs=EPSG:4326&bbox=${minx},${miny},${maxx},${maxy}`;
+        // Construct the WMS GetFeatureInfo request URL with info_format=application/vnd.ogc.gml
+        const url = `https://ows.globalfloods.eu/glofas-ows/ows.py?service=WMS&request=GetFeatureInfo&layers=AccRainEGE&query_layers=AccRainEGE&info_format=application/vnd.ogc.gml&version=1.3.0&I=50&J=50&width=101&height=101&crs=EPSG:4326&bbox=${minx},${miny},${maxx},${maxy}`;
 
         // Fetch the data from the WMS server
         const response = await fetch(url);
+        console.log("response:", response);
 
         if (response.ok) {
-          const textData = await response.text(); // Parse the response as plain text
+          const gmlData = await response.text(); // Get the response as text
 
-          if (textData.includes("No feature selected")) {
-            setPopupData({ lat, lng, message: "No flood data available for this location." });
+          // Parse the GML data using a DOMParser
+          const parser = new DOMParser();
+          const xmlDoc = parser.parseFromString(gmlData, "application/xml");
+
+          // Extract flood information from the GML response
+          const featureMember = xmlDoc.querySelector("gml\\:featureMember, featureMember");
+          if (featureMember) {
+            const floodValue = featureMember.querySelector("gml\\:value, value")?.textContent;
+            const description = floodValue ? `Flood Value: ${floodValue}` : "Flood data available, but could not parse value.";
+
+            setPopupData({ lat, lng, message: description });
           } else {
-            setPopupData({ lat, lng, message: `Flood information: ${textData}` });
+            setPopupData({ lat, lng, message: "No flood data available for this location." });
           }
         } else {
           setPopupData({ lat, lng, message: "Failed to fetch flood data." });
@@ -57,11 +67,12 @@ const ClickHandler = ({ setPopupData }) => {
 
 
 
+
 // Legend component
 // Displays a legend explaining the color coding for different map layers
 const Legend = () => {
   return (
-    <div className="legend">
+    <div className="legend" style={{ maxHeight: "195px", overflowY: "auto"}}>
       <h4>Map Legend</h4>
       <p><span className="legend-color" style={{ backgroundColor: "#0000FF", opacity: 0.6 }}></span> Accumulated Rainfall</p>
       <p><span className="legend-color" style={{ backgroundColor: "#800080", opacity: 0.6 }}></span> Rapid Flood Mapping</p>
@@ -73,6 +84,9 @@ const Legend = () => {
       <p><span className="legend-color" style={{ backgroundColor: "#FF4500", opacity: 0.6 }}></span> Reservoir Impact</p>
       <p><span className="legend-color" style={{ backgroundColor: "#FFFF00", opacity: 0.6 }}></span> Upstream Area</p>
       <p><span className="legend-color" style={{ backgroundColor: "#FF6347", opacity: 0.6 }}></span> Reporting Points</p>
+      <p><span className="legend-color" style={{ backgroundColor: "#0000FF", opacity: 0.6 }}></span> Medium-Range Forecast</p>
+      <p><span className="legend-color" style={{ backgroundColor: "#FFD700", opacity: 0.6 }}></span> Seasonal Outlook</p>
+      <p><span className="legend-color" style={{ backgroundColor: "#FF69B4", opacity: 0.6 }}></span> Rapid Risk Assessment</p>
     </div>
   );
 };
@@ -91,8 +105,18 @@ const FloodMap = () => {
   const [upstreamOpacity, setUpstreamOpacity] = useState(0.6);
   const [reportingOpacity, setReportingOpacity] = useState(0.6);
 
+  // const [forecastOpacity, setForecastOpacity] = useState(0.7);
+  // const [outlookOpacity, setOutlookOpacity] = useState(0.6);
+  // const [riskOpacity, setRiskOpacity] = useState(0.6);
+
   // State for clicked popup data
   const [popupData, setPopupData] = useState(null);
+
+  const [rpg80Opacity, setRpg80Opacity] = useState(0.6);
+  const [time, setTime] = useState("2024-10"); // Default time dimension
+
+  const [rivermapOpacity, setRivermapOpacity] = useState(0.6);
+  const [rivertime, setRiverTime] = useState("2024-10"); // Default time dimension
 
   return (
     <div style={{ position: "relative" }}>
@@ -105,7 +129,7 @@ const FloodMap = () => {
         />
 
         {/* LayersControl for switching between base layers and WMS layers */}
-        <LayersControl position="topright">
+        <LayersControl position="topright"  className="leaflet-control-layers-list">
           {/* Base Layers */}
           <LayersControl.BaseLayer checked name="Satellite">
             <TileLayer
@@ -228,7 +252,73 @@ const FloodMap = () => {
               opacity={reportingOpacity}
             />
           </LayersControl.Overlay>
+          <LayersControl.Overlay name="Seasonal Outlook - Reporting Points">
+            <WMSTileLayer
+              url="https://ows.globalfloods.eu/glofas-ows/ows.py?"
+              layers="RPG80"
+              format="image/png"
+              transparent={true}
+              version="1.3.0"
+              attribution="GloFAS Seasonal Outlook"
+              opacity={rpg80Opacity}
+              params={{
+                time: time, // Set the time dimension dynamically
+              }}
+            />
+          </LayersControl.Overlay>
+          <LayersControl.Overlay name="Seasonal Outlook - River Network">
+            <WMSTileLayer
+              url="https://ows.globalfloods.eu/glofas-ows/ows.py?"
+              layers="rivermap_4mon"
+              format="image/png"
+              transparent={true}
+              version="1.3.0"
+              attribution="GloFAS Seasonal Outlook"
+              opacity={rivermapOpacity}
+              params={{
+                time: rivertime, // Set the time dimension dynamically
+              }}
+            />
+          </LayersControl.Overlay>
+
+          {/* <LayersControl.Overlay checked name="Medium-Range Forecast">
+            <WMSTileLayer
+              url="https://ows.globalfloods.eu/glofas-ows/ows.py?"
+              layers="MediumRangeForecast"
+              format="image/png"
+              transparent={true}
+              version="1.3.0"
+              attribution="GloFAS Medium-Range Forecast"
+              opacity={forecastOpacity}
+            />
+          </LayersControl.Overlay>
+
+          <LayersControl.Overlay name="Seasonal Outlook">
+            <WMSTileLayer
+              url="https://ows.globalfloods.eu/glofas-ows/ows.py?"
+              layers="SeasonalOutlook"
+              format="image/png"
+              transparent={true}
+              version="1.3.0"
+              attribution="GloFAS Seasonal Outlook"
+              opacity={outlookOpacity}
+            />
+          </LayersControl.Overlay>
+
+          <LayersControl.Overlay name="Rapid Risk Assessment">
+            <WMSTileLayer
+              url="https://ows.globalfloods.eu/glofas-ows/ows.py?"
+              layers="RapidRiskAssessment"
+              format="image/png"
+              transparent={true}
+              version="1.3.0"
+              attribution="GloFAS Rapid Risk Assessment"
+              opacity={riskOpacity}
+            />
+          </LayersControl.Overlay> */}
         </LayersControl>
+
+        
 
         {/* Click handler */} 
         <ClickHandler setPopupData={setPopupData} />
@@ -316,7 +406,73 @@ const FloodMap = () => {
           step="0.1"
           value={reportingOpacity}
           onChange={(e) => setReportingOpacity(parseFloat(e.target.value))}
+
         />
+        <label>Seasonal Outlook - Reporting Points: {rpg80Opacity}</label>
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.1"
+          value={rpg80Opacity}
+          onChange={(e) => setRpg80Opacity(parseFloat(e.target.value))}
+        />
+      {/* Time Dimension Control */}
+      <div className="time-controls">
+        <label>Select Time:</label>
+        <input
+          type="month"
+          value={time}
+          onChange={(e) => setTime(e.target.value)} />
+      </div>
+      <label>Seasonal Outlook - River Network: {rivermapOpacity}</label>
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.1"
+          value={rivermapOpacity}
+          onChange={(e) => setRivermapOpacity(parseFloat(e.target.value))}
+        />
+      {/* Time Dimension Control */}
+      <div className="time-controls">
+        <label>Select Time:</label>
+        <input
+          type="month"
+          value={rivertime}
+          onChange={(e) => setRiverTime(e.target.value)}
+        />
+      </div>
+
+       
+
+{/* <label>Medium-Range Forecast: {forecastOpacity}</label>
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.1"
+          value={forecastOpacity}
+          onChange={(e) => setForecastOpacity(parseFloat(e.target.value))}
+        />
+        <label>Seasonal Outlook: {outlookOpacity}</label>
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.1"
+          value={outlookOpacity}
+          onChange={(e) => setOutlookOpacity(parseFloat(e.target.value))}
+        />
+        <label>Rapid Risk Assessment: {riskOpacity}</label>
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.1"
+          value={riskOpacity}
+          onChange={(e) => setRiskOpacity(parseFloat(e.target.value))}
+        /> */}
       </div>
     </div>
   );

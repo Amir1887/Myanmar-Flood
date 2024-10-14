@@ -1,3 +1,8 @@
+.leaflet-control-layers-list {
+    max-height: 195px;
+    overflow-y: auto;
+  }
+
 .legend {
     position: absolute;
     z-index: 1000; /* Increased z-index */
