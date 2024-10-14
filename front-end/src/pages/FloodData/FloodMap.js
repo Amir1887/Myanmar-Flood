@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { MapContainer, TileLayer, WMSTileLayer, LayersControl, Marker, Popup, Tooltip, useMapEvents } from "react-leaflet";
+import { MapContainer, TileLayer, WMSTileLayer, LayersControl, Marker, Popup, Tooltip, useMapEvents, useMap } from "react-leaflet";
 import "leaflet/dist/leaflet.css";
 import L from "leaflet"; // Used for defining custom map elements like marker icons.
 import "./FloodMap.css";
@@ -12,15 +12,50 @@ const customIcon = new L.Icon({
 
 // Function to handle map clicks and display a marker with a popup
 // Listens for clicks on the map and updates the state (setPopupData) with the latitude and longitude of the clicked location.
+// Updated ClickHandler to fetch flood data based on the clicked location
 const ClickHandler = ({ setPopupData }) => {
   useMapEvents({
-    click(e) {
+    click: async (e) => {
       const { lat, lng } = e.latlng;
-      setPopupData({ lat, lng, message: `Flood information for the selected location.` });
+
+      // Create a small bounding box around the clicked location
+      const delta = 0.01; // Adjust this value for a larger or smaller bounding box
+      const minx = lng - delta;
+      const miny = lat - delta;
+      const maxx = lng + delta;
+      const maxy = lat + delta;
+
+      try {
+        // Construct the WMS GetFeatureInfo request URL with info_format=text/plain
+        const url = `https://ows.globalfloods.eu/glofas-ows/ows.py?service=WMS&request=GetFeatureInfo&layers=AccRainEGE&query_layers=AccRainEGE&info_format=text/plain&version=1.3.0&I=50&J=50&width=101&height=101&crs=EPSG:4326&bbox=${minx},${miny},${maxx},${maxy}`;
+
+        // Fetch the data from the WMS server
+        const response = await fetch(url);
+
+        if (response.ok) {
+          const textData = await response.text(); // Parse the response as plain text
+
+          if (textData.includes("No feature selected")) {
+            setPopupData({ lat, lng, message: "No flood data available for this location." });
+          } else {
+            setPopupData({ lat, lng, message: `Flood information: ${textData}` });
+          }
+        } else {
+          setPopupData({ lat, lng, message: "Failed to fetch flood data." });
+        }
+      } catch (error) {
+        console.error("Error fetching flood data:", error);
+        setPopupData({ lat, lng, message: "Error fetching flood data." });
+      }
     },
   });
+
   return null;
 };
+
+
+
+
 
 // Legend component
 // Displays a legend explaining the color coding for different map layers
