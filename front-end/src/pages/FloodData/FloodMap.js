@@ -216,8 +216,8 @@ const FloodMap = () => {
       {/* Map Legend */}
       <Legend />
 
-      {/* Dynamic Opacity Controls */}
-      <div className="opacity-controls">
+      {/* Dynamic Opacity Controls with Vertical Scroll */}
+      <div className="opacity-controls" style={{ maxHeight: "195px", overflowY: "auto"}}>
         <h4>Adjust Layer Opacity</h4>
         <label>Accumulated Rainfall: {rainOpacity}</label>
         <input
