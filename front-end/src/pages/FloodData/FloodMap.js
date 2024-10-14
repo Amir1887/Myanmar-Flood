@@ -29,13 +29,15 @@ const Legend = () => {
     <div className="legend">
       <h4>Map Legend</h4>
       <p><span className="legend-color" style={{ backgroundColor: "#0000FF", opacity: 0.6 }}></span> Accumulated Rainfall</p>
-      <p><span className="legend-color" style={{ backgroundColor: "#FF0000", opacity: 0.6 }}></span> Flood Zones</p>
-      <p><span className="legend-color" style={{ backgroundColor: "#FFA500", opacity: 0.6 }}></span> Flood Risk Areas</p>
-      <p><span className="legend-color" style={{ backgroundColor: "#00FF00", opacity: 0.6 }}></span> Reporting Points</p>
       <p><span className="legend-color" style={{ backgroundColor: "#800080", opacity: 0.6 }}></span> Rapid Flood Mapping</p>
-      <p><span className="legend-color" style={{ backgroundColor: "#FFFF00", opacity: 0.6 }}></span> Flood Summary</p>
+      <p><span className="legend-color" style={{ backgroundColor: "#FFD700", opacity: 0.6 }}></span> Flood Hazard 100-Year</p>
       <p><span className="legend-color" style={{ backgroundColor: "#FF69B4", opacity: 0.6 }}></span> Rapid Impact Assessment</p>
-      <p><span className="legend-color" style={{ backgroundColor: "#8B4513", opacity: 0.6 }}></span> Observed Flood Extent</p>
+      <p><span className="legend-color" style={{ backgroundColor: "#00FF00", opacity: 0.6 }}></span> Critical Infrastructure</p>
+      <p><span className="legend-color" style={{ backgroundColor: "#8B4513", opacity: 0.6 }}></span> Major River Basins</p>
+      <p><span className="legend-color" style={{ backgroundColor: "#00FFFF", opacity: 0.6 }}></span> Lakes and Reservoirs</p>
+      <p><span className="legend-color" style={{ backgroundColor: "#FF4500", opacity: 0.6 }}></span> Reservoir Impact</p>
+      <p><span className="legend-color" style={{ backgroundColor: "#FFFF00", opacity: 0.6 }}></span> Upstream Area</p>
+      <p><span className="legend-color" style={{ backgroundColor: "#FF6347", opacity: 0.6 }}></span> Reporting Points</p>
     </div>
   );
 };
@@ -47,28 +49,28 @@ const FloodMap = () => {
 
   // State for opacity control
   const [rainOpacity, setRainOpacity] = useState(0.7);
-  const [zonesOpacity, setZonesOpacity] = useState(0.6);
-  const [riskOpacity, setRiskOpacity] = useState(0.6);
+  const [hazardOpacity, setHazardOpacity] = useState(0.6);
+  const [impactOpacity, setImpactOpacity] = useState(0.6);
+  const [riverBasinOpacity, setRiverBasinOpacity] = useState(0.6);
+  const [reservoirOpacity, setReservoirOpacity] = useState(0.6);
+  const [upstreamOpacity, setUpstreamOpacity] = useState(0.6);
+  const [reportingOpacity, setReportingOpacity] = useState(0.6);
 
   // State for clicked popup data
   const [popupData, setPopupData] = useState(null);
 
   return (
     <div style={{ position: "relative" }}>
-      {/* MapContainer Configuration: 
-          - Defines the map's center and zoom level. 
-          - Uses TileLayer for the default satellite base map. */}
+      {/* MapContainer Configuration */} 
       <MapContainer center={center} zoom={zoomLevel} style={{ height: "100vh", width: "100%" }}>
-        {/* Default base layer (MapTiler Satellite) */}
+        {/* Default base layer */}
         <TileLayer
           url="https://api.maptiler.com/tiles/satellite/{z}/{x}/{y}.jpg?key=gSXiU4XXwkoLtGhf1qUM"
           attribution='&copy; <a href="https://www.maptiler.com/copyright/">MapTiler</a>'
         />
 
         {/* LayersControl for switching between base layers and WMS layers */}
-        {/* Allows users to switch between base layers (Satellite and Topographic) and overlay WMS layers for accumulated rainfall, flood zones, and flood risk areas */}
         <LayersControl position="topright">
-
           {/* Base Layers */}
           <LayersControl.BaseLayer checked name="Satellite">
             <TileLayer
@@ -84,9 +86,8 @@ const FloodMap = () => {
             />
           </LayersControl.BaseLayer>
 
-         {/* WMS Layers */}
-          {/* WMS Layer for Accumulated Rainfall */}
-         <LayersControl.Overlay checked name="Accumulated Rainfall">
+          {/* WMS Layers */}
+          <LayersControl.Overlay checked name="Accumulated Rainfall">
             <WMSTileLayer
               url="https://ows.globalfloods.eu/glofas-ows/ows.py?"
               layers="AccRainEGE"
@@ -95,41 +96,6 @@ const FloodMap = () => {
               version="1.3.0"
               attribution="GloFAS Flood Data"
               opacity={rainOpacity}
-            />
-          </LayersControl.Overlay>
-
-          <LayersControl.Overlay name="Flood Zones">
-            <WMSTileLayer
-              url="https://ows.globalfloods.eu/glofas-ows/ows.py?"
-              layers="FloodZonesEGE"
-              format="image/png"
-              transparent={true}
-              version="1.3.0"
-              attribution="GloFAS Flood Data"
-              opacity={zonesOpacity}
-            />
-          </LayersControl.Overlay>
-
-          <LayersControl.Overlay name="Flood Risk Areas">
-            <WMSTileLayer
-              url="https://ows.globalfloods.eu/glofas-ows/ows.py?"
-              layers="FloodRiskEGE"
-              format="image/png"
-              transparent={true}
-              version="1.3.0"
-              attribution="GloFAS Flood Risk Data"
-              opacity={riskOpacity}
-            />
-          </LayersControl.Overlay>
-
-          <LayersControl.Overlay name="Reporting Points">
-            <WMSTileLayer
-              url="https://ows.globalfloods.eu/glofas-ows/ows.py?"
-              layers="reportingPoints"
-              format="image/png"
-              transparent={true}
-              version="1.3.0"
-              attribution="GloFAS Reporting Data"
             />
           </LayersControl.Overlay>
 
@@ -144,14 +110,15 @@ const FloodMap = () => {
             />
           </LayersControl.Overlay>
 
-          <LayersControl.Overlay name="Flood Summary">
+          <LayersControl.Overlay name="Flood Hazard (100-Year)">
             <WMSTileLayer
               url="https://ows.globalfloods.eu/glofas-ows/ows.py?"
-              layers="sumAL41EGE"
+              layers="FloodHazard100y"
               format="image/png"
               transparent={true}
               version="1.3.0"
-              attribution="GloFAS Flood Summary"
+              attribution="GloFAS Flood Hazard Data"
+              opacity={hazardOpacity}
             />
           </LayersControl.Overlay>
 
@@ -163,25 +130,75 @@ const FloodMap = () => {
               transparent={true}
               version="1.3.0"
               attribution="GloFAS Impact Assessment"
+              opacity={impactOpacity}
             />
           </LayersControl.Overlay>
 
-          <LayersControl.Overlay name="Observed Flood Extent">
+          <LayersControl.Overlay name="Major River Basins">
             <WMSTileLayer
               url="https://ows.globalfloods.eu/glofas-ows/ows.py?"
-              layers="gfm:observed_flood_extent_group_layer"
+              layers="MajorRiverBasins"
               format="image/png"
               transparent={true}
               version="1.3.0"
-              attribution="GloFAS Observed Extent"
+              attribution="GloFAS River Basins"
+              opacity={riverBasinOpacity}
+            />
+          </LayersControl.Overlay>
+
+          <LayersControl.Overlay name="Lakes and Reservoirs">
+            <WMSTileLayer
+              url="https://ows.globalfloods.eu/glofas-ows/ows.py?"
+              layers="GlofasLakesReservoirs"
+              format="image/png"
+              transparent={true}
+              version="1.3.0"
+              attribution="GloFAS Lakes and Reservoirs"
+              opacity={reservoirOpacity}
+            />
+          </LayersControl.Overlay>
+
+          <LayersControl.Overlay name="Reservoir Impact">
+            <WMSTileLayer
+              url="https://ows.globalfloods.eu/glofas-ows/ows.py?"
+              layers="GlofasReservoirImpact"
+              format="image/png"
+              transparent={true}
+              version="1.3.0"
+              attribution="GloFAS Reservoir Impact"
+              opacity={reservoirOpacity}
+            />
+          </LayersControl.Overlay>
+
+          <LayersControl.Overlay name="Upstream Area">
+            <WMSTileLayer
+              url="https://ows.globalfloods.eu/glofas-ows/ows.py?"
+              layers="UpstreamArea"
+              format="image/png"
+              transparent={true}
+              version="1.3.0"
+              attribution="GloFAS Drainage Network"
+              opacity={upstreamOpacity}
+            />
+          </LayersControl.Overlay>
+
+          <LayersControl.Overlay name="Reporting Points">
+            <WMSTileLayer
+              url="https://ows.globalfloods.eu/glofas-ows/ows.py?"
+              layers="RPG_U_GLOFAS_3_3"
+              format="image/png"
+              transparent={true}
+              version="1.3.0"
+              attribution="GloFAS Reporting Points"
+              opacity={reportingOpacity}
             />
           </LayersControl.Overlay>
         </LayersControl>
 
-        {/* Click handler for Adding a clickable event listener to the map for displaying popups. */}
+        {/* Click handler */} 
         <ClickHandler setPopupData={setPopupData} />
 
-        {/* If popupData is present, a Marker is shown on the map with a custom icon, displaying location-specific flood information. */}
+        {/* Marker with popup */}
         {popupData && (
           <Marker position={[popupData.lat, popupData.lng]} icon={customIcon}>
             <Popup>
@@ -196,9 +213,7 @@ const FloodMap = () => {
         )}
       </MapContainer>
 
-      {/* Map Legend: 
-          - Displays a map legend to explain the layers. 
-          - Includes range sliders to adjust the opacity of each map layer. */}
+      {/* Map Legend */}
       <Legend />
 
       {/* Dynamic Opacity Controls */}
@@ -213,23 +228,59 @@ const FloodMap = () => {
           value={rainOpacity}
           onChange={(e) => setRainOpacity(parseFloat(e.target.value))}
         />
-        <label>Flood Zones: {zonesOpacity}</label>
+        <label>Flood Hazard (100-Year): {hazardOpacity}</label>
         <input
           type="range"
           min="0"
           max="1"
           step="0.1"
-          value={zonesOpacity}
-          onChange={(e) => setZonesOpacity(parseFloat(e.target.value))}
+          value={hazardOpacity}
+          onChange={(e) => setHazardOpacity(parseFloat(e.target.value))}
         />
-        <label>Flood Risk Areas: {riskOpacity}</label>
+        <label>Rapid Impact Assessment: {impactOpacity}</label>
         <input
           type="range"
           min="0"
           max="1"
           step="0.1"
-          value={riskOpacity}
-          onChange={(e) => setRiskOpacity(parseFloat(e.target.value))}
+          value={impactOpacity}
+          onChange={(e) => setImpactOpacity(parseFloat(e.target.value))}
+        />
+        <label>Major River Basins: {riverBasinOpacity}</label>
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.1"
+          value={riverBasinOpacity}
+          onChange={(e) => setRiverBasinOpacity(parseFloat(e.target.value))}
+        />
+        <label>Lakes and Reservoirs: {reservoirOpacity}</label>
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.1"
+          value={reservoirOpacity}
+          onChange={(e) => setReservoirOpacity(parseFloat(e.target.value))}
+        />
+        <label>Upstream Area: {upstreamOpacity}</label>
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.1"
+          value={upstreamOpacity}
+          onChange={(e) => setUpstreamOpacity(parseFloat(e.target.value))}
+        />
+        <label>Reporting Points: {reportingOpacity}</label>
+        <input
+          type="range"
+          min="0"
+          max="1"
+          step="0.1"
+          value={reportingOpacity}
+          onChange={(e) => setReportingOpacity(parseFloat(e.target.value))}
         />
       </div>
     </div>
