@@ -1,25 +1,65 @@
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import WeatherGraph from './WeatherGraph';
+import { useSearch } from '../../context/SearchContext';
 
 const WeatherComponent = () => {
+  const { location, handleSearch, isLoading, error } = useSearch();
   const [weatherData, setWeatherData] = useState(null);
+  const [query, setQuery] = useState('');
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (query.trim()) {
+      handleSearch(query);
+    }
+  };
 
   useEffect(() => {
     const fetchWeatherData = async () => {
-      // Use Open-Meteo API to fetch hourly temperature and precipitation
-      const url = 'https://api.open-meteo.com/v1/forecast?latitude=20.0&longitude=96.0&hourly=temperature_2m,precipitation';
-      const response = await fetch(url);
-      const data = await response.json();
-      setWeatherData(data);
+      if (location) {
+        try {
+          const url = `https://api.open-meteo.com/v1/forecast?latitude=${location.lat}&longitude=${location.lng}&hourly=temperature_2m,precipitation`;
+          const response = await fetch(url);
+          if (!response.ok) {
+            throw new Error('Network response was not ok');
+          }
+          const data = await response.json();
+          setWeatherData(data);
+        } catch (error) {
+          console.error('Failed to fetch weather data:', error);
+        }
+      }
     };
 
     fetchWeatherData();
-  }, []);
+  }, [location]);
 
   return (
-    <div>
-      <h2>Weather Forecast</h2>
-      {weatherData ? <WeatherGraph weatherData={weatherData} /> : <p>Loading...</p>}
+    <div className="max-w-2xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+      <h2 className="text-2xl font-semibold text-gray-800 mb-4">Weather Forecast</h2>
+      <form onSubmit={handleSubmit} className="flex items-center mb-6">
+        <input
+          type="text"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder="Enter a location"
+          className="flex-grow p-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+        <button
+          type="submit"
+          className="ml-4 p-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+        >
+          Search
+        </button>
+      </form>
+      {isLoading ? (
+        <p className="text-gray-500">Loading...</p>
+      ) : weatherData ? (
+        <WeatherGraph weatherData={weatherData} />
+      ) : (
+        <p className="text-gray-500">No data available.</p>
+      )}
+      {error && <p className="text-red-500 mt-4">{error}</p>}
     </div>
   );
 };

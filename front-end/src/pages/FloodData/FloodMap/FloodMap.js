@@ -15,6 +15,7 @@ import L from "leaflet"; // Used for defining custom map elements like marker ic
 import "./FloodMap.css";
 import SearchMap from "./SearchMap";
 import Legend from "./Legend";
+import { useSearch } from "../../../context/SearchContext";
 
 // Custom marker icon
 const customIcon = new L.Icon({
@@ -139,10 +140,12 @@ const FloodMap = () => {
     return null;
   };
 
-  const [searchedLocation, setSearchedLocation] = useState(null);
+  const { location, isLoading, error } = useSearch(); // Get location from context
   return (
     <div style={{ position: "relative" }}>
-      <SearchMap onSearch={setSearchedLocation} />
+      <SearchMap  />
+      {isLoading && <p>Loading...</p>}
+      {error && <p>{error}</p>}
 
       {/* MapContainer Configuration */}
       <MapContainer
@@ -156,7 +159,7 @@ const FloodMap = () => {
           attribution='&copy; <a href="https://www.maptiler.com/copyright/">MapTiler</a>'
         />
 
-        {searchedLocation && <FlyToLocation location={searchedLocation} />}
+        {location && <FlyToLocation location={location} />}
 
         {/* LayersControl for switching between base layers and WMS layers */}
         <LayersControl
