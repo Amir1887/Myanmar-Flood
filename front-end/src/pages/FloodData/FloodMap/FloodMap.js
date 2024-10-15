@@ -13,6 +13,8 @@ import {
 import "leaflet/dist/leaflet.css";
 import L from "leaflet"; // Used for defining custom map elements like marker icons.
 import "./FloodMap.css";
+import SearchMap from "./SearchMap";
+import Legend from "./Legend";
 
 // Custom marker icon
 const customIcon = new L.Icon({
@@ -84,125 +86,7 @@ const ClickHandler = ({ setPopupData }) => {
 
 // Legend component
 // Displays a legend explaining the color coding for different map layers
-const Legend = () => {
-  return (
-    <div className="legend" style={{ maxHeight: "195px", overflowY: "auto" }}>
-      <h4>Map Legend</h4>
-      <p>
-        <span
-          className="legend-color"
-          style={{ backgroundColor: "#0000FF", opacity: 0.6 }}
-        ></span>{" "}
-        Accumulated Rainfall
-      </p>
-      <p>
-        <span
-          className="legend-color"
-          style={{ backgroundColor: "#800080", opacity: 0.6 }}
-        ></span>{" "}
-        Rapid Flood Mapping
-      </p>
-      <p>
-        <span
-          className="legend-color"
-          style={{ backgroundColor: "#FFD700", opacity: 0.6 }}
-        ></span>{" "}
-        Flood Hazard 100-Year
-      </p>
-      <p>
-        <span
-          className="legend-color"
-          style={{ backgroundColor: "#FF69B4", opacity: 0.6 }}
-        ></span>{" "}
-        Rapid Impact Assessment
-      </p>
-      <p>
-        <span
-          className="legend-color"
-          style={{ backgroundColor: "#00FF00", opacity: 0.6 }}
-        ></span>{" "}
-        Critical Infrastructure
-      </p>
-      <p>
-        <span
-          className="legend-color"
-          style={{ backgroundColor: "#8B4513", opacity: 0.6 }}
-        ></span>{" "}
-        Major River Basins
-      </p>
-      <p>
-        <span
-          className="legend-color"
-          style={{ backgroundColor: "#00FFFF", opacity: 0.6 }}
-        ></span>{" "}
-        Lakes and Reservoirs
-      </p>
-      <p>
-        <span
-          className="legend-color"
-          style={{ backgroundColor: "#FF4500", opacity: 0.6 }}
-        ></span>{" "}
-        Reservoir Impact
-      </p>
-      <p>
-        <span
-          className="legend-color"
-          style={{ backgroundColor: "#FFFF00", opacity: 0.6 }}
-        ></span>{" "}
-        Upstream Area
-      </p>
-      <p>
-        <span
-          className="legend-color"
-          style={{ backgroundColor: "#FF6347", opacity: 0.6 }}
-        ></span>{" "}
-        Reporting Points
-      </p>
-      <p>
-        <span
-          className="legend-color"
-          style={{ backgroundColor: "#0000FF", opacity: 0.6 }}
-        ></span>{" "}
-        Medium-Range Forecast
-      </p>
-      <p>
-        <span
-          className="legend-color"
-          style={{ backgroundColor: "#FFD700", opacity: 0.6 }}
-        ></span>{" "}
-        Seasonal Outlook
-      </p>
-      <p>
-        <span
-          className="legend-color"
-          style={{ backgroundColor: "#FF69B4", opacity: 0.6 }}
-        ></span>{" "}
-        Rapid Risk Assessment
-      </p>
-      <p>
-        <span
-          className="legend-color"
-          style={{ backgroundColor: "#ADD8E6", opacity: 0.6 }}
-        ></span>{" "}
-        Seasonal Outlook - Basin Overview
-      </p>
-      <p>
-        <span
-          className="legend-color"
-          style={{ backgroundColor: "#9400D3", opacity: 0.6 }}
-        ></span>{" "}
-        Flood Summary (Days 1-3)
-      </p>
-      <p>
-        <span
-          className="legend-color"
-          style={{ backgroundColor: "#FF4500", opacity: 0.6 }}
-        ></span>{" "}
-        Flood Summary (Days 4-10)
-      </p>
-    </div>
-  );
-};
+<Legend/>
 
 // Main Component
 const FloodMap = () => {
@@ -246,8 +130,20 @@ const FloodMap = () => {
   const [hydrologicalPerformanceOpacity, setHydrologicalPerformanceOpacity] =
     useState(0.6);
 
+  // This function pans the map to the searched location
+  const FlyToLocation = ({ location }) => {
+    const map = useMap();
+    map.flyTo([location.lat, location.lng], 10, {
+      duration: 2, // Smooth fly animation duration in seconds
+    });
+    return null;
+  };
+
+  const [searchedLocation, setSearchedLocation] = useState(null);
   return (
     <div style={{ position: "relative" }}>
+      <SearchMap onSearch={setSearchedLocation} />
+
       {/* MapContainer Configuration */}
       <MapContainer
         center={center}
@@ -259,6 +155,8 @@ const FloodMap = () => {
           url="https://api.maptiler.com/tiles/satellite/{z}/{x}/{y}.jpg?key=gSXiU4XXwkoLtGhf1qUM"
           attribution='&copy; <a href="https://www.maptiler.com/copyright/">MapTiler</a>'
         />
+
+        {searchedLocation && <FlyToLocation location={searchedLocation} />}
 
         {/* LayersControl for switching between base layers and WMS layers */}
         <LayersControl
@@ -675,6 +573,7 @@ const FloodMap = () => {
         className="opacity-controls"
         style={{ maxHeight: "195px", overflowY: "auto" }}
       >
+        <h4>Adjust Layer Opacity</h4>
         {/* Time Dimension Control */}
         <div className="time-controls">
           <label>Select Time:</label>
@@ -684,7 +583,7 @@ const FloodMap = () => {
             onChange={(e) => setTime(e.target.value)}
           />
         </div>
-        <h4>Adjust Layer Opacity</h4>
+
         <label>Accumulated Rainfall: {rainOpacity}</label>
         <input
           type="range"
