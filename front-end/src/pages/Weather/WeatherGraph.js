@@ -108,27 +108,30 @@ const WeatherGraph = ({ weatherData }) => {
   };
 
   return (
-    <div>
-      <h2>Weather Graph</h2>
-
+    <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+      <h2 className="text-2xl font-semibold text-gray-800 mb-4">Weather Graph</h2>
+  
       {/* Checkboxes for selecting which data to display */}
-      <div>
+      <div className="grid grid-cols-2 gap-4 mb-6">
         {dataOptions.map((option) => (
-          <div key={option.value}>
+          <div key={option.value} className="flex items-center space-x-2">
             <input
               type="checkbox"
               name={option.value}
               checked={selectedData[option.value]}
               onChange={handleDataSelection}
+              className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
             />
-            <label htmlFor={option.value}>{option.label}</label>
+            <label htmlFor={option.value} className="text-gray-700">
+              {option.label}
+            </label>
           </div>
         ))}
       </div>
-
+  
       {/* Weather chart */}
       {chartData && chartData.datasets.length > 0 ? (
-        <div style={{ width: "100%", height: "500px" }}>
+        <div className="w-full h-96">
           <Line
             data={chartData}
             options={{
@@ -138,10 +141,11 @@ const WeatherGraph = ({ weatherData }) => {
           />
         </div>
       ) : (
-        <p>No available chart data</p>
+        <p className="text-gray-500 text-center">No available chart data</p>
       )}
     </div>
   );
+  
 };
 
 export default WeatherGraph;
