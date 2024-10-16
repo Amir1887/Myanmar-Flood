@@ -177,21 +177,29 @@ model FloodData {
   WeatherData         WeatherData[]
   MapData             MapData[]
 }
-
 model WeatherData {
-  id             Int        @id @default(autoincrement())
-  region         String // The region for which weather data is fetched
-  temperature    Float // Current temperature
-  humidity       Float // Current humidity level
-  rainfall       Float // Rainfall amount in mm
-  windSpeed      Float // Wind speed in km/h
-  forecast       String // Weather forecast description
-  fetchedAt      DateTime   @default(now()) // Time when the data was fetched
-  floodRiskLevel Float // Calculated flood risk based on weather data (e.g., risk score)
-  floodDataId    Int? // Optional: Link to related flood data
-  floodData      FloodData? @relation(fields: [floodDataId], references: [id])
-  apiSource      String // The API source used (e.g., "OpenWeatherMap")
+  id                     Int         @id @default(autoincrement())
+  region                 String      // The region for which weather data is fetched
+  temperature            Float       // Temperature in °C
+  precipitation          Float       // Precipitation in mm
+  soilMoisture0To1cm     Float       // Soil moisture at 0-1 cm depth
+  soilMoisture1To3cm     Float       // Soil moisture at 1-3 cm depth
+  soilMoisture3To9cm     Float       // Soil moisture at 3-9 cm depth
+  soilMoisture9To27cm    Float       // Soil moisture at 9-27 cm depth
+  soilMoisture27To81cm   Float       // Soil moisture at 27-81 cm depth
+  cloudCover             Float       // Cloud cover percentage
+  windSpeed              Float       // Wind speed in m/s
+  windGusts              Float       // Wind gusts in m/s
+  windDirection          Float       // Wind direction in degrees
+  visibility             Float       // Visibility in meters
+  surfacePressure        Float       // Surface pressure in hPa
+  fetchedAt              DateTime    @default(now()) // Time when the data was fetched
+  floodRiskLevel         Float?      // Optional: Calculated flood risk based on weather data (e.g., risk score)
+  floodDataId            Int?        // Optional: Link to related flood data
+  floodData              FloodData?  @relation(fields: [floodDataId], references: [id])
+  apiSource              String      // The API source used (e.g., "Open-Meteo")
 }
+
 
 model HistoricalFloodData {
   id             Int        @id @default(autoincrement())
