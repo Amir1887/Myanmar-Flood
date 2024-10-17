@@ -198,6 +198,7 @@ model WeatherData {
   floodDataId            Int?        // Optional: Link to related flood data
   floodData              FloodData?  @relation(fields: [floodDataId], references: [id])
   apiSource              String      // The API source used (e.g., "Open-Meteo")
+  @@unique([fetchedAt, region])
 }
 
 
