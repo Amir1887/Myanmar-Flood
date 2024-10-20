@@ -94,9 +94,12 @@ const saveWeatherDataToDB = async (weatherData, latitude, longitude) => {
   }
 };
 
+// 30-minute schedule ("*/30 * * * *")
+//for a 1-hour schedule:("0 * * * *")
+//every minute: "* * * * *",
 // Function to start cron job
 const startWeatherDataFetchCron = (latitude, longitude) => {
-  cron.schedule("* * * * *", async () => {
+  cron.schedule("*/30 * * * *", async () => {
     console.log("Fetching weather data...");
     try {
       const weatherData = await fetchWeatherData(latitude, longitude);
