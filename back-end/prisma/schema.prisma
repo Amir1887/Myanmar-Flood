@@ -22,7 +22,8 @@ model User {
   phoneNumber          String? // Optional phone number contact
   password             String
   role                 Role                   @default(USER)
-  location             String // User's address or affected area
+  latitude             Float? // User's latitude
+  longitude            Float? // User's longitude// User's address or affected area
   isInNeed             Boolean                @default(false) // Indicates if the user is in need of help
   privacyAgreement     Boolean                @default(false) // Track if the user has agreed to privacy terms
   createdAt            DateTime               @default(now())
