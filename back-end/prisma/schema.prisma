@@ -180,7 +180,8 @@ model FloodData {
 }
 model WeatherData {
   id                     Int         @id @default(autoincrement())
-  region                 String      // The region for which weather data is fetched
+  latitude             Float? 
+  longitude            Float?
   temperature            Float       // Temperature in °C
   precipitation          Float       // Precipitation in mm
   soilMoisture0To1cm     Float       // Soil moisture at 0-1 cm depth
@@ -199,7 +200,7 @@ model WeatherData {
   floodDataId            Int?        // Optional: Link to related flood data
   floodData              FloodData?  @relation(fields: [floodDataId], references: [id])
   apiSource              String      // The API source used (e.g., "Open-Meteo")
-  @@unique([fetchedAt, region])
+  @@unique([fetchedAt, latitude, longitude])
 }
 
 
