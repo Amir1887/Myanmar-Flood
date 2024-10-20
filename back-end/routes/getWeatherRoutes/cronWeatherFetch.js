@@ -4,6 +4,24 @@ const axios = require("axios");
 
 const prisma = new PrismaClient();
 
+// Threshold configuration
+const thresholds = {
+  precipitation: {
+    shortDuration: 30, // mm in 1-3 hours for potential flooding
+    highRiskShortDuration: 50, // mm for high flash flood risk
+    longDuration: 100, // mm in 24 hours for significant flooding
+  },
+  soilMoisture: {
+    level: 0.30, // 30% volumetric water content for saturation
+    rapidIncrease: 0.05, // Daily increase in soil moisture
+  },
+  surfacePressure: {
+    rapidDrop: 2, // hPa in 6 hours indicating a storm
+  },
+  cumulativePrecipitation: 50, // mm in a week indicating increased flood risk
+  windGusts: 30, // km/h indicating significant weather systems
+};
+
 // Function to fetch weather data
 const fetchWeatherData = async (latitude, longitude) => {
   try {
@@ -41,6 +59,36 @@ const fetchWeatherData = async (latitude, longitude) => {
   }
 };
 
+// Function to check if weather data exceeds thresholds
+const checkThresholds = (currentData, latitude, longitude) => {
+  const alerts = [];
+
+  // Check precipitation thresholds
+  if (currentData.precipitation >= thresholds.precipitation.shortDuration) {
+    alerts.push(`Potential flooding detected at (${latitude}, ${longitude}) due to high precipitation.`);
+  }
+  if (currentData.precipitation >= thresholds.precipitation.highRiskShortDuration) {
+    alerts.push(`High risk of flash floods detected at (${latitude}, ${longitude}) due to very high precipitation.`);
+  }
+
+  // Check soil moisture thresholds
+  if (currentData.soilMoisture0To1cm >= thresholds.soilMoisture.level) {
+    alerts.push(`Ground is saturated at (${latitude}, ${longitude}) with high soil moisture.`);
+  }
+
+  // Check surface pressure thresholds
+  if (currentData.surfacePressure < thresholds.surfacePressure.rapidDrop) {
+    alerts.push(`Rapid drop in surface pressure detected at (${latitude}, ${longitude}), indicating an approaching storm.`);
+  }
+
+  // Check wind speed
+  if (currentData.windGusts > thresholds.windGusts) {
+    alerts.push(`High wind gusts detected at (${latitude}, ${longitude}), which may accompany significant weather systems.`);
+  }
+
+  return alerts;
+};
+
 // Function to save weather data to the database
 const saveWeatherDataToDB = async (weatherData, latitude, longitude) => {
   if (weatherData && weatherData.hourly) {
@@ -48,6 +96,20 @@ const saveWeatherDataToDB = async (weatherData, latitude, longitude) => {
 
     for (let i = 0; i < hourlyData.time.length; i++) {
       try {
+        const currentData = {
+          precipitation: hourlyData.precipitation[i],
+          soilMoisture0To1cm: hourlyData.soil_moisture_0_to_1cm[i],
+          surfacePressure: hourlyData.surface_pressure[i],
+          windGusts: hourlyData.wind_gusts_10m[i],
+        
+        };
+
+        const alerts = checkThresholds(currentData, latitude, longitude);
+        if (alerts.length > 0) {
+          console.log("Alerts generated:", alerts);
+          // Notify user or admin here (email, SMS, etc.)
+        }
+
         const existingEntry = await prisma.weatherData.findUnique({
           where: {
             fetchedAt_latitude_longitude: {
@@ -94,16 +156,13 @@ const saveWeatherDataToDB = async (weatherData, latitude, longitude) => {
   }
 };
 
-// 30-minute schedule ("*/30 * * * *")
-//for a 1-hour schedule:("0 * * * *")
-//every minute: "* * * * *",
-// Function to start cron job
+// Function to start the cron job
 const startWeatherDataFetchCron = (latitude, longitude) => {
   cron.schedule("*/30 * * * *", async () => {
     console.log("Fetching weather data...");
     try {
       const weatherData = await fetchWeatherData(latitude, longitude);
-      await saveWeatherDataToDB(weatherData, latitude, longitude); // Pass latitude and longitude
+      await saveWeatherDataToDB(weatherData, latitude, longitude);
     } catch (error) {
       console.error("Error occurred during scheduled weather data fetch:", error);
     }
