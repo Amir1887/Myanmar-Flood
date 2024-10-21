@@ -311,7 +311,6 @@ model Organization {
   EmergencyResponsePlan EmergencyResponsePlan[]
   OrganizationResponse  OrganizationResponse[]
   Order                 Order[]
-  VolunteerApplication  VolunteerApplication[]
 }
 
 model OrganizationMember {
@@ -345,16 +344,23 @@ enum ReportType {
 }
 
 model VolunteerApplication {
-  id             Int               @id @default(autoincrement())
-  userId         Int // Reference to the user applying to volunteer
-  user           User              @relation(fields: [userId], references: [id])
-  organizationId Int // Organization reviewing the application
-  organization   Organization      @relation(fields: [organizationId], references: [id])
-  skills         String // Skills of the volunteer (comma-separated or JSON)
-  status         ApplicationStatus @default(PENDING) // Status of the application
-  createdAt      DateTime          @default(now())
-  reviewedAt     DateTime? // Optional: When the application was reviewed
-  notes          String? // Optional: Notes from the reviewer
+  id                    Int               @id @default(autoincrement())
+  userId                Int               // Reference to the user applying to volunteer
+  user                  User              @relation(fields: [userId], references: [id])
+  skills                String            // Skills of the volunteer (comma-separated or JSON)
+  education             String            //  Education background of the volunteer
+  preferredAreas        String?           // Optional: Areas where the volunteer wants to help (comma-separated)
+  previousExperience    String?           // Optional: Description of previous volunteer work
+  availability          String?           // Optional: Days or hours the volunteer is available
+  languages             String?           // Optional: Languages spoken (comma-separated)
+  location              String?           // Optional: Geographical area of interest
+  emergencyContact      String            //  Emergency contact information
+  motivation            String?           // Optional: Volunteer motivation statement
+  certifications        String?           // Optional: Relevant certifications or training
+  status                ApplicationStatus @default(PENDING) // Status of the application
+  createdAt             DateTime          @default(now())
+  reviewedAt            DateTime?         // Optional: When the application was reviewed
+  notes                 String?           // Optional: Notes from the reviewer
 }
 
 enum ApplicationStatus {
