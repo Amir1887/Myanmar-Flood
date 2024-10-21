@@ -38,6 +38,17 @@ model User {
   UserConsent          UserConsent?
   VolunteerApplication VolunteerApplication[]
   Volunteer            Volunteer[]
+  PushSubscription     PushSubscription[]
+}
+
+model PushSubscription {
+  id        Int      @id @default(autoincrement())
+  endpoint  String   @unique // The unique endpoint URL for the subscription
+  keys      Json // Stores the keys object which contains publicKey and auth
+  userId    Int? // Optional relation to a User model (if you want to link subscriptions to users)
+  user      User?    @relation(fields: [userId], references: [id]) // Optional relationship to the User model
+  createdAt DateTime @default(now()) // Timestamp for when the subscription was created
+  updatedAt DateTime @updatedAt // Timestamp for when the subscription was last updated
 }
 
 model UserConsent {
@@ -178,31 +189,32 @@ model FloodData {
   WeatherData         WeatherData[]
   MapData             MapData[]
 }
+
 model WeatherData {
-  id                     Int         @id @default(autoincrement())
-  latitude             Float? 
+  id                   Int        @id @default(autoincrement())
+  latitude             Float?
   longitude            Float?
-  temperature            Float       // Temperature in °C
-  precipitation          Float       // Precipitation in mm
-  soilMoisture0To1cm     Float       // Soil moisture at 0-1 cm depth
-  soilMoisture1To3cm     Float       // Soil moisture at 1-3 cm depth
-  soilMoisture3To9cm     Float       // Soil moisture at 3-9 cm depth
-  soilMoisture9To27cm    Float       // Soil moisture at 9-27 cm depth
-  soilMoisture27To81cm   Float       // Soil moisture at 27-81 cm depth
-  cloudCover             Float       // Cloud cover percentage
-  windSpeed              Float       // Wind speed in m/s
-  windGusts              Float       // Wind gusts in m/s
-  windDirection          Float       // Wind direction in degrees
-  visibility             Float       // Visibility in meters
-  surfacePressure        Float       // Surface pressure in hPa
-  fetchedAt              DateTime    @default(now()) // Time when the data was fetched
-  floodRiskLevel         Float?      // Optional: Calculated flood risk based on weather data (e.g., risk score)
-  floodDataId            Int?        // Optional: Link to related flood data
-  floodData              FloodData?  @relation(fields: [floodDataId], references: [id])
-  apiSource              String      // The API source used (e.g., "Open-Meteo")
+  temperature          Float // Temperature in °C
+  precipitation        Float // Precipitation in mm
+  soilMoisture0To1cm   Float // Soil moisture at 0-1 cm depth
+  soilMoisture1To3cm   Float // Soil moisture at 1-3 cm depth
+  soilMoisture3To9cm   Float // Soil moisture at 3-9 cm depth
+  soilMoisture9To27cm  Float // Soil moisture at 9-27 cm depth
+  soilMoisture27To81cm Float // Soil moisture at 27-81 cm depth
+  cloudCover           Float // Cloud cover percentage
+  windSpeed            Float // Wind speed in m/s
+  windGusts            Float // Wind gusts in m/s
+  windDirection        Float // Wind direction in degrees
+  visibility           Float // Visibility in meters
+  surfacePressure      Float // Surface pressure in hPa
+  fetchedAt            DateTime   @default(now()) // Time when the data was fetched
+  floodRiskLevel       Float? // Optional: Calculated flood risk based on weather data (e.g., risk score)
+  floodDataId          Int? // Optional: Link to related flood data
+  floodData            FloodData? @relation(fields: [floodDataId], references: [id])
+  apiSource            String // The API source used (e.g., "Open-Meteo")
+
   @@unique([fetchedAt, latitude, longitude])
 }
-
 
 model HistoricalFloodData {
   id             Int        @id @default(autoincrement())
