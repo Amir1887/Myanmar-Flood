@@ -362,7 +362,7 @@ model VolunteerApplication {
   createdAt          DateTime          @default(now())
   reviewedAt         DateTime? // Optional: When the application was reviewed
   notes              String? // Optional: Notes from the reviewer
-  organizationId     Int?               @unique
+  organizationId     Int?               
   organization       Organization?      @relation(fields: [organizationId], references: [id])
 }
 
