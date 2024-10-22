@@ -345,7 +345,7 @@ enum ReportType {
 
 model VolunteerApplication {
   id                    Int               @id @default(autoincrement())
-  userId                Int               // Reference to the user applying to volunteer
+  userId                Int                @unique 
   user                  User              @relation(fields: [userId], references: [id])
   skills                String            // Skills of the volunteer (comma-separated or JSON)
   education             String            //  Education background of the volunteer
