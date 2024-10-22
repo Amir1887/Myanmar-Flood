@@ -7,9 +7,19 @@ const router = express.Router();
 
 //getting all applications of all users
 router.get('/volunteer-application', async (req, res) => {
-  const volunteerApplicationData = await prisma.volunteerApplication.findMany();
-  res.json(volunteerApplicationData);
-  console.log("historical submitted volunteer Application Data", volunteerApplicationData);
+  try {
+    // Use Prisma's `include` feature to include user data
+    const volunteerApplicationData = await prisma.volunteerApplication.findMany({
+      include: {
+        user: true, // This will include user data in the response
+      },
+    });
+    console.log("all app backend", volunteerApplicationData);
+    res.json(volunteerApplicationData);
+  } catch (error) {
+    console.error("Error fetching all applications:", error);
+    res.status(500).json({ error: "Failed to fetch all applications." });
+  }
 });
 
 
