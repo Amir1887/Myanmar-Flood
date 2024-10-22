@@ -39,7 +39,7 @@ function VolunteeringToOrgSide({organizationId}) {
       // Update the application list with the new status locally to reflect changes
       setApplications((prevApps) =>
         prevApps.map((app) =>
-          app.id === appId ? { ...app, status: newStatus, reviewedAt: new Date().toISOString(), reviewedBy:"Organization name"  } : app
+          app.id === appId ? { ...app, status: newStatus, reviewedAt: new Date().toISOString() } : app
         )
       );
     } catch (error) {

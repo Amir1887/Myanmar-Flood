@@ -23,6 +23,7 @@ function Volunteering({userId}) {
       const getApplication = async () => {
         try {
           const response = await axios.get(`http://localhost:4000/volunteer-application/${userId}`);
+          console.log("response from userSide", response);
           if (response.data) {
             setApplication(response.data);
           }
@@ -64,17 +65,6 @@ function Volunteering({userId}) {
       if (response.ok) {
         setApplication(volunteerApplication); // Set the application state to prevent further submissions
         setMessage('Your application has been submitted successfully.');
-        setAvailability("");
-        setCertifications("");
-        setEducation("");
-        setEmergencyContact("");
-        setLanguages('');
-        setLocation('');
-        setMotivation('');
-        setNotes('');
-        setPreviousExperience('');
-        setPreferredAreas('');
-        setSkills('');
       } else {
         setMessage('Failed to submit the application. Please try again.');
       }
@@ -113,7 +103,9 @@ function Volunteering({userId}) {
           <p><strong>Emergency Contact:</strong> {application.emergencyContact}</p>
           <p><strong>Motivation:</strong> {application.motivation}</p>
           <p><strong>Certifications:</strong> {application.certifications}</p>
-          <p><strong>Notes:</strong> {application.notes}</p>
+          <p><strong>Notes:</strong> {application.notes || "No Notes"}</p>
+          <p><strong>Reviewed By:</strong> {application.organization.name}</p>
+          <p><strong>Reviewer Email:</strong> {application.organization.email}</p>
         </div>
       ) : (
         <form onSubmit={handleSubmit} className="space-y-4">
