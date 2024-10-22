@@ -12,6 +12,7 @@ router.get('/volunteer-application', async (req, res) => {
     const volunteerApplicationData = await prisma.volunteerApplication.findMany({
       include: {
         user: true, // This will include user data in the response
+        organization:true,
       },
     });
     console.log("all app backend", volunteerApplicationData);
