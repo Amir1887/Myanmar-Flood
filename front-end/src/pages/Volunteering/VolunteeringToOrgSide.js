@@ -1,7 +1,7 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
 
-function VolunteeringToOrgSide() {
+function VolunteeringToOrgSide({organizationId}) {
   const [applications, setApplications] = useState([]);
 
   useEffect(() => {
@@ -26,6 +26,25 @@ function VolunteeringToOrgSide() {
     if (status === "APPROVED") statusColor = "text-green-500";
     if (status === "REJECTED") statusColor = "text-red-500";
     return <span className={`font-semibold ${statusColor}`}>{status}</span>;
+  };
+
+  const handleStatusUpdate = async (appId, newStatus) => {
+    try {
+      await axios.post(`http://localhost:4000/volunteer-application/${appId}`, {
+        status: newStatus,
+        reviewedAt: new Date().toISOString(),
+        organizationId:organizationId,
+      });
+
+      // Update the application list with the new status locally to reflect changes
+      setApplications((prevApps) =>
+        prevApps.map((app) =>
+          app.id === appId ? { ...app, status: newStatus, reviewedAt: new Date().toISOString(), reviewedBy:"Organization name"  } : app
+        )
+      );
+    } catch (error) {
+      console.error("Error updating the application status:", error);
+    }
   };
 
   return (
@@ -53,6 +72,26 @@ function VolunteeringToOrgSide() {
               <p><strong>Additional Notes:</strong> {app.notes}</p>
               <p><strong>Status:</strong> {renderStatus(app.status)}</p>
               <p><strong>Submitted At:</strong> {new Date(app.createdAt).toLocaleString()}</p>
+
+              {/* Buttons for Accept and Decline */}
+              <div className="mt-4">
+                {app.status === "PENDING" && (
+                  <div className="flex space-x-4">
+                    <button
+                      onClick={() => handleStatusUpdate(app.id, "APPROVED")}
+                      className="px-4 py-2 bg-green-500 text-white rounded"
+                    >
+                      Accept
+                    </button>
+                    <button
+                      onClick={() => handleStatusUpdate(app.id, "REJECTED")}
+                      className="px-4 py-2 bg-red-500 text-white rounded"
+                    >
+                      Decline
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           ))
         )}
