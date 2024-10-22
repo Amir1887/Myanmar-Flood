@@ -1,11 +1,25 @@
 import React from 'react';
 import { SignedIn, SignedOut, UserButton, useUser } from '@clerk/clerk-react';
 import { Link } from 'react-router-dom';
+import { useUserType } from '../context/UserContext';
+import Volunteering from './Volunteering/VolunteeringUserSide';
+import VolunteeringToOrgSide from './Volunteering/VolunteeringToOrgSide';
 
 const ProfilePage = () => {
   const { user, isLoaded } = useUser();
-  // console.log("userinfo..",user);
-
+  const {contextUserType, allUserData, allOrgData} = useUserType();
+  console.log("userinfo..",user);
+  console.log("all infoooo", allOrgData);
+  console.log("userType..",contextUserType);
+  let userId;
+  if(allUserData){
+     userId = allUserData.id;
+  }
+  
+  let organizationId;
+  if(allOrgData){
+    organizationId = allOrgData.id;
+  }
   if (!isLoaded) {
     return <div>Loading...</div>;
   }
@@ -39,6 +53,8 @@ const ProfilePage = () => {
         <p className="text-lg">{user.primaryEmailAddress.emailAddress}</p>
       </div>
     </div>
+    {contextUserType === "user" && <Volunteering userId={userId}/>}
+    {contextUserType === "organization" && <VolunteeringToOrgSide organizationId={organizationId}/>}
     </div>
   );
 };
