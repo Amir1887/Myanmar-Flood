@@ -145,9 +145,9 @@ const saveWeatherDataToDB = async (weatherData, latitude, longitude) => {
         };
         
 
-        if(alerts){
+        
           notifyUserIfThresholdsExceeded(alerts);
-        }
+        
 
         const existingEntry = await prisma.weatherData.findUnique({
           where: {
