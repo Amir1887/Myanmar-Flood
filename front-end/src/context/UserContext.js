@@ -11,6 +11,7 @@ export const UsereProvider = ({ children }) => {
   const { user } = useUser();
   const [contextUserType, setContextUserType] = useState(null);
   const [allUserData, setAllUserData] = useState(null);
+  const [allOrgData, setAllOrgData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [roleSelection, setRoleSelection] = useState(null); // State to store role selection
@@ -32,6 +33,7 @@ export const UsereProvider = ({ children }) => {
           } else {
             setContextUserType(res.data.type);
             setAllUserData(res.data.userData);
+            setAllOrgData(res.data.orgData);
             fetchDataBasedOnUserType(res.data.type); // Fetch data based on user type
           }
         } catch (err) {
@@ -68,7 +70,7 @@ export const UsereProvider = ({ children }) => {
 
       try {
         const response = await axios.get(endpoint);
-        console.log(`Data for ${type}:`, response.data);
+        console.log(`Data for All ${type}s:`, response.data);
         // Handle the data according to your requirements here
       } catch (error) {
         console.error(`Error fetching data for ${type}:`, error);
@@ -117,6 +119,7 @@ export const UsereProvider = ({ children }) => {
         imageUrl: user.imageUrl,
         password: user.passwordEnabled,
       };
+      console.log("clerck data ", clerkData);
 
       // Merge clerkData with roleData
       const dataToSend = { ...roleData, ...clerkData };
@@ -133,7 +136,7 @@ export const UsereProvider = ({ children }) => {
   };
 
   return (
-    <UsereContext.Provider value={{ contextUserType, setContextUserType, allUserData, loading, error, roleSelection, handleRoleSelection }}>
+    <UsereContext.Provider value={{ contextUserType, setContextUserType, allUserData, allOrgData,  loading, error, roleSelection, handleRoleSelection }}>
       {children}
     </UsereContext.Provider>
   );
