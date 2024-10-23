@@ -15,8 +15,6 @@ const urls = [
 
 async function fetchAndExtract(url) {
   try {
-// use cheerio to find links within the HTML content,
-    //Extract text 
     const { data } = await axios.get(url);
     const $ = cheerio.load(data);
     const textContent = $('body').text();
@@ -39,12 +37,49 @@ async function fetchAndExtract(url) {
       }
     });
 
-    return { textContent, pdfLinks, imageLinks };
+    // Find specific section for Flood Warnings
+    const floodWarnings = [];
+    $('a').each((i, link) => {
+      const title = $(link).text().trim();
+      const href = $(link).attr('href');
+      if (title.includes('Flood Warning') && href) {
+        floodWarnings.push({ title, href });
+      }
+    });
+
+    // Extract Latest Resources section
+    const resources = [];
+    $('.view-content table tbody tr').each((i, row) => {
+      const titleElement = $(row).find('td.views-field-nothing a');
+      const title = titleElement.text().trim();
+      const href = titleElement.attr('href');
+      const uploadedDate = $(row).find('td.views-field-changed-1').text().trim();
+
+      if (title && href) {
+        resources.push({ title, href, uploadedDate });
+      }
+    });
+
+    // Return all collected data in a structured format
+    return { 
+      textContent, 
+      pdfLinks, 
+      imageLinks, 
+      floodWarnings, 
+      resources 
+    };
   } catch (error) {
     console.error('Error fetching the page:', error);
-    return { textContent: '', pdfLinks: [], imageLinks: [] };
+    return { 
+      textContent: '', 
+      pdfLinks: [], 
+      imageLinks: [], 
+      floodWarnings: [], 
+      resources: [] 
+    };
   }
 }
+
 async function fetchPdfContent(pdfUrl) {
     try {
       const { data } = await axios.get(pdfUrl, { responseType: 'arraybuffer' });
@@ -77,7 +112,7 @@ function createBlogPost(title, summary, mainContent, images = [], pdfs = []) {
     cron.schedule('0 * * * *', async () => {
       console.log('Checking for updates...');
       for (const url of urls) {
-        const { textContent, pdfLinks, imageLinks } = await fetchAndExtract(url);
+        const { textContent, pdfLinks, imageLinks, floodWarnings, resources } = await fetchAndExtract(url);
         let contentToAnalyze = textContent;
   
         // Fetch and analyze PDF content if any
@@ -90,12 +125,16 @@ function createBlogPost(title, summary, mainContent, images = [], pdfs = []) {
           const title = 'Generated Title'; // Optionally extract from HTML
           const summary = await analyzeContent(contentToAnalyze);
           const blogPost = createBlogPost(title, summary, contentToAnalyze, imageLinks, pdfLinks);
-          console.log(blogPost);
+          
+          console.log('Flood Warnings:', floodWarnings);
+          console.log('Resources:', resources);
+          console.log('Blog Post:', blogPost);
   
-          // Here, you can save the blogPost to your database
+          // Here, you can save the blogPost, floodWarnings, and resources to your database
         }
       }
     });
   }
+  
 
 module.exports = { startBlogPostFetchCron };
