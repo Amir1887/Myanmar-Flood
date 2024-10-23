@@ -5,99 +5,6 @@ const pdf = require('pdf-parse');
 const { NlpManager } = require('node-nlp');
 const nlpManager = new NlpManager();
 
-const urls = [
-    // "https://reliefweb.int/updates?list=Myanmar%3A%20Floods%20-%20Jul%202024%20Updates&advanced-search=%28D52069%29",
-    "https://www.moezala.gov.mm/fog-warning%20",
-    // "https://themimu.info/emergencies/floods-2024",
-];
-
-// Function to fetch and extract data from a given URL
-// async function fetchAndExtract(url) {
-//     try {
-//         const { data } = await axios.get(url);
-//         const $ = cheerio.load(data);
-//         const textContent = $('body').text(); // Extracting all text content from the body tag
-
-//         // Extract PDFs directly linked on the page
-//         const pdfLinks = [];
-//         $('a').each((i, link) => {
-//             const href = $(link).attr('href');
-//             if (href && href.endsWith('.pdf')) {
-//                 pdfLinks.push(href);
-//             }
-//         });
-
-  
-//         // Ensure all image URLs are absolute
-//         $('img').each((i, img) => {
-//           let src = $(img).attr('src');
-//           if (src && src.startsWith('//')) {
-//               src = 'https:' + src;
-//               $(img).attr('src', src);
-//           }
-//       });
-
-//         // Find specific section for Flood Warnings
-//         const floodWarnings = [];
-//         $('a').each((i, link) => {
-//             const title = $(link).text().trim();
-//             const href = $(link).attr('href');
-//             if (title.includes('Flood Warning') && href) {
-//                 floodWarnings.push({ title, href });
-//             }
-//         });
-
-//         // Extract resources such as reports, updates, etc.
-//         const resources = [];
-//         $('.view-content table tbody tr').each((i, row) => {
-//             const titleElement = $(row).find('td.views-field-nothing a');
-//             const title = titleElement.text().trim();
-//             const href = titleElement.attr('href');
-//             const uploadedDate = $(row).find('td.views-field-changed-1').text().trim();
-
-//             if (title && href) {
-//                 resources.push({ title, href, uploadedDate });
-//             }
-//         });
-
-//         // Fetch PDF content for resources that link to PDF pages
-//         const resourcePdfContents = [];
-//         for (const resource of resources) {
-//             if (resource.href && resource.href.endsWith('.pdf')) {
-//                 // If the link is directly a PDF file
-//                 const pdfContent = await fetchPdfContent(resource.href);
-//                 resourcePdfContents.push({ title: resource.title, content: pdfContent });
-//             } else {
-//                 // Fetch the resource page and look for PDF links
-//                 const { pdfLinks: resourcePdfLinks } = await fetchAndExtract(resource.href);
-//                 for (const pdfLink of resourcePdfLinks) {
-//                     const pdfContent = await fetchPdfContent(pdfLink);
-//                     resourcePdfContents.push({ title: resource.title, content: pdfContent });
-//                 }
-//             }
-//         }
-
-//         // Return all collected data in a structured format
-//         return { 
-//             textContent, 
-//             pdfLinks, 
-//             imageLinks, 
-//             floodWarnings, 
-//             resources, 
-//             resourcePdfContents 
-//         };
-//     } catch (error) {
-//         console.error('Error fetching the page:', error);
-//         return { 
-//             textContent: '', 
-//             pdfLinks: [], 
-//             imageLinks: [], 
-//             floodWarnings: [], 
-//             resources: [], 
-//             resourcePdfContents: []
-//         };
-//     }
-// }
 
 
 
@@ -134,23 +41,17 @@ async function fetchFloodWarningsMoezala() {
         console.error('Error fetching flood warnings:', error);
     }
 }
-
+//https://reliefweb.int/updates?advanced-search=%28PC165%29_%28C165%29_%28DT4624_DT4611%29
 // Separate function for another site
-async function fetchFloodWarningsAnotherSite() {
+async function fetchFloodWarningsReliefWeb() {
   // Specific logic for another site
 }
-// "https://www.moezala.gov.mm/flood-warning%20"
-// "https://www.moezala.gov.mm/flood-warning-209"
-// "/flood-warning-208"
 
-// -image sourcse in web : 	https://www.moezala.gov.mm/sites/default/files/Web%28Warning%29E.jpg
-// -image sourcse in web : 	https://www.moezala.gov.mm/sites/default/files/__MACOSX/W-E.PNG
 // Function to scrape image from the "Read More" page
 async function getFloodWarningImage(readMoreLink) {
     try {
         // Fetch the "Read More" page content
         const response = await axios.get(`https://www.moezala.gov.mm${readMoreLink}`);
-        console.log("respone", response);
         const $ = cheerio.load(response.data);
 
         // Select the image element within the article content
@@ -180,6 +81,8 @@ async function getFloodWarningImage(readMoreLink) {
         console.log('No "Read More" links found.');
     }
 })();
+
+
 
 
 // Function to fetch PDF content from a URL
