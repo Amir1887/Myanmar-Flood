@@ -102,6 +102,36 @@ enum AlertType {
   RESOURCE_DISTRIBUTION
 }
 
+model BlogPost {
+  id          Int       @id @default(autoincrement())
+  url         String    @unique
+  hash        String    @unique // A unique identifier to track content uniqueness (could be a hash of the content)
+  title       String
+  summary     String
+  mainContent String
+  images      Image[]   // Relation to Image model for storing multiple image links or paths
+  pdfLinks    Pdf[]     // Relation to Pdf model for storing multiple PDF links or paths
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+}
+
+model Image {
+  id        Int      @id @default(autoincrement())
+  blogPost  BlogPost @relation(fields: [blogPostId], references: [id])
+  blogPostId Int
+  url       String   // The URL of the image
+  filePath  String?  // Optional local file path if the image is downloaded
+}
+
+model Pdf {
+  id        Int      @id @default(autoincrement())
+  blogPost  BlogPost @relation(fields: [blogPostId], references: [id])
+  blogPostId Int
+  url       String   // The URL of the PDF
+  filePath  String?  // Optional local file path if the PDF is downloaded
+}
+
+
 model DamageAssessment {
   id                   Int                 @id @default(autoincrement())
   floodDataId          Int // Relates the assessment to specific flood data
