@@ -1,6 +1,7 @@
 const cron = require('node-cron');
 const axios = require('axios');
 const cheerio = require('cheerio');
+const { SummarizerManager } = require('node-summarizer');
 const pdf = require('pdf-parse');
 const { NlpManager } = require('node-nlp');
 const nlpManager = new NlpManager();
@@ -173,7 +174,12 @@ async function scrapeArticleContent(articleUrl, depth) {
             .map((i, el) => $(el).text().trim()) // Extract text from filtered elements
             .get().join('\n'); // Join text paragraphs for easier readability
 
-        console.log('Article Content:', articleContent);
+            console.log('Original Article Content:', articleContent);
+            console.log("***********************************")
+            // Summarize the content
+            const summarizer = new SummarizerManager(articleContent, 3); // Limit to 3 sentences in the summary
+            const summary = await summarizer.getSummaryByRank(); // Generate the summary
+            console.log('Summarized Content:', summary.summary);
         console.log("--------------------------------------------------------------------------");
         // Process related content (if any)
         await scrapeRelatedContent($, depth);
@@ -188,13 +194,14 @@ async function scrapeRelatedContent($, depth) {
     if (depth > MAX_DEPTH) {
         return;
     }
-
+  
     // Access the "Related Content" section
     $('#related .rw-river-article').each((i, element) => {
         // Extract the country link and text, and make the comparison case-insensitive
         const countryLink = $(element).find('.rw-entity-country-slug a').attr('href');
         const countryText = $(element).find('.rw-entity-country-slug a').text().trim().toLowerCase(); // Convert to lowercase
-        console.log("country link", countryLink);
+        const updatedCountryLink = `https://reliefweb.int${countryLink}`
+        console.log("country link", updatedCountryLink);
         // Check if the country is Myanmar (case-insensitive)
         if (countryText !== 'myanmar') {
             console.log(`Skipping related content not from Myanmar: ${countryText}`);
