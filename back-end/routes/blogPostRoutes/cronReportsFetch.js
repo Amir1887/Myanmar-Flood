@@ -78,8 +78,8 @@ async function getFloodWarningImage(readMoreLink) {
     }
 })();
 
-
-
+//  https://reliefweb.int/report/myanmar/who-south-east-asia-region-epidemiological-bulletin-21st-edition-2024-16-october-2024-reporting-period-30-september-13-october-2024
+//'https://reliefweb.inthttps://reliefweb.int/report/myanmar/situation-update-no-8-combined-effects-tropical-cyclone-yagi-and-southwest-monsoon-27-september-2024'
 async function fetchFloodWarningsReliefWeb() {
   try {
     const { data } = await axios.get('https://reliefweb.int/updates?advanced-search=%28PC165%29_%28C165%29_%28DT4624_DT4611%29');
@@ -118,7 +118,7 @@ async function fetchFloodWarningsReliefWeb() {
         // Add the relevant data to the results array
         results.push({
           title: titleText,
-          articleUrl: `https://reliefweb.int${articleUrl}`, // Full URL of the article
+          articleUrl: `${articleUrl}`, // Full URL of the article
           countryLink,
         });
 
