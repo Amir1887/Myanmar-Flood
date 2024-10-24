@@ -1,12 +1,6 @@
-const cron = require('node-cron');
 const axios = require('axios');
 const cheerio = require('cheerio');
 const { SummarizerManager } = require('node-summarizer');
-const pdf = require('pdf-parse');
-const { NlpManager } = require('node-nlp');
-const nlpManager = new NlpManager();
-
-
 
 
 // Function to fetch flood warnings and get the "Read More" links
@@ -80,82 +74,4 @@ async function getFloodWarningImage(readMoreLink) {
 })();
 
 
-
-
-
-
-// Function to fetch PDF content from a URL
-async function fetchPdfContent(pdfUrl) {
-    try {
-        const { data } = await axios.get(pdfUrl, { responseType: 'arraybuffer' });
-        const pdfText = await pdf(data);
-        return pdfText.text;
-    } catch (error) {
-        console.error('Error fetching or parsing PDF:', error);
-        return '';
-    }
-}
-
-// Analyze content using NLP
-async function analyzeContent(text) {
-    await nlpManager.train();
-    const summary = await nlpManager.process('en', text);
-    return summary;
-}
-
-// Create a blog post object
-function createBlogPost(title, summary, mainContent, images = [], pdfs = []) {
-    return {
-        title,
-        summary,
-        content: mainContent,
-        images,
-        pdfs,
-        date: new Date(),
-    };
-}
-
-// Process the fetched data and generate a blog post
-async function processFetchedData({ textContent, pdfLinks, imageLinks, floodWarnings, resources, resourcePdfContents }) {
-    let contentToAnalyze = textContent;
-
-    // Append content from all fetched PDFs
-    for (const pdfUrl of pdfLinks) {
-        const pdfContent = await fetchPdfContent(pdfUrl);
-        contentToAnalyze += pdfContent;
-    }
-
-    // Include content from dynamically fetched PDF resources
-    for (const { content } of resourcePdfContents) {
-        contentToAnalyze += content;
-    }
-
-    if (contentToAnalyze) {
-        const title = 'Generated Title'; // This can be derived from the content if needed
-        const summary = await analyzeContent(contentToAnalyze);
-        const blogPost = createBlogPost(title, summary, contentToAnalyze, imageLinks, pdfLinks);
-
-        console.log('Flood Warnings:', floodWarnings);
-        console.log('Resources:', resources);
-        console.log('Blog Post:', blogPost);
-
-        // Code to save the blogPost, floodWarnings, and resources to a database can be added here
-    }
-}
-
-// 30-minute schedule ("*/30 * * * *")
-//for a 1-hour schedule:("0 * * * *")
-//every minute: "* * * * *",
-// Cron job to fetch data periodically
-const startBlogPostFetchCron = () => {
-    cron.schedule('* * * * *', async () => {
-        console.log('Checking for updates...');
-        for (const url of urls) {
-            const fetchedData = await fetchAndExtract(url);
-            await processFetchedData(fetchedData);
-        }
-    });
-};
-
-// Export the function to start the cron job
-module.exports = { startBlogPostFetchCron };
+module.exports = { fetchFloodWarningsMoezala };
