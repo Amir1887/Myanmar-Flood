@@ -183,12 +183,25 @@ async function scrapeArticleContent(articleUrl, depth) {
 }
 
 // Function to scrape related content and process them recursively
+// Function to scrape related content and process them recursively
 async function scrapeRelatedContent($, depth) {
     if (depth > MAX_DEPTH) {
         return;
     }
 
+    // Access the "Related Content" section
     $('#related .rw-river-article').each((i, element) => {
+        // Extract the country link and text, and make the comparison case-insensitive
+        const countryLink = $(element).find('.rw-entity-country-slug a').attr('href');
+        const countryText = $(element).find('.rw-entity-country-slug a').text().trim().toLowerCase(); // Convert to lowercase
+        console.log("country link", countryLink);
+        // Check if the country is Myanmar (case-insensitive)
+        if (countryText !== 'myanmar') {
+            console.log(`Skipping related content not from Myanmar: ${countryText}`);
+            return; // Skip this related content if it's not related to Myanmar
+        }
+
+        // If country is Myanmar, proceed with other checks
         const relatedTitle = $(element).find('.rw-river-article__title a').text().trim();
         const relatedUrl = $(element).find('.rw-river-article__title a').attr('href');
 
@@ -198,15 +211,18 @@ async function scrapeRelatedContent($, depth) {
         const currentYear = new Date().getFullYear();
         const keywords = ['Flood', 'Disaster', 'Cyclone', 'Typhoon', 'Rain', 'Storm'];
 
+        // Check if the date is after the current year and the title contains relevant keywords
         if (postedDateObj.getFullYear() >= currentYear) {
             const isRelevant = keywords.some(keyword => relatedTitle.includes(keyword));
             if (isRelevant) {
-                console.log(`Related Content: ${relatedTitle} | URL: ${relatedUrl}`);
+                console.log(`Related Content: ${relatedTitle} | URL: ${relatedUrl} | Country: Myanmar`);
+                // Recursively scrape related content
                 scrapeArticleContent(relatedUrl, depth + 1); // Recursively scrape related content
             }
         }
     });
 }
+
 
 // Example usage to initiate scraping with depth control
 fetchFloodWarningsReliefWeb();
