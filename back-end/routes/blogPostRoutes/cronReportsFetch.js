@@ -92,6 +92,7 @@ async function fetchFloodWarningsReliefWeb() {
       const titleElement = $(element).find('.rw-river-article__title a');
       const titleText = titleElement.text().trim();
       const articleUrl = titleElement.attr('href');
+ 
 
       // Find the posted and published dates
       const postedDate = $(element).find('dd.rw-entity-meta__tag-value--posted time').attr('datetime');
@@ -119,13 +120,13 @@ async function fetchFloodWarningsReliefWeb() {
         // Add the relevant data to the results array
         results.push({
           title: titleText,
-          articleUrl: `${articleUrl}`, // Full URL of the article
-          countryLink,
+          articleUrl:   articleUrl, 
+          CountryLink:  updatedCountryLink,
         });
 
         // Print or log the results
         console.log('Title:', titleText);
-        console.log('Article URL:', `https://reliefweb.int${articleUrl}`);
+        console.log('Article URL:', articleUrl);
         console.log('Country Link:', updatedCountryLink);
         console.log('--------------------------');
       }
