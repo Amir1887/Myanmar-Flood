@@ -103,7 +103,7 @@ async function fetchFloodWarningsReliefWeb() {
 
       // Filter based on dates (must be after 2024)
       const currentYear = new Date().getFullYear();
-      if (postedDateObj.getFullYear() < 2024 || publishedDateObj.getFullYear() < 2024) {
+      if (postedDateObj.getFullYear() < currentYear || publishedDateObj.getFullYear() < currentYear) {
         return; // Skip this article if it's before 2024
       }
 
