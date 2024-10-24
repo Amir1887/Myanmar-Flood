@@ -114,7 +114,8 @@ async function fetchFloodWarningsReliefWeb() {
       if (isRelevant) {
         // Get the country link (Myanmar or others)
         const countryLink = $(element).find('.rw-entity-country-slug a').attr('href');
-        
+        const updatedCountryLink = ` https://reliefweb.int${countryLink}`
+      
         // Add the relevant data to the results array
         results.push({
           title: titleText,
@@ -125,7 +126,7 @@ async function fetchFloodWarningsReliefWeb() {
         // Print or log the results
         console.log('Title:', titleText);
         console.log('Article URL:', `https://reliefweb.int${articleUrl}`);
-        console.log('Country Link:', countryLink);
+        console.log('Country Link:', updatedCountryLink);
         console.log('--------------------------');
       }
     });
