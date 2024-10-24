@@ -80,7 +80,6 @@ async function getFloodWarningImage(readMoreLink) {
 
 
 
-
 let scrapedUrls = new Set(); // To keep track of scraped URLs and prevent revisiting
 const MAX_DEPTH = 3; // Set a limit to avoid infinite recursion
 
@@ -111,7 +110,7 @@ async function fetchFloodWarningsReliefWeb(depth = 1) {
             const postedDateObj = new Date(postedDate);
             const publishedDateObj = new Date(publishedDate);
 
-            // Filter based on dates (must be after current year)
+            // Filter based on dates (must be after the current year)
             const currentYear = new Date().getFullYear();
             if (postedDateObj.getFullYear() < currentYear || publishedDateObj.getFullYear() < currentYear) {
                 return; // Skip this article if it's before current year
@@ -152,28 +151,30 @@ async function scrapeArticleContent(articleUrl, depth) {
         }
 
         scrapedUrls.add(articleUrl);
-        // console.log("artile url", articleUrl);
-        // const fullUrl = `https://reliefweb.int${articleUrl}`;
-        // console.log("full url", fullUrl);
         const { data } = await axios.get(articleUrl);
         const $ = cheerio.load(data);
 
         console.log("--------------------------------------------------------------------------");
         console.log('Scraping:', articleUrl);
 
-        // Extract the content (summary of the article)
-        const articleContent = $('.rw-article__content').text().trim();
+        // Extract the title
+        const articleTitle = $('.rw-article__title').text().trim();
+        console.log('Title:', articleTitle);
+
+        // Extract the main content, skipping the download link section
+        const articleContent = $('.rw-report__content')
+            .find('p, strong') // Get paragraphs and strong text tags within content which typically hold the key text.
+            .filter((i, el) => {
+                const text = $(el).text().trim();
+      
+                // Skip any text that includes 'Download Report' or other download links
+                return !text.includes('Download Report') && !text.includes('PDF');
+            })
+            .map((i, el) => $(el).text().trim()) // Extract text from filtered elements
+            .get().join('\n'); // Join text paragraphs for easier readability
+
         console.log('Article Content:', articleContent);
         console.log("--------------------------------------------------------------------------");
-
-        // Find the download link for the report (if available)
-        
-        const downloadLink = $('.rw-attachment--report a').attr('href');
-        if (downloadLink) {
-            const fullDownloadLink = `https://reliefweb.int/${downloadLink}`;
-            console.log('Download Link:', fullDownloadLink);
-        }
-
         // Process related content (if any)
         await scrapeRelatedContent($, depth);
 
@@ -182,7 +183,6 @@ async function scrapeArticleContent(articleUrl, depth) {
     }
 }
 
-// Function to scrape related content and process them recursively
 // Function to scrape related content and process them recursively
 async function scrapeRelatedContent($, depth) {
     if (depth > MAX_DEPTH) {
@@ -223,9 +223,9 @@ async function scrapeRelatedContent($, depth) {
     });
 }
 
-
 // Example usage to initiate scraping with depth control
 fetchFloodWarningsReliefWeb();
+
 
 
 // Function to fetch PDF content from a URL
