@@ -176,16 +176,36 @@ async function scrapeArticleContent(articleUrl, depth) {
 
             console.log('Original Article Content:', articleContent);
             console.log("***********************************")
-            // Summarize the content
-            const summarizer = new SummarizerManager(articleContent, 3); // Limit to 3 sentences in the summary
-            const summary = await summarizer.getSummaryByRank(); // Generate the summary
-            console.log('Summarized Content:', summary.summary);
+  
+        // Summarize the content
+        const summarizer = new SummarizerManager(articleContent, 5); // Limit to 5 sentences in the summary
+        const summary = await summarizer.getSummaryByRank(); // Generate the summary
+        console.log('Summarized Content:', summary.summary);
+
+        // Get the sentiment score
+        const sentiment = await summarizer.getSentiment();
+        console.log("Sentiment Score:", sentiment);
+
+        // Categorize sentiment based on custom thresholds
+        const categorizedSentiment = categorizeSentiment(sentiment);
+        console.log("Categorized Sentiment:", categorizedSentiment);
         console.log("--------------------------------------------------------------------------");
         // Process related content (if any)
         await scrapeRelatedContent($, depth);
 
     } catch (error) {
         console.error('Error scraping article content:', error);
+    }
+}
+
+// Helper function to categorize sentiment based on thresholds
+function categorizeSentiment(score) {
+    if (score > 0.05) {
+        return "Positive";
+    } else if (score < -0.05) {
+        return "Negative";
+    } else {
+        return "Neutral";
     }
 }
 
