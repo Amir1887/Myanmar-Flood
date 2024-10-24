@@ -41,11 +41,7 @@ async function fetchFloodWarningsMoezala() {
         console.error('Error fetching flood warnings:', error);
     }
 }
-//https://reliefweb.int/updates?advanced-search=%28PC165%29_%28C165%29_%28DT4624_DT4611%29
-// Separate function for another site
-async function fetchFloodWarningsReliefWeb() {
-  // Specific logic for another site
-}
+
 
 // Function to scrape image from the "Read More" page
 async function getFloodWarningImage(readMoreLink) {
@@ -83,6 +79,67 @@ async function getFloodWarningImage(readMoreLink) {
 })();
 
 
+
+async function fetchFloodWarningsReliefWeb() {
+  try {
+    const { data } = await axios.get('https://reliefweb.int/updates?advanced-search=%28PC165%29_%28C165%29_%28DT4624_DT4611%29');
+    const $ = cheerio.load(data);
+    
+    const results = [];
+
+    // Iterate through each article in the list
+    $('.rw-river-article').each((i, element) => {
+      const titleElement = $(element).find('.rw-river-article__title a');
+      const titleText = titleElement.text().trim();
+      const articleUrl = titleElement.attr('href');
+
+      // Find the posted and published dates
+      const postedDate = $(element).find('dd.rw-entity-meta__tag-value--posted time').attr('datetime');
+      const publishedDate = $(element).find('dd.rw-entity-meta__tag-value--published time').attr('datetime');
+
+      // Convert dates to Date objects for comparison
+      const postedDateObj = new Date(postedDate);
+      const publishedDateObj = new Date(publishedDate);
+
+      // Filter based on dates (must be after 2024)
+      const currentYear = new Date().getFullYear();
+      if (postedDateObj.getFullYear() < 2024 || publishedDateObj.getFullYear() < 2024) {
+        return; // Skip this article if it's before 2024
+      }
+
+      // Filter articles by keywords in the title
+      const keywords = ['Flood', 'Disaster', 'Cyclone', 'Typhoon', 'Rain', 'Storm']; // Add more keywords if needed
+      const isRelevant = keywords.some(keyword => titleText.includes(keyword));
+
+      if (isRelevant) {
+        // Get the country link (Myanmar or others)
+        const countryLink = $(element).find('.rw-entity-country-slug a').attr('href');
+        
+        // Add the relevant data to the results array
+        results.push({
+          title: titleText,
+          articleUrl: `https://reliefweb.int${articleUrl}`, // Full URL of the article
+          countryLink,
+        });
+
+        // Print or log the results
+        console.log('Title:', titleText);
+        console.log('Article URL:', `https://reliefweb.int${articleUrl}`);
+        console.log('Country Link:', countryLink);
+        console.log('--------------------------');
+      }
+    });
+
+    return results; // Return the filtered results
+  } catch (error) {
+    console.error('Error fetching flood warnings from ReliefWeb:', error);
+  }
+}
+
+// Example usage
+fetchFloodWarningsReliefWeb().then((results) => {
+  console.log('Filtered articles:', results);
+});
 
 
 // Function to fetch PDF content from a URL
