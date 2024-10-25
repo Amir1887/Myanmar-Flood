@@ -1,5 +1,6 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
+const { extractTextFromPdf, processPdf } = require('./utils/extractTextFromPdf');
 
 async function fetchLatestResources() {
     try {
@@ -28,10 +29,13 @@ async function fetchLatestResources() {
                 uploadedDate,
                 pdfLink
             });
+            processPdf(pdfLink);
         });
 
         // Print or process the scraped data
         console.log(resources);
+        console.log("----------------------------------------------------------------------");
+       
 
         return resources;
     } catch (error) {
