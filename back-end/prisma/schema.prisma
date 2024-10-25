@@ -109,27 +109,44 @@ model BlogPost {
   title       String
   summary     String
   mainContent String
-  images      Image[]   // Relation to Image model for storing multiple image links or paths
-  pdfLinks    Pdf[]     // Relation to Pdf model for storing multiple PDF links or paths
   createdAt   DateTime  @default(now())
   updatedAt   DateTime  @updatedAt
 }
 
-model Image {
-  id        Int      @id @default(autoincrement())
-  blogPost  BlogPost @relation(fields: [blogPostId], references: [id])
-  blogPostId Int
-  url       String   // The URL of the image
-  filePath  String?  // Optional local file path if the image is downloaded
+model Mimu {
+  id           Int      @id @default(autoincrement())
+  url          String   @unique
+  title        String
+  uploadedDate String
+  pdfLink      String
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
 
-model Pdf {
-  id        Int      @id @default(autoincrement())
-  blogPost  BlogPost @relation(fields: [blogPostId], references: [id])
-  blogPostId Int
-  url       String   // The URL of the PDF
-  filePath  String?  // Optional local file path if the PDF is downloaded
+model ReliefWeb {
+  id              Int      @id @default(autoincrement())
+  url             String   @unique
+  title           String
+  articleContent  String
+  summary         String
+  pdfLink         String?
+  relatedContent  String?  // Optional if scraped
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 }
+
+model Mozela {
+  id          Int      @id @default(autoincrement())
+  url         String   @unique
+  title       String
+  date        String   // For Mozela date field
+  hydrograph  String
+  imageUrl    String?  // Optional field to store image links
+  readMoreLink String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
 
 
 model DamageAssessment {
