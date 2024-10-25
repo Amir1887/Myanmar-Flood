@@ -2,25 +2,28 @@ const pdfParse = require('pdf-parse');
 const axios = require('axios');
 const { summarizeContent } = require('./summarizer');
 
-// Retry function to download the PDF with retries in case of failure
-async function downloadPdfWithRetry(pdfUrl, retries = 3) {
+// Retry function to download the PDF with retries in case of network failure
+async function downloadPdfWithRetry(pdfUrl, retries = 3, retryDelay = 1000) {
     for (let attempt = 1; attempt <= retries; attempt++) {
         try {
             console.log(`Downloading PDF (Attempt ${attempt}):`, pdfUrl);
 
-            // Fetch the PDF as a stream with a 10-second timeout
-            const response = await axios.get(pdfUrl, { responseType: 'arraybuffer'});
+            // Fetch the PDF with a 10-second timeout
+            const response = await axios.get(pdfUrl, { responseType: 'arraybuffer', timeout: 10000 });
 
-            return response.data; // Return the PDF data if the download is successful
+            return response.data; // Return the PDF data if successful
         } catch (error) {
-            if (attempt === retries) {
-                console.error(`Failed to download PDF after ${retries} attempts`, error);
-                throw error; // If retries are exhausted, throw the error
+            if (attempt === retries || !error.code || !['ECONNRESET', 'ETIMEDOUT'].includes(error.code)) {
+                console.error(`Failed to download PDF after ${retries} attempts:`, error.message);
+                throw error; // If retries are exhausted or the error isn't network-related, throw the error
             }
-            console.log(`Retrying download... Attempt ${attempt} of ${retries}`);
+
+            console.log(`Network error: ${error.code}. Retrying download in ${retryDelay}ms...`);
+            await new Promise(resolve => setTimeout(resolve, retryDelay)); // Wait before retrying
         }
     }
 }
+
 
 // Function to download the PDF and process it
 async function processPdf(pdfUrl) {
