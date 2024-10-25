@@ -1,7 +1,7 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
 
-async function fetchLatestResources() { 
+async function fetchLatestResources() {
     try {
         // Fetch the HTML content from the page
         const { data } = await axios.get('https://themimu.info/emergencies/floods-2024');
@@ -10,8 +10,11 @@ async function fetchLatestResources() {
         // Array to hold the extracted resource information
         const resources = [];
 
-        // Iterate over each row in the table
-        $('tbody tr').each((i, element) => {
+        // Select the specific section "Latest Resources" using its parent class or ID
+        const latestResourcesSection = $('section.pane-documents-panel-pane-158');
+
+        // Now target the rows within this specific section
+        latestResourcesSection.find('tbody tr').each((i, element) => {
             // Extract the title
             const title = $(element).find('td.views-field-nothing a').text().trim();
             // Extract the uploaded date
@@ -38,5 +41,6 @@ async function fetchLatestResources() {
 
 // Example usage
 fetchLatestResources();
+
 
 module.exports = {fetchLatestResources};
