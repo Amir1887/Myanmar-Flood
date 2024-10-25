@@ -1,4 +1,4 @@
-const SummarizerManager = require('node-summarizer');
+const { SummarizerManager } = require('node-summarizer');
 
 async function summarizeContent(text, sentenceCount) {
     const summarizer = new SummarizerManager(text, sentenceCount);
