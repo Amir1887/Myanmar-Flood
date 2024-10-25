@@ -11,7 +11,9 @@ async function downloadPdfWithRetry(pdfUrl, retries = 3, retryDelay = 1000, time
             // Fetch the PDF with a 30-second timeout
             const response = await axios.get(pdfUrl, { 
                 responseType: 'arraybuffer', 
-                timeout // Pass the extended timeout here
+                timeout,// Pass the extended timeout here
+                maxContentLength: Infinity, // Set to Infinity to allow large PDFs
+                maxBodyLength: Infinity // Set to Infinity to allow large PDFs
             });
 
             return response.data; // Return the PDF data if successful
