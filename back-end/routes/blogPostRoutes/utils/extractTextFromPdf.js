@@ -3,13 +3,16 @@ const axios = require('axios');
 const { summarizeContent } = require('./summarizer');
 
 // Retry function to download the PDF with retries in case of network failure
-async function downloadPdfWithRetry(pdfUrl, retries = 3, retryDelay = 1000) {
+async function downloadPdfWithRetry(pdfUrl, retries = 3, retryDelay = 1000, timeout = 30000) { // Extended timeout to 30 seconds
     for (let attempt = 1; attempt <= retries; attempt++) {
         try {
             console.log(`Downloading PDF (Attempt ${attempt}):`, pdfUrl);
 
-            // Fetch the PDF with a 10-second timeout
-            const response = await axios.get(pdfUrl, { responseType: 'arraybuffer', timeout: 10000 });
+            // Fetch the PDF with a 30-second timeout
+            const response = await axios.get(pdfUrl, { 
+                responseType: 'arraybuffer', 
+                timeout // Pass the extended timeout here
+            });
 
             return response.data; // Return the PDF data if successful
         } catch (error) {
