@@ -1,34 +1,28 @@
 const pdfParse = require('pdf-parse');
-const fs = require('fs');
+const axios = require('axios');
 const { summarizeContent } = require('./summarizer');
 
-//without summary
-async function extractTextFromPdf(pdfUrl) {
-    // Fetch or read the PDF (from URL or file)
-    const dataBuffer = await fs.promises.readFile(pdfUrl);
-    
-    // Extract text
-    const data = await pdfParse(dataBuffer);
-    return data.text;
-}
-
-//with summary
+// Function to download the PDF and process it
 async function processPdf(pdfUrl) {
     try {
-        // Extract text from the PDF
-        const pdfText = await extractTextFromPdf(pdfUrl);
+        console.log("Downloading PDF:", pdfUrl);
         
-        // Summarize the extracted text
-        const summary = await summarizeContent(pdfText, 7);
+        // Fetch the PDF as a stream
+        const response = await axios.get(pdfUrl, { responseType: 'arraybuffer' });
         
-        console.log('Summary of pdf:', summary);
-        return summary;
+        // Use the fetched data as a buffer for pdf-parse
+        const pdfBuffer = Buffer.from(response.data);
+        
+        // Extract the text from the PDF using pdf-parse
+        const data = await pdfParse(pdfBuffer);
+        console.log('Extracted Text:', data.text);
+
+        // You can now pass the extracted text to summarizer or store it for further use
     } catch (error) {
         console.error('Error processing PDF:', error);
     }
 }
-
 // const pdfUrl = 'path/to/pdf-file.pdf';
 // processPdf(pdfUrl);
 
-module.exports = {extractTextFromPdf, processPdf};
+module.exports = {processPdf};
