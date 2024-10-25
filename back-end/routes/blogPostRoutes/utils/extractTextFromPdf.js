@@ -36,7 +36,7 @@ async function processPdf(pdfUrl) {
         // console.log('Extracted Text:', data.text);
 
         // Optionally, you can now pass the extracted text to summarizer or store it for further use
-        const summary = summarizeContent(data.text, 6);
+        const summary = await summarizeContent(data.text, 6);
         console.log('Summary:', summary);
         console.log('......................................................................');
         
