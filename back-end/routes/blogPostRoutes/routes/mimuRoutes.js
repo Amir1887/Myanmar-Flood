@@ -25,7 +25,7 @@ if (!title || !uploadedDate || !pdfLink || !summary || summary.length < 50) {
 
         if (existingEntry) {
             console.log('This entry already exists in the database:', url);
-            return; // Stop execution here without sending a response to the frontend
+            continue; // Skips to the next resource in the loop
         }
 
         // Create new Mimu entry
