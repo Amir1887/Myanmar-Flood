@@ -1,21 +1,26 @@
-async function summarizeContent(text, maxLength = 130) {
+async function summarizeContent(text, maxLength) {
     if (!text || text.length < 100) {
         console.log("Text too short or invalid for summarization.");
-        return "Text too short to summarize.";
+        return text;
     }
 
     try {
-        // Dynamically import the pipeline function
+        // Dynamically import the pipeline function from @xenova/transformers
         const { pipeline } = await import('@xenova/transformers');
 
-        // Initialize the summarization pipeline with a model
+        // Initialize the summarization pipeline
         const summarizer = await pipeline('summarization', 'facebook/bart-large-cnn');
+        
+        // Generate the summary with specific settings
         const summary = await summarizer(text, {
-            maxLength: maxLength,
-            minLength: 30,
-            doSample: false
+            max_length: maxLength,
+            min_length: 30,
+            do_sample: false,
         });
+        
+        console.log("Summarized text:", summary[0].summary_text);
 
+        // Return the summary if it's valid and long enough
         if (summary[0]?.summary_text.length > 50) {
             return summary[0].summary_text;
         } else {
