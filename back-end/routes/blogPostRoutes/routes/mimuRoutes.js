@@ -10,11 +10,12 @@ router.post('/mimu/bulk', async (req, res) => {
     for (const resource of resources) {
     const { url, title, uploadedDate, pdfLink, summary  } = resource;
 
-        // Validation Before Storing Data
-        if (!title || !uploadedDate || !pdfLink) {
-            console.log('Invalid resource, skipping:', resource);
-            continue;
-        }
+// Validation Before Storing Data
+if (!title || !uploadedDate || !pdfLink || !summary || summary.length < 50) {
+    console.log('Invalid resource or summary, skipping:', resource);
+    continue;  // Skip this resource if validation fails
+}
+
 
     try {
         // Check if the record already exists based on URL
