@@ -50,6 +50,7 @@ async function processPdf(pdfUrl) {
         });
         console.log('Summary:', summary);
         console.log('......................................................................');
+        return summary;  // Return the summary to be used in fetchLatestResources(for sending to db)
         
     } catch (error) {
         console.error('Error processing PDF:', error);
