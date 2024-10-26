@@ -115,10 +115,10 @@ model BlogPost {
 
 model Mimu {
   id           Int      @id @default(autoincrement())
-  url          String   @unique
+  url          String   
   title        String
   uploadedDate String
-  pdfLink      String
+  pdfLink      String   @unique
   summary      String?  // New field for storing the PDF summary
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
