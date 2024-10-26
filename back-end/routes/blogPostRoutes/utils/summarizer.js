@@ -1,5 +1,3 @@
-const { pipeline } = require('@xenova/transformers');
-
 async function summarizeContent(text, maxLength = 130) {
     if (!text || text.length < 100) {
         console.log("Text too short or invalid for summarization.");
@@ -7,6 +5,9 @@ async function summarizeContent(text, maxLength = 130) {
     }
 
     try {
+        // Dynamically import the pipeline function
+        const { pipeline } = await import('@xenova/transformers');
+
         // Initialize the summarization pipeline with a model
         const summarizer = await pipeline('summarization', 'facebook/bart-large-cnn');
         const summary = await summarizer(text, {
