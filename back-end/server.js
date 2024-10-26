@@ -62,6 +62,11 @@ const postVisualizationRouter = require('./routes/visualizationRoutes/postVisual
 const getWeatherDataRouter = require('./routes/weatherDataRoute/getWeatherData');
 const postWeatherDataRouter = require('./routes/weatherDataRoute/postWeatherData');
 const postcheckUserTypeRouter = require('./routes/checkUserType/postcheckUserType');
+const getGlofasRouter = require('./routes/glofasRoutes/getGlofas');
+const getThenPostWeatherRouter = require('./routes/getWeatherRoutes/getThenPostWeather');
+const postSubscriptionRouter = require('./routes/notificationSubscription/postSubscription');
+const getBlogRouteRouter = require('./routes/blogPostRoutes/blogRoute');
+const postMimuRoutesRouter = require('./routes/blogPostRoutes/routes/mimuRoutes');
 
 
 
@@ -137,6 +142,11 @@ app.use('/', postVisualizationRouter);
 app.use('/', getWeatherDataRouter);
 app.use('/', postWeatherDataRouter);
 app.use('/', postcheckUserTypeRouter);
+app.use('/', getGlofasRouter);
+app.use('/', getThenPostWeatherRouter);
+app.use('/', postSubscriptionRouter);
+app.use('/', getBlogRouteRouter);
+app.use('/', postMimuRoutesRouter);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
