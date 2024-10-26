@@ -25,13 +25,15 @@ async function fetchLatestResources() {
 
             // Add the extracted information to the resources array
             if (title && uploadedDate && pdfLink) {
+                const summary = await processPdf(pdfLink);  // Get summary from the PDF
                 resources.push({
                     title,
                     uploadedDate,
                     pdfLink,
+                    summary  // Add the summary from the processed PDF
                 });
             }
-            processPdf(pdfLink);
+          
             console.log("pdf link::::::::::", pdfLink);
         });
 
