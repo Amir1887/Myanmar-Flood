@@ -15,7 +15,8 @@ async function fetchLatestResources() {
         const latestResourcesSection = $('section.pane-documents-panel-pane-158');
 
         // Now target the rows within this specific section
-        latestResourcesSection.find('tbody tr').each((i, element) => {
+        // Use `map()` to create an array of promises for processing each PDF
+        const promises = latestResourcesSection.find('tbody tr').map(async (i, element) => {
             // Extract the title
             const title = $(element).find('td.views-field-nothing a').text().trim();
             // Extract the uploaded date
@@ -35,7 +36,10 @@ async function fetchLatestResources() {
             }
           
             console.log("pdf link::::::::::", pdfLink);
-        });
+        }).get(); // Extracts the array of promises
+
+         
+        await Promise.all(promises); // Await all the promises (processing each PDF) at once
 
         // Print or process the scraped data
         console.log(resources);
