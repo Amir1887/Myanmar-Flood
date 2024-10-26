@@ -8,6 +8,14 @@ async function fetchLatestResources() {
         const { data } = await axios.get('https://themimu.info/emergencies/floods-2024');
         const $ = cheerio.load(data);
 
+          // Fetch all existing PDF links from the database
+          const existingResources = await prisma.mimu.findMany({
+            select: { pdfLink: true } // Get only the pdfLink field
+        });
+
+        // Create a Set for faster lookup
+        const existingPdfLinks = new Set(existingResources.map(resource => resource.pdfLink));
+
         // Array to hold the extracted resource information
         const resources = [];
 
@@ -24,10 +32,18 @@ async function fetchLatestResources() {
             // Extract the PDF link
             const pdfLink = $(element).find('td.views-field-nothing a').attr('href');
 
+
+            // Check if the pdfLink already exists in the Set
+          if (existingPdfLinks.has(pdfLink)) {
+              console.log(`PDF already exists in the database, skipping: ${pdfLink}`);
+               return; // Skip if the PDF link is already in the database
+           }
+
             // Add the extracted information to the resources array
             if (title && uploadedDate && pdfLink) {
                 const summary = await processPdf(pdfLink);  // Get summary from the PDF
                 resources.push({
+                    url: 'https://themimu.info/emergencies/floods-2024',
                     title,
                     uploadedDate,
                     pdfLink,
