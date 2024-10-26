@@ -119,9 +119,11 @@ model Mimu {
   title        String
   uploadedDate String
   pdfLink      String
+  summary      String?  // New field for storing the PDF summary
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
+
 
 model ReliefWeb {
   id              Int      @id @default(autoincrement())
