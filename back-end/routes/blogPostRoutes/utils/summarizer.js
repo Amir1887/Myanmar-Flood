@@ -10,10 +10,17 @@ async function summarizeContent(text, sentenceCount) {
     try {
         const summarizer = new SummarizerManager(text, sentenceCount);
         const summary = await summarizer.getSummaryByRank();
-        return summary.summary;
+
+        // Check for quality - e.g., if summary is too short or lacks important content, return the full text instead
+        if (summary.summary && summary.summary.length > 50) {
+            return summary.summary;
+        } else {
+            console.log('Summary quality too low, using full content.');
+            return text;
+        }
     } catch (error) {
         console.error('Error summarizing content:', error);
-        return "Failed to summarize the content.";
+        return text;  // If an error occurs, fall back to the full text
     }
 }
 
