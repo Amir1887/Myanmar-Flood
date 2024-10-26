@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
-
+const bodyParser = require('body-parser');
 
 const getFloodsRouter = require('./routes/floodRoutes/getFloodsRoute');
 const postFloodsRouter = require('./routes/floodRoutes/postFloodsRoute');
@@ -82,6 +82,9 @@ app.use(cors({
   origin: 'http://localhost:3000', 
   credentials: true,
 }));
+// Increase the payload limit to handle larger requests
+app.use(bodyParser.json({ limit: '10mb' }));
+app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
 
 app.use('/', getFloodsRouter);
 app.use('/', postFloodsRouter);
