@@ -1,4 +1,4 @@
-async function summarizeContent(text, maxLength) {
+async function summarizeContent(text, maxLength = 150) {
     if (!text || text.length < 100) {
         console.log("Text too short or invalid for summarization.");
         return text;
