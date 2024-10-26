@@ -10,8 +10,8 @@ async function fetchLatestResources() {
         const { data } = await axios.get('https://themimu.info/emergencies/floods-2024');
         const $ = cheerio.load(data);
 
-          // Fetch all existing PDF links from the database
-          const existingResources = await prisma.mimu.findMany({
+        // Fetch all existing PDF links from the database
+        const existingResources = await prisma.mimu.findMany({
             select: { pdfLink: true } // Get only the pdfLink field
         });
 
@@ -34,12 +34,12 @@ async function fetchLatestResources() {
             // Extract the PDF link
             const pdfLink = $(element).find('td.views-field-nothing a').attr('href');
 
-
             // Check if the pdfLink already exists in the Set
-          if (existingPdfLinks.has(pdfLink)) {
-              console.log(`PDF already exists in the database, skipping: ${pdfLink}`);
-               return; // Skip if the PDF link is already in the database
-           }
+            if (existingPdfLinks.has(pdfLink)) {
+                console.log(`PDF already exists in the database, skipping: ${pdfLink}`);
+                return; // Skip if the PDF link is already in the database
+      
+            }
 
             // Add the extracted information to the resources array
             if (title && uploadedDate && pdfLink) {
@@ -52,32 +52,19 @@ async function fetchLatestResources() {
                     summary  // Add the summary from the processed PDF
                 });
             }
-          
-            console.log("pdf link::::::::::", pdfLink);
+
+            console.log("PDF link processed:", pdfLink);
         }).get(); // Extracts the array of promises
 
-         
         await Promise.all(promises); // Await all the promises (processing each PDF) at once
 
         // Print or process the scraped data
         console.log(resources);
         console.log("----------------------------------------------------------------------");
-       
 
-           // Send the array of resources at once
-           if (resources.length) {
-            async function sendBatchedResources(resources, batchSize = 10) {
-                for (let i = 0; i < resources.length; i += batchSize) {
-                    const batch = resources.slice(i, i + batchSize);
-                    try {
-                        await axios.post('http://localhost:4000/mimu/bulk', { resources: batch });
-                        console.log('Batch saved successfully.');
-                    } catch (err) {
-                        console.error('Error saving batch:', err.message);
-                    }
-                }
-            }
-            
+        // Send the array of resources in batches
+        if (resources.length) {
+            await sendBatchedResources(resources); // Call the function to send batched resources
         } else {
             console.log('No valid resources found.');
         }
@@ -88,8 +75,20 @@ async function fetchLatestResources() {
     }
 }
 
+// Function to send resources in batches to avoid large payloads
+async function sendBatchedResources(resources, batchSize = 10) {
+    for (let i = 0; i < resources.length; i += batchSize) {
+        const batch = resources.slice(i, i + batchSize);
+        try {
+            await axios.post('http://localhost:4000/mimu/bulk', { resources: batch });
+            console.log(`Batch ${i / batchSize + 1} saved successfully.`);
+        } catch (err) {
+            console.error('Error saving batch:', err.message);
+        }
+    }
+}
+
 // Example usage
 fetchLatestResources();
 
-
-module.exports = {fetchLatestResources};
+module.exports = { fetchLatestResources };
