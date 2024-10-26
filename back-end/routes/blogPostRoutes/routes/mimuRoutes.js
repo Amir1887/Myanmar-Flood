@@ -19,7 +19,7 @@ router.post('/mimu/bulk', async (req, res) => {
     try {
         // Check if the record already exists based on URL
         const existingEntry = await prisma.mimu.findUnique({
-            where: { url }
+            where: { pdfLink }
         });
 
         if (existingEntry) {
