@@ -1,6 +1,11 @@
 const pdfParse = require('pdf-parse');
 const axios = require('axios');
-const { summarizeContent } = require('./summarizer');
+
+// Dynamically import the ESM module for summarization
+async function loadSummarizer() {
+    const { summarizeContent } = await import('./summarizer.mjs');
+    return summarizeContent;
+}
 
 // Retry function to download the PDF with retries in case of network failure
 async function downloadPdfWithRetry(pdfUrl, retries = 3, retryDelay = 1000, timeout = 60000) { // Extended timeout to 30 seconds
@@ -43,8 +48,11 @@ async function processPdf(pdfUrl) {
         const data = await pdfParse(pdfBuffer);
         // console.log('Extracted Text:', data.text);
 
+        // Dynamically load the summarizeContent function
+        const summarizeContent = await loadSummarizer();
+        
         // Optionally, you can now pass the extracted text to summarizer or store it for further use
-        const summary = await summarizeContent(data.text, 6).catch(err => {
+        const summary = await summarizeContent(data.text, 130).catch(err => {
             console.log('Summarization failed, using full content.');
             return data.text; // Fall back to the full text if summarization fails
         });
