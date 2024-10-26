@@ -24,18 +24,33 @@ async function fetchLatestResources() {
             const pdfLink = $(element).find('td.views-field-nothing a').attr('href');
 
             // Add the extracted information to the resources array
-            resources.push({
-                title,
-                uploadedDate,
-                pdfLink
-            });
+            if (title && uploadedDate && pdfLink) {
+                resources.push({
+                    title,
+                    uploadedDate,
+                    pdfLink,
+                });
+            }
             processPdf(pdfLink);
+            console.log("pdf link::::::::::", pdfLink);
         });
 
         // Print or process the scraped data
         console.log(resources);
         console.log("----------------------------------------------------------------------");
        
+
+           // Send the array of resources at once
+           if (resources.length) {
+            try {
+                await axios.post('http://localhost:4000/mimu/bulk', { resources });  // Single POST request
+                console.log('All Data from MIMU successfully saved.');
+            } catch (err) {
+                console.error('Error saving Mimu resources:', err.message);
+            }
+        } else {
+            console.log('No valid resources found.');
+        }
 
         return resources;
     } catch (error) {
