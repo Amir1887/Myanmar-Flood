@@ -1,4 +1,4 @@
-const { pipeline } = require('@huggingface/transformers');  // Import the pipeline function from transformers
+const { pipeline } = require('@xenova/transformers');
 
 async function summarizeContent(text, maxLength = 130) {
     if (!text || text.length < 100) {
@@ -7,18 +7,15 @@ async function summarizeContent(text, maxLength = 130) {
     }
 
     try {
-        // Load the summarization pipeline using the bart-large-cnn model
-        const summarizer = pipeline('summarization', 'facebook/bart-large-cnn');
-        
-        // Generate a summary with the given max and min lengths
+        // Initialize the summarization pipeline with a model
+        const summarizer = await pipeline('summarization', 'facebook/bart-large-cnn');
         const summary = await summarizer(text, {
-            max_length: maxLength,
-            min_length: 30,
-            do_sample: false
+            maxLength: maxLength,
+            minLength: 30,
+            doSample: false
         });
 
-        // Check if the summary is of good quality (not too short)
-        if (summary[0].summary_text && summary[0].summary_text.length > 50) {
+        if (summary[0]?.summary_text.length > 50) {
             return summary[0].summary_text;
         } else {
             console.log('Summary quality too low, using full content.');
