@@ -1,5 +1,7 @@
 const axios = require('axios');
 const cheerio = require('cheerio');
+const { PrismaClient } = require('@prisma/client');
+const prisma = new PrismaClient();
 const { extractTextFromPdf, processPdf } = require('./utils/extractTextFromPdf');
 
 async function fetchLatestResources() {
@@ -64,12 +66,18 @@ async function fetchLatestResources() {
 
            // Send the array of resources at once
            if (resources.length) {
-            try {
-                await axios.post('http://localhost:4000/mimu/bulk', { resources });  // Single POST request
-                console.log('All Data from MIMU successfully saved.');
-            } catch (err) {
-                console.error('Error saving Mimu resources:', err.message);
+            async function sendBatchedResources(resources, batchSize = 10) {
+                for (let i = 0; i < resources.length; i += batchSize) {
+                    const batch = resources.slice(i, i + batchSize);
+                    try {
+                        await axios.post('http://localhost:4000/mimu/bulk', { resources: batch });
+                        console.log('Batch saved successfully.');
+                    } catch (err) {
+                        console.error('Error saving batch:', err.message);
+                    }
+                }
             }
+            
         } else {
             console.log('No valid resources found.');
         }
