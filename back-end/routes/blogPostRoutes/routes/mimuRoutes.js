@@ -4,17 +4,17 @@ const { PrismaClient } = require('@prisma/client');
 const prisma = new PrismaClient();
 
 router.post('/mimu/bulk', async (req, res) => {
-    const { resource  } = req.body;
+    const { resources } = req.body;  // Expect an array of resources
+
+
+    for (const resource of resources) {
     const { url, title, uploadedDate, pdfLink, summary  } = resource;
 
-    //Validation Before Storing Data
-    function validateResource(resource) {
+        // Validation Before Storing Data
         if (!title || !uploadedDate || !pdfLink) {
             console.log('Invalid resource, skipping:', resource);
-            return false;
+            continue;
         }
-        return true;
-    }
 
     try {
         // Check if the record already exists based on URL
@@ -43,6 +43,7 @@ router.post('/mimu/bulk', async (req, res) => {
     } catch (error) {
         console.error('Error saving Mimu data:', error);
     }
+}
 });
 
 module.exports = router;
