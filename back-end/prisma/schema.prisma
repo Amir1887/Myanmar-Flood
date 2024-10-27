@@ -141,9 +141,9 @@ model Mozela {
   id            Int      @id @default(autoincrement())
   url           String   
   title         String
-  date          String   // For Mozela date field
+  date          String    @unique// For Mozela date field
   hydrograph    String
-  imageUrl      String?  @unique
+  imageUrl      String?  
   paragraph     String?  // New field for paragraph content if no image is found
   readMoreLink  String?
   createdAt     DateTime @default(now())
