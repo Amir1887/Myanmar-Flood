@@ -140,6 +140,10 @@ async function fetchFloodWarningsMoezala() {
             async function sendBatchedWarnings(warnings, batchSize = 10) {
                 for (let i = 0; i < warnings.length; i += batchSize) {
                     const batch = warnings.slice(i, i + batchSize);
+                    if (batch.length === 0) {
+                        console.log('Skipping empty batch.');
+                        continue;  // Skip empty batches
+                    }
                     try {
                         await axios.post('http://localhost:4000/mozela/bulk', { warnings: batch });
                         console.log('Warning Batch saved successfully.');
