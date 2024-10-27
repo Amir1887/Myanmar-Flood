@@ -83,7 +83,14 @@ async function getFloodWarningContent(readMoreLink) {
 
         // If no image is found, fetch the paragraph content
         if (!imageUrl) {
-            const paragraph = $('article .field-name-body .field-item').text().trim();
+            const paragraph =  $('article .field-name-body .field-item')
+            .contents()  // Get all child nodes (text, elements, etc.)( different from .children(), which only returns element nodes, not text nodes.)
+            .filter(function() {
+                // Filter out elements (like <ul>) and only keep text nodes or inline elements
+                // In the DOM, text nodes have a nodeType of 3.
+                return this.nodeType === 3 || $(this).is('p');  // Keep only text nodes and <p> tags
+            })
+            .text().trim();  // Combine the remaining text
             console.log("Paragraph content found:", paragraph);
             return { paragraph };
         }
