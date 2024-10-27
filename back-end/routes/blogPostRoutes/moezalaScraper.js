@@ -140,6 +140,7 @@ async function fetchFloodWarningsMoezala() {
             async function sendBatchedWarnings(warnings, batchSize = 10) {
                 for (let i = 0; i < warnings.length; i += batchSize) {
                     const batch = warnings.slice(i, i + batchSize);
+                    console.log('Sending batch:', batch); // Log the batch for debugging
                     if (batch.length === 0) {
                         console.log('Skipping empty batch.');
                         continue;  // Skip empty batches
@@ -148,7 +149,7 @@ async function fetchFloodWarningsMoezala() {
                         await axios.post('http://localhost:4000/mozela/bulk', { warnings: batch });
                         console.log('Warning Batch saved successfully.');
                     } catch (err) {
-                        console.error('Error saving batch:', err.message);
+                        console.error('Error saving batch:', err.response?.data || err.message); // Log detailed error
                     }
                 }
             }
