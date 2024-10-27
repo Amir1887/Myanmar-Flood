@@ -62,9 +62,10 @@ async function getFloodWarningImage(readMoreLink) {
         const imageSrc = $('article .field-name-body img').attr('src');
 
         // If the image URL is relative, convert it to an absolute URL
-        const imageUrl = imageSrc ? (imageSrc.startsWith('http') ? imageSrc : `https:${imageSrc}`) : null;
+        const imageUrl = imageSrc.startsWith('http') ? imageSrc : `https:${imageSrc}`;
+        console.log("img url", imageUrl);
 
-        return imageUrl; // Return the image URL or null if not found
+        return imageUrl; // Return the image URL
     } catch (error) {
         console.error('Error fetching image:', error.message);
         return null;
