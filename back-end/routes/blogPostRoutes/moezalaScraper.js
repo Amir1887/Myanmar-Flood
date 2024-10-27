@@ -62,7 +62,7 @@ async function getFloodWarningImage(readMoreLink) {
         const imageSrc = $('article .field-name-body img').attr('src');
 
         // If the image URL is relative, convert it to an absolute URL
-        const imageUrl = imageSrc.startsWith('http') ? imageSrc : `https:${imageSrc}`;
+        const imageUrl = imageSrc ? (imageSrc.startsWith('http') ? imageSrc : `https:${imageSrc}`) : null;
         console.log("img url", imageUrl);
 
         return imageUrl; // Return the image URL
@@ -90,8 +90,29 @@ async function fetchFloodWarningsMoezala() {
             for (const warning of warningsFromPage) {
                 const imageUrl = await getFloodWarningImage(warning.readMoreLink);
                 warning.imageUrl = imageUrl; // Add imageUrl to the warning object
+                warning.url = pageUrl; // Add pageUrl to the warning object
                 allFloodWarnings.push(warning);
             }
+        }
+
+
+        
+        // Send the array of resources in batches
+        if (allFloodWarnings.length) {
+            async function sendBatchedWarnings(warnings, batchSize = 10) {
+                for (let i = 0; i < warnings.length; i += batchSize) {
+                    const batch = warnings.slice(i, i + batchSize);
+                    try {
+                        await axios.post('http://localhost:4000/mozela/bulk', { warnings: batch });
+                        console.log('Warning Batch saved successfully.');
+                    } catch (err) {
+                        console.error('Error saving batch:', err.message);
+                    }
+                }
+            }
+            await sendBatchedWarnings(allFloodWarnings);
+        } else {
+            console.log('No valid resources found.');
         }
 
         return allFloodWarnings;
