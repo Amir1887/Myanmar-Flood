@@ -139,11 +139,11 @@ model ReliefWeb {
 
 model Mozela {
   id          Int      @id @default(autoincrement())
-  url         String   @unique
+  url         String   
   title       String
   date        String   // For Mozela date field
   hydrograph  String
-  imageUrl    String?  // Optional field to store image links
+  imageUrl    String  @unique
   readMoreLink String?
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
