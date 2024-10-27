@@ -27,7 +27,7 @@ async function fetchFloodWarningsFromPage(pageUrl) {
             const readMoreLink = $(element).find('.views-field-view-node .field-content a').attr('href');
 
             // Check if the pdfLink already exists in the Set
-            if (existingDates.has(date)) {
+            if (existingWarningDates.has(date)) {
                 console.log(`This Warning Date already exists in the database, skipping: ${date}`);
                 return; // Skip the current iteration by using return in the .each() callback
             }
