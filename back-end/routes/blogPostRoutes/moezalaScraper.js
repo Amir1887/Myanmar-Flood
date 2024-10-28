@@ -10,12 +10,12 @@ async function fetchFloodWarningsFromPage(pageUrl) {
         const $ = cheerio.load(data);
 
         // Fetch all existing warning dates from the database
-        const existingDates = await prisma.mozela.findMany({
-            select: { date: true } // Get only the pdfLink field
-        });
+        // const existingDates = await prisma.mozela.findMany({
+        //     select: { date: true } // Get only the pdfLink field
+        // });
 
         // Create a Set for faster lookup
-        const existingWarningDates = new Set(existingDates.map(date => date.date));
+        // const existingWarningDates = new Set(existingDates.map(date => date.date));
 
         const floodWarnings = [];
 
@@ -29,10 +29,10 @@ async function fetchFloodWarningsFromPage(pageUrl) {
          const readMoreLink = $(element).find('.views-field-view-node .field-content a').attr('href');
 
     // Check if the warning date already exists in the database
-       if (existingWarningDates.has(date)) {
-              console.log(`This Warning Date already exists in the database, skipping: ${date}`);
-              continue; // Skip this warning and move to the next one
-         }
+    //    if (existingWarningDates.has(date)) {
+    //           console.log(`This Warning Date already exists in the database, skipping: ${date}`);
+    //           continue; // Skip this warning and move to the next one
+    //      }
 
             // Collect the readMoreLink and other details if it exists
             if (readMoreLink) {
@@ -136,26 +136,25 @@ async function fetchFloodWarningsMoezala() {
         }
 
 
-        
-        // Send the array of resources in batches
-        if (allFloodWarnings.length) {
-            async function sendBatchedWarnings(warnings, batchSize = 10) {
-                for (let i = 0; i < warnings.length; i += batchSize) {
-                    const batch = warnings.slice(i, i + batchSize);
-                    console.log('Sending batch:', batch); // Log the batch for debugging
-                    if (batch.length === 0) {
-                        console.log('Skipping empty batch.');
-                        continue;  // Skip empty batches
-                    }
-                    try {
-                        await axios.post('http://localhost:4000/mozela/bulk', { warnings: batch });
-                        console.log('Warning Batch saved successfully.');
-                    } catch (err) {
-                        console.error('Error saving batch:', err.response?.data || err.message); // Log detailed error
-                    }
+        async function sendBatchedWarnings(warnings, batchSize = 10) {
+            for (let i = 0; i < warnings.length; i += batchSize) {
+                const batch = warnings.slice(i, i + batchSize);
+                console.log('Sending batch:', batch); // Log the batch for debugging
+                if (batch.length === 0) {
+                    console.log('Skipping empty batch.');
+                    continue;  // Skip empty batches
+                }
+                try {
+                    await axios.post('http://localhost:4000/mozela/bulk', { warnings: batch  });
+                    console.log('Warning Batch saved successfully.');
+                } catch (err) {
+                    console.error('Error saving batch:', err.response?.data || err.message); // Log detailed error
                 }
             }
-            await sendBatchedWarnings(allFloodWarnings);
+        }
+        // Send the array of resources in batches
+        if (allFloodWarnings.length) {
+            await sendBatchedWarnings(allFloodWarnings, 10);
         } else {
             console.log('No valid resources found.');
         }
