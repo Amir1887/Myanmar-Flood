@@ -87,6 +87,32 @@ async function fetchFloodWarningsReliefWeb(depth = 1) {
                 }
               
             }
+
+                 
+                // Send the array of resources in batches
+                if(results && results.length > 0){
+                    async function sendBatchedResults(results, batchSize = 10) {
+                        for (let i = 0; i < results.length; i += batchSize) {
+                            const batch = results.slice(i, i + batchSize);
+                            console.log('Sending batch:', batch); // Log the batch for debugging
+                            if (batch.length === 0) {
+                                console.log('Skipping empty batch.');
+                                continue;  // Skip empty batches
+                            }
+                            try {
+                                console.log('Sending results to the database:', results);
+                                await axios.post('http://localhost:4000/reliefweb/bulk', { results });
+                                console.log('Warning Batch saved successfully.');
+                            } catch (err) {
+                                console.error("Error saving reliefWeb data:", err.response?.data || err.message); 
+                                // console.error('Error saving batch:',  err.message); // Log detailed error
+                            }
+                        }
+                    }
+                    await sendBatchedResults(results);
+                } else {
+                    console.log('No valid results found.');
+                }
             console.log("results....", results);
         };
 
