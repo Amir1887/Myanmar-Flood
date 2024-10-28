@@ -79,13 +79,14 @@ const saveAlertToDB = async (message, latitude, longitude, weatherDataId = null,
   }
 };
 
-// Function to notify users based on weather alerts
-const notifyUserIfThresholdsExceeded = async (alerts) => {
-  if (alerts.length > 0) {
+
+// Function to notify users based on weather alerts and update alert status
+const notifyUserIfThresholdsExceeded = async (alerts, alertIds) => {
+  if (alerts.length > 0 && alertIds.length > 0) {
     try {
       // Fetch all subscriptions from the database
       const subscriptions = await prisma.pushSubscription.findMany();
-      
+
       for (const subscription of subscriptions) {
         const payload = {
           title: "Weather Alert!",
@@ -93,16 +94,41 @@ const notifyUserIfThresholdsExceeded = async (alerts) => {
           icon: "https://img.icons8.com/?size=100&id=11642&format=png&color=000000",
         };
 
-        // Send push notification
-        await sendPushNotification(subscription, payload);
-      }
+        try {
+          // Send push notification
+          await sendPushNotification(subscription, payload);
 
-      console.log("Notifications sent to all users");
+          // Update alert status to "SENT" if notification is successful
+          await prisma.alert.updateMany({
+            where: {
+              id: { in: alertIds },
+            },
+            data: {
+              status: "SENT",
+            },
+          });
+
+          console.log("Notifications sent to all users. Alerts updated to SENT.");
+        } catch (error) {
+          // If an error occurs, update alert status to "FAILED"
+          await prisma.alert.updateMany({
+            where: {
+              id: { in: alertIds },
+            },
+            data: {
+              status: "FAILED",
+            },
+          });
+
+          console.error("Error sending notification. Alerts updated to FAILED:", error);
+        }
+      }
     } catch (error) {
-      console.error("Error sending notifications:", error);
+      console.error("Error fetching subscriptions:", error);
     }
   }
 };
+
 
 // Function to check if weather data exceeds thresholds
 const checkThresholds = (currentData, latitude, longitude) => {
@@ -159,8 +185,8 @@ const saveWeatherDataToDB = async (weatherData, latitude, longitude) => {
         };
 
         const alerts = checkThresholds(currentData, latitude, longitude);
+        const alertIds = []; // Array to store alert IDs
 
-        // Check if weather data already exists
         const existingEntry = await prisma.weatherData.findUnique({
           where: {
             fetchedAt_latitude_longitude: {
@@ -172,8 +198,8 @@ const saveWeatherDataToDB = async (weatherData, latitude, longitude) => {
         });
 
         let weatherDataId;
+
         if (!existingEntry) {
-          // Insert new weather data into the database
           const newWeatherData = await prisma.weatherData.create({
             data: {
               latitude: parseFloat(latitude),
@@ -196,24 +222,21 @@ const saveWeatherDataToDB = async (weatherData, latitude, longitude) => {
             },
           });
 
-          console.log("Inserted weather data:", newWeatherData);
-          weatherDataId = newWeatherData.id; // Set the weatherDataId for alerts
+          weatherDataId = newWeatherData.id;
         } else {
-          console.log(
-            `Data for ${hourlyData.time[i]} at coordinates (${latitude}, ${longitude}) already exists.`
-          );
-          weatherDataId = existingEntry.id; // Use existing weatherDataId for alerts
+          weatherDataId = existingEntry.id;
         }
 
-        // Save alerts to the database using the weatherDataId
+        // Save alerts and collect their IDs
         if (alerts.length > 0) {
           for (const alertMessage of alerts) {
-            await saveAlertToDB(alertMessage, latitude, longitude, weatherDataId);
+            const savedAlert = await saveAlertToDB(alertMessage, latitude, longitude, weatherDataId);
+            alertIds.push(savedAlert.id); // Add saved alert ID
           }
         }
 
-        // Send notifications after saving alerts
-        await notifyUserIfThresholdsExceeded(alerts);
+        // Send notifications and pass alertIds
+        await notifyUserIfThresholdsExceeded(alerts, alertIds);
 
       } catch (error) {
         console.error("Error inserting weather data:", error);
@@ -223,6 +246,7 @@ const saveWeatherDataToDB = async (weatherData, latitude, longitude) => {
     console.log("No weather data fetched or weather data format is incorrect.");
   }
 };
+
 
 // Function to start the cron job
 const startWeatherDataFetchCron = (latitude, longitude) => {
