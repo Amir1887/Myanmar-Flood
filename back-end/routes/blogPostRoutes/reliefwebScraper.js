@@ -53,23 +53,34 @@ async function fetchFloodWarningsReliefWeb(depth = 1) {
                   // Await `scrapeArticleContent` to handle its asynchronous nature
                   const articleContent = await scrapeArticleContent(articleUrl, depth + 1);
 
-                  // Push all data to results
-                  results.push({
-                      title: titleText || articleContent.articleTitle,
-                      articleContent: articleContent.articleContent,
-                      articleUrl: articleUrl,
-                      summary: articleContent.summary,
-                      sentiment: articleContent.sentiment,
-                      categorizedSentiment: articleContent.categorizedSentiment,
-                      countryLink: updatedCountryLink,
-                      publishedDate: publishedDateObj,
-                  });
+                    // Check if articleContent is valid before pushing to results
+                    if (articleContent && articleContent.articleContent) {
+                        results.push({
+                            title: titleText || articleContent.articleTitle,
+                            articleContent: articleContent.articleContent,
+                            articleUrl: articleUrl,
+                            summary: articleContent.summary,
+                            sentiment: articleContent.sentiment,
+                            categorizedSentiment: articleContent.categorizedSentiment,
+                            countryLink: updatedCountryLink,
+                            publishedDate: publishedDateObj,
+                        });
+                    } else {
+                        console.log(`No valid article content for URL: ${articleUrl}`);
+                    }
   
                   // Now fetch and include related content
                   const relatedResults = await scrapeRelatedContent($, depth + 1);
+                  console.log("related results", relatedResults);
+                  // Check if relatedResults has valid data before pushing
+                  if (relatedResults && relatedResults.length > 0) {
                   results.push(...relatedResults); // Push related results into the main results array
+                } else {
+                    console.log('No related results found.');
+                }
               
             }
+            console.log("results....", results);
         });
 
         return results; // Return the filtered results
