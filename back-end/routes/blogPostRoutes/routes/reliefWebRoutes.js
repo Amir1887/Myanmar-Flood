@@ -76,4 +76,10 @@ console.log(`Processed: ${processedCount}, Skipped: ${skippedCount}`);
       res.status(200).send({ message: "Bulk save completed." }); 
 });
 
+router.get("/reliefweb/bulk", async (req, res) => {
+    const reliefWeb = await prisma.reliefWeb.findMany();
+    res.json(reliefWeb);
+    console.log("All reliefWeb data", reliefWeb);
+});
+
 module.exports = router;
