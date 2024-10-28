@@ -20,7 +20,7 @@ async function fetchFloodWarningsReliefWeb(depth = 1) {
         const results = [];
 
         // Iterate through each article in the list
-        $('.rw-river-article').each((i, element) => {
+        $('.rw-river-article').each(async (i, element) => {  // Added `async` here
             const titleElement = $(element).find('.rw-river-article__title a');
             const titleText = titleElement.text().trim();
             const articleUrl = titleElement.attr('href');
@@ -49,20 +49,33 @@ async function fetchFloodWarningsReliefWeb(depth = 1) {
                 const updatedCountryLink = `https://reliefweb.int${countryLink}`;
 
                 // Add the relevant data to the results array
-                results.push({
-                    title: titleText,
-                    articleUrl: articleUrl,
-                    countryLink: updatedCountryLink,
-                });
+  
+                  // Await `scrapeArticleContent` to handle its asynchronous nature
+                  const articleContent = await scrapeArticleContent(articleUrl, depth + 1);
 
-                // Scrape the main article content
-                scrapeArticleContent(articleUrl, depth + 1);
+                  // Push all data to results
+                  results.push({
+                      title: titleText || articleContent.articleTitle,
+                      articleContent: articleContent.articleContent,
+                      articleUrl: articleUrl,
+                      summary: articleContent.summary,
+                      sentiment: articleContent.sentiment,
+                      categorizedSentiment: articleContent.categorizedSentiment,
+                      countryLink: updatedCountryLink,
+                      publishedDate: publishedDateObj,
+                  });
+  
+                  // Now fetch and include related content
+                  const relatedResults = await scrapeRelatedContent($, depth + 1);
+                  results.push(...relatedResults); // Push related results into the main results array
+              
             }
         });
 
         return results; // Return the filtered results
     } catch (error) {
         console.error('Error fetching flood warnings from ReliefWeb:', error);
+        return [];
     }
 }
 
@@ -114,7 +127,13 @@ async function scrapeArticleContent(articleUrl, depth) {
         console.log("--------------------------------------------------------------------------");
         // Process related content (if any)
         await scrapeRelatedContent($, depth);
-
+        return {
+            articleTitle,
+            articleContent,
+            summary: summary.summary,
+            sentiment,
+            categorizedSentiment
+        };
     } catch (error) {
         console.error('Error scraping article content:', error);
     }
@@ -134,11 +153,12 @@ function categorizeSentiment(score) {
 // Function to scrape related content and process them recursively
 async function scrapeRelatedContent($, depth) {
     if (depth > MAX_DEPTH) {
-        return;
+        return[];
     }
   
+    const relatedResults = [];
     // Access the "Related Content" section
-    $('#related .rw-river-article').each((i, element) => {
+    $('#related .rw-river-article').each(async(i, element) => {
         // Extract the country link and text, and make the comparison case-insensitive
         const countryLink = $(element).find('.rw-entity-country-slug a').attr('href');
         const countryText = $(element).find('.rw-entity-country-slug a').text().trim().toLowerCase(); // Convert to lowercase
@@ -166,10 +186,25 @@ async function scrapeRelatedContent($, depth) {
             if (isRelevant) {
                 console.log(`Related Content: ${relatedTitle} | URL: ${relatedUrl} | Country: Myanmar`);
                 // Recursively scrape related content
-                scrapeArticleContent(relatedUrl, depth + 1); // Recursively scrape related content
+                const articleContent = await scrapeArticleContent(relatedUrl, depth + 1); // Using await here
+                if (articleContent) {  // Ensure the content is not undefined
+                    relatedResults.push({
+                        title: relatedTitle || articleContent.articleTitle,
+                        articleContent: articleContent.articleContent,
+                        articleUrl: relatedUrl,
+                        summary: articleContent.summary,
+                        sentiment: articleContent.sentiment,
+                        categorizedSentiment: articleContent.categorizedSentiment,
+                        countryLink: updatedCountryLink,
+                        publishedDate: postedDateObj,
+                    });
+                } else {
+                    console.log(`Failed to fetch article content for: ${relatedTitle}`);
+                }
             }
         }
     });
+    return relatedResults;
 }
-
+fetchFloodWarningsReliefWeb();
 module.exports = { fetchFloodWarningsReliefWeb };
