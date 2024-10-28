@@ -20,7 +20,9 @@ async function fetchFloodWarningsReliefWeb(depth = 1) {
         const results = [];
 
         // Iterate through each article in the list
-        $('.rw-river-article').each(async (i, element) => {  // Added `async` here
+        const articles = $('.rw-river-article'); 
+        for (let i = 0; i < articles.length; i++) { 
+            const element = articles[i];
             const titleElement = $(element).find('.rw-river-article__title a');
             const titleText = titleElement.text().trim();
             const articleUrl = titleElement.attr('href');
@@ -86,7 +88,7 @@ async function fetchFloodWarningsReliefWeb(depth = 1) {
               
             }
             console.log("results....", results);
-        });
+        };
 
         return results; // Return the filtered results
     } catch (error) {
@@ -178,8 +180,10 @@ async function scrapeRelatedContent($, depth) {
     }
   
     const relatedResults = [];
-    // Access the "Related Content" section
-    $('#related .rw-river-article').each(async(i, element) => {
+       // Access the "Related Content" section  
+       const relatedArticles = $('#related .rw-river-article');  
+    for (let i = 0; i < relatedArticles.length; i++) { // Using a for loop to handle async properly 
+        const element = relatedArticles[i]; 
         // Extract the country link and text, and make the comparison case-insensitive
         const countryLink = $(element).find('.rw-entity-country-slug a').attr('href');
         const countryText = $(element).find('.rw-entity-country-slug a').text().trim().toLowerCase(); // Convert to lowercase
@@ -195,6 +199,10 @@ async function scrapeRelatedContent($, depth) {
         const relatedTitle = $(element).find('.rw-river-article__title a').text().trim();
         const relatedUrl = $(element).find('.rw-river-article__title a').attr('href');
 
+        if (!relatedUrl.startsWith('http')) {
+            relatedUrl = `https://reliefweb.int${relatedUrl}`;
+        }
+
         const postedDate = $(element).find('dd.rw-entity-meta__tag-value--posted time').attr('datetime');
         const postedDateObj = new Date(postedDate);
 
@@ -208,6 +216,7 @@ async function scrapeRelatedContent($, depth) {
                 console.log(`Related Content: ${relatedTitle} | URL: ${relatedUrl} | Country: Myanmar`);
                 // Recursively scrape related content
                 const articleContent = await scrapeArticleContent(relatedUrl, depth + 1); // Using await here
+                console.log("related articel content:##", articleContent);
                 if (articleContent) {  // Ensure the content is not undefined
                     relatedResults.push({
                         title: relatedTitle || articleContent.articleTitle,
@@ -224,7 +233,7 @@ async function scrapeRelatedContent($, depth) {
                 }
             }
         }
-    });
+    };
     return relatedResults;
 }
 fetchFloodWarningsReliefWeb();
