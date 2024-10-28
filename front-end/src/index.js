@@ -24,6 +24,8 @@ import { SearchProvider } from "./context/SearchContext";
 import { UserLocationProvider } from "./context/UserLocationContext";
 import { registerServiceWorker, SubscribeUserToPush } from "./services/pushNotifications";
 import AllblogPosts from "./pages/blogPosts/AllblogPosts";
+import Alert from "./pages/Alerts/Alert";
+import Weatherhistory from "./pages/WeatherHistory/Weatherhistory";
 
 
 
@@ -62,6 +64,8 @@ const router = createBrowserRouter([
           </UsereProvider>
         )},  // Accessible as /dashboard/profile
           { path: 'blog-post', element: <AllblogPosts/>}, 
+          { path: 'alerts', element: <Alert/>}, 
+          { path: 'weather-history', element: <Weatherhistory/>}, 
           { path: 'user-form', element: (
           <UsereProvider>
           <UserForm /> 
