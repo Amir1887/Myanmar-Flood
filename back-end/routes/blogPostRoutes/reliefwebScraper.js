@@ -262,5 +262,5 @@ async function scrapeRelatedContent($, depth) {
     };
     return relatedResults;
 }
-fetchFloodWarningsReliefWeb();
+// fetchFloodWarningsReliefWeb(); // No need for this manual call due to presence of cron 
 module.exports = { fetchFloodWarningsReliefWeb };
