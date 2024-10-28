@@ -25,6 +25,11 @@ async function fetchFloodWarningsReliefWeb(depth = 1) {
             const titleText = titleElement.text().trim();
             const articleUrl = titleElement.attr('href');
 
+            // Ensure the URL is complete (append base URL if necessary)
+            if (!articleUrl.startsWith('http')) {
+                articleUrl = `https://reliefweb.int${articleUrl}`;
+            }
+
             // Find the posted and published dates
             const postedDate = $(element).find('dd.rw-entity-meta__tag-value--posted time').attr('datetime');
             const publishedDate = $(element).find('dd.rw-entity-meta__tag-value--published time').attr('datetime');
@@ -122,6 +127,11 @@ async function scrapeArticleContent(articleUrl, depth) {
 
             console.log('Original Article Content:', articleContent);
             console.log("***********************************")
+
+            if (!articleContent) {
+                console.log(`No content found for: ${articleUrl}`);
+                return null;  // Return null if no content is found
+            }
   
         // Summarize the content
         const summarizer = new SummarizerManager(articleContent, 5); // Limit to 5 sentences in the summary
