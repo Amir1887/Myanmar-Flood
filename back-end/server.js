@@ -67,6 +67,8 @@ const getThenPostWeatherRouter = require('./routes/getWeatherRoutes/getThenPostW
 const postSubscriptionRouter = require('./routes/notificationSubscription/postSubscription');
 const getBlogRouteRouter = require('./routes/blogPostRoutes/blogRoute');
 const postMimuRoutesRouter = require('./routes/blogPostRoutes/routes/mimuRoutes');
+const postMozelaRoutesRouter = require('./routes/blogPostRoutes/routes/mozelaRoutes');
+const postreliefWebRoutessRouter = require('./routes/blogPostRoutes/routes/reliefWebRoutes');
 
 
 
@@ -83,8 +85,8 @@ app.use(cors({
   credentials: true,
 }));
 // Increase the payload limit to handle larger requests
-app.use(bodyParser.json({ limit: '10mb' }));
-app.use(bodyParser.urlencoded({ limit: '10mb', extended: true }));
+app.use(bodyParser.json({ limit: '50mb' }));
+app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
 
 app.use('/', getFloodsRouter);
 app.use('/', postFloodsRouter);
@@ -150,6 +152,8 @@ app.use('/', getThenPostWeatherRouter);
 app.use('/', postSubscriptionRouter);
 app.use('/', getBlogRouteRouter);
 app.use('/', postMimuRoutesRouter);
+app.use('/', postMozelaRoutesRouter);
+app.use('/', postreliefWebRoutessRouter);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
