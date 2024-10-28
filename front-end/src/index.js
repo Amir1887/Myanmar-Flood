@@ -23,6 +23,7 @@ import WeatherComponent from "./pages/Weather/WeatherComponent";
 import { SearchProvider } from "./context/SearchContext";
 import { UserLocationProvider } from "./context/UserLocationContext";
 import { registerServiceWorker, SubscribeUserToPush } from "./services/pushNotifications";
+import AllblogPosts from "./pages/blogPosts/AllblogPosts";
 
 
 
@@ -60,6 +61,7 @@ const router = createBrowserRouter([
           <ProfilePage />
           </UsereProvider>
         )},  // Accessible as /dashboard/profile
+          { path: 'blog-post', element: <AllblogPosts/>}, 
           { path: 'user-form', element: (
           <UsereProvider>
           <UserForm /> 
