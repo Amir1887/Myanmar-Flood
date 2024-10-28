@@ -103,58 +103,53 @@ enum AlertType {
 }
 
 model BlogPost {
-  id          Int       @id @default(autoincrement())
-  url         String    @unique
-  hash        String    @unique // A unique identifier to track content uniqueness (could be a hash of the content)
+  id          Int      @id @default(autoincrement())
+  url         String   @unique
+  hash        String   @unique // A unique identifier to track content uniqueness (could be a hash of the content)
   title       String
   summary     String
   mainContent String
-  createdAt   DateTime  @default(now())
-  updatedAt   DateTime  @updatedAt
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
 }
 
 model Mimu {
   id           Int      @id @default(autoincrement())
-  url          String   
+  url          String
   title        String
   uploadedDate String
   pdfLink      String   @unique
-  summary      String?  // New field for storing the PDF summary
+  summary      String? // New field for storing the PDF summary
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 }
 
-
 model ReliefWeb {
-  id                Int      @id @default(autoincrement())
-  articleUrl        String   @unique
-  title             String
-  articleContent    String
-  summary           String
-  relatedContent    String?  // Optional if scraped
-  sentiment         Float    // Sentiment score
+  id                   Int       @id @default(autoincrement())
+  articleUrl           String    @unique
+  title                String
+  articleContent       String
+  summary              String
+  relatedContent       String? // Optional if scraped
+  sentiment            Float // Sentiment score
   categorizedSentiment String // Positive, Negative, or Neutral
-  createdAt         DateTime @default(now())
-  updatedAt         DateTime @updatedAt
-  publishedDate     DateTime?
+  createdAt            DateTime  @default(now())
+  updatedAt            DateTime  @updatedAt
+  publishedDate        DateTime?
 }
-
 
 model Mozela {
-  id            Int      @id @default(autoincrement())
-  url           String   
-  title         String
-  date          String    @unique// For Mozela date field
-  hydrograph    String
-  imageUrl      String?  
-  paragraph     String?  // New field for paragraph content if no image is found
-  readMoreLink  String?
-  createdAt     DateTime @default(now())
-  updatedAt     DateTime @updatedAt
+  id           Int      @id @default(autoincrement())
+  url          String
+  title        String
+  date         String   @unique // For Mozela date field
+  hydrograph   String
+  imageUrl     String?
+  paragraph    String? // New field for paragraph content if no image is found
+  readMoreLink String?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
 }
-
-
-
 
 model DamageAssessment {
   id                   Int                 @id @default(autoincrement())
@@ -266,6 +261,7 @@ model WeatherData {
   floodDataId          Int? // Optional: Link to related flood data
   floodData            FloodData? @relation(fields: [floodDataId], references: [id])
   apiSource            String // The API source used (e.g., "Open-Meteo")
+  Alert                Alert[]
 
   @@unique([fetchedAt, latitude, longitude])
 }
@@ -320,13 +316,17 @@ enum PriorityLevel {
 }
 
 model Alert {
-  id          Int         @id @default(autoincrement())
-  message     String // Alert message sent to users
-  region      String // Region where alert is applicable
-  floodDataId Int
-  floodData   FloodData   @relation(fields: [floodDataId], references: [id])
-  status      AlertStatus @default(PENDING) // Status of the alert: sent, failed, etc.
-  createdAt   DateTime    @default(now())
+  id            Int          @id @default(autoincrement())
+  message       String
+  region        String?
+  latitude      Float
+  longitude     Float
+  floodDataId   Int? // Foreign key to FloodData
+  floodData     FloodData?   @relation(fields: [floodDataId], references: [id], map: "Alert_floodData_fkey") // Unique constraint name
+  weatherDataId Int? // Foreign key to WeatherData
+  weatherData   WeatherData? @relation(fields: [weatherDataId], references: [id], map: "Alert_weatherData_fkey") // Another unique constraint name
+  status        AlertStatus  @default(PENDING)
+  createdAt     DateTime     @default(now())
 }
 
 model Donation {
@@ -416,8 +416,8 @@ model VolunteerApplication {
   createdAt          DateTime          @default(now())
   reviewedAt         DateTime? // Optional: When the application was reviewed
   notes              String? // Optional: Notes from the reviewer
-  organizationId     Int?               
-  organization       Organization?      @relation(fields: [organizationId], references: [id])
+  organizationId     Int?
+  organization       Organization?     @relation(fields: [organizationId], references: [id])
 }
 
 enum ApplicationStatus {
