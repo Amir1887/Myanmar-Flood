@@ -131,13 +131,12 @@ model ReliefWeb {
   title             String
   articleContent    String
   summary           String
-  pdfLink           String?
   relatedContent    String?  // Optional if scraped
   sentiment         Float    // Sentiment score
   categorizedSentiment String // Positive, Negative, or Neutral
   createdAt         DateTime @default(now())
   updatedAt         DateTime @updatedAt
-  publishedDate     DateTime
+  publishedDate     DateTime?
 }
 
 
