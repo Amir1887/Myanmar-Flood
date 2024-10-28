@@ -19,7 +19,6 @@ const thresholds = {
   surfacePressure: {
     rapidDrop: 2, // hPa in 6 hours indicating a storm
   },
-  cumulativePrecipitation: 50, // mm in a week indicating increased flood risk
   windGusts: 30, // km/h indicating significant weather systems
 };
 
@@ -60,6 +59,51 @@ const fetchWeatherData = async (latitude, longitude) => {
   }
 };
 
+// Function to save alerts to the database
+const saveAlertToDB = async (message, latitude, longitude, weatherDataId = null, floodDataId = null) => {
+  try {
+    const newAlert = await prisma.alert.create({
+      data: {
+        message: message,
+        latitude: latitude,
+        longitude: longitude,
+        weatherDataId: weatherDataId,
+        floodDataId: floodDataId,
+        status: "PENDING", // Default to PENDING before sending
+      },
+    });
+    console.log("Alert saved to DB:", newAlert);
+    return newAlert;
+  } catch (error) {
+    console.error("Error saving alert to DB:", error);
+  }
+};
+
+// Function to notify users based on weather alerts
+const notifyUserIfThresholdsExceeded = async (alerts) => {
+  if (alerts.length > 0) {
+    try {
+      // Fetch all subscriptions from the database
+      const subscriptions = await prisma.pushSubscription.findMany();
+      
+      for (const subscription of subscriptions) {
+        const payload = {
+          title: "Weather Alert!",
+          body: alerts.join("\n"),
+          icon: "https://img.icons8.com/?size=100&id=11642&format=png&color=000000",
+        };
+
+        // Send push notification
+        await sendPushNotification(subscription, payload);
+      }
+
+      console.log("Notifications sent to all users");
+    } catch (error) {
+      console.error("Error sending notifications:", error);
+    }
+  }
+};
+
 // Function to check if weather data exceeds thresholds
 const checkThresholds = (currentData, latitude, longitude) => {
   const alerts = [];
@@ -70,9 +114,7 @@ const checkThresholds = (currentData, latitude, longitude) => {
       `Potential flooding detected at (${latitude}, ${longitude}) due to high precipitation.`
     );
   }
-  if (
-    currentData.precipitation >= thresholds.precipitation.highRiskShortDuration
-  ) {
+  if (currentData.precipitation >= thresholds.precipitation.highRiskShortDuration) {
     alerts.push(
       `High risk of flash floods detected at (${latitude}, ${longitude}) due to very high precipitation.`
     );
@@ -118,37 +160,7 @@ const saveWeatherDataToDB = async (weatherData, latitude, longitude) => {
 
         const alerts = checkThresholds(currentData, latitude, longitude);
 
-
-        // Function to notify users based on weather alerts
-        const notifyUserIfThresholdsExceeded = async (alerts) => {
-          if (alerts.length > 0) {
-            try {
-              // Fetch all subscriptions from the database
-              const subscriptions = await prisma.pushSubscription.findMany();
-              
-              for (const subscription of subscriptions) {
-                const payload = {
-                  title: "Weather Alert!",
-                  body: alerts.join("\n"),
-                  icon: "https://img.icons8.com/?size=100&id=11642&format=png&color=000000",
-                };
-        
-                // Send push notification
-                await sendPushNotification(subscription, payload);
-              }
-              
-              console.log("Notifications sent to all users");
-            } catch (error) {
-              console.error("Error sending notifications:", error);
-            }
-          }
-        };
-        
-
-        
-          notifyUserIfThresholdsExceeded(alerts);
-        
-
+        // Check if weather data already exists
         const existingEntry = await prisma.weatherData.findUnique({
           where: {
             fetchedAt_latitude_longitude: {
@@ -159,7 +171,9 @@ const saveWeatherDataToDB = async (weatherData, latitude, longitude) => {
           },
         });
 
+        let weatherDataId;
         if (!existingEntry) {
+          // Insert new weather data into the database
           const newWeatherData = await prisma.weatherData.create({
             data: {
               latitude: parseFloat(latitude),
@@ -183,11 +197,24 @@ const saveWeatherDataToDB = async (weatherData, latitude, longitude) => {
           });
 
           console.log("Inserted weather data:", newWeatherData);
+          weatherDataId = newWeatherData.id; // Set the weatherDataId for alerts
         } else {
           console.log(
             `Data for ${hourlyData.time[i]} at coordinates (${latitude}, ${longitude}) already exists.`
           );
+          weatherDataId = existingEntry.id; // Use existing weatherDataId for alerts
         }
+
+        // Save alerts to the database using the weatherDataId
+        if (alerts.length > 0) {
+          for (const alertMessage of alerts) {
+            await saveAlertToDB(alertMessage, latitude, longitude, weatherDataId);
+          }
+        }
+
+        // Send notifications after saving alerts
+        await notifyUserIfThresholdsExceeded(alerts);
+
       } catch (error) {
         console.error("Error inserting weather data:", error);
       }
