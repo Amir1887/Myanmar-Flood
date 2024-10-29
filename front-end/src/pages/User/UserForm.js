@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { useUserType } from "../../context/UserContext";
+import { Card, CardContent, Typography, Box } from '@mui/material';
 
 function UserForm() {
-  const { handleRoleSelection, contextUserType, allUserData, loading, error } = useUserType(); // Use context's handleRoleSelection
+  const { handleRoleSelection, contextUserType, allUserData, allOrgData, loading, error } = useUserType(); // Use context's handleRoleSelection
   console.log("frontend user data", allUserData)
   const [userType, setUserType] = useState(""); // Initialize userType
   const [userData, setUserData] = useState({
@@ -42,20 +43,47 @@ function UserForm() {
   if (error) return <p>Error: {error}</p>;
 
     // Render the user data if available
-    if (contextUserType && allUserData) {
-      return (
-        <div className="user-data-display p-4 bg-gray-50 rounded-lg shadow-inner">
-          <h2 className="text-xl font-bold mb-4">User Details</h2>
-          <p><strong>Name:</strong> {allUserData.name || "N/A"}</p>
-          <p><strong>Email:</strong> {allUserData.email}</p>
-          <p><strong>Location:</strong> {allUserData.location || "N/A"}</p>
-          <p><strong>Role:</strong> {allUserData.role}</p>
-          <p><strong>Phone Number:</strong> {allUserData.phoneNumber || "N/A"}</p>
-          <p><strong>In Need of Help:</strong> {allUserData.isInNeed ? "Yes" : "No"}</p>
-          <p><strong>Privacy Agreement:</strong> {allUserData.privacyAgreement ? "Agreed" : "Not Agreed"}</p>
-        </div>
-      );
-    }
+// User Details Component
+if (contextUserType && allUserData) {
+  return (
+    <Card variant="outlined" sx={{ maxWidth: 600, margin: 'auto', mt: 4 }}>
+      <CardContent>
+        <Typography variant="h4" component="div" gutterBottom color="primary">
+          User Details
+        </Typography>
+        <Box>
+          <Typography variant="body1"><strong>Name:</strong> {allUserData.name || "N/A"}</Typography>
+          <Typography variant="body1"><strong>Email:</strong> {allUserData.email}</Typography>
+          <Typography variant="body1"><strong>Location:</strong> {allUserData.location || "N/A"}</Typography>
+          <Typography variant="body1"><strong>Role:</strong> {allUserData.role}</Typography>
+          <Typography variant="body1"><strong>Phone Number:</strong> {allUserData.phoneNumber || "N/A"}</Typography>
+          <Typography variant="body1"><strong>In Need of Help:</strong> {allUserData.isInNeed ? "Yes" : "No"}</Typography>
+          <Typography variant="body1"><strong>Privacy Agreement:</strong> {allUserData.privacyAgreement ? "Agreed" : "Not Agreed"}</Typography>
+        </Box>
+      </CardContent>
+    </Card>
+  );
+}
+
+if (contextUserType && allOrgData) {
+  return (
+    <Card variant="outlined" sx={{ maxWidth: 600, margin: 'auto', mt: 4 }}>
+      <CardContent>
+        <Typography variant="h4" component="div" gutterBottom color="secondary">
+          Organization Details
+        </Typography>
+        <Box>
+          <Typography variant="body1"><strong>Name:</strong> {allOrgData.name || "N/A"}</Typography>
+          <Typography variant="body1"><strong>Email:</strong> {allOrgData.email}</Typography>
+          <Typography variant="body1"><strong>Location:</strong> {allOrgData.location || "N/A"}</Typography>
+          <Typography variant="body1"><strong>Phone Number:</strong> {allOrgData.phoneNumber || "N/A"}</Typography>
+          <Typography variant="body1"><strong>Created At:</strong> {allOrgData.createdAt ? new Date(allOrgData.createdAt).toLocaleDateString() + ' ' + new Date(allOrgData.createdAt).toLocaleTimeString() : "N/A"}</Typography>
+        </Box>
+      </CardContent>
+    </Card>
+  );
+}
+
   
     // Render the form if user data is not fully available or needs to be updated
 
