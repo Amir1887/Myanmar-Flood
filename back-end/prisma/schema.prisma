@@ -158,11 +158,11 @@ model Post {
   imageUrl      String? // Optional field for image uploads
   createdAt     DateTime               @default(now())
   updatedAt     DateTime               @updatedAt
-  user          User?                  @relation(fields: [userId], references: [id])
-  organization  Organization?          @relation(fields: [organizationId], references: [id])
-  orgMember     OrganizationMember?    @relation(fields: [orgMemberId], references: [id])
-  higherOrg     HighLevelOrganization? @relation(fields: [higherOrgId], references: [id])
-  decisionMaker DecisionMaker?         @relation(fields: [decisionMakerId], references: [id])
+  user          User?                  @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization  Organization?          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+  orgMember     OrganizationMember?    @relation(fields: [orgMemberId], references: [id], onDelete: Cascade)
+  higherOrg     HighLevelOrganization? @relation(fields: [higherOrgId], references: [id], onDelete: Cascade)
+  decisionMaker DecisionMaker?         @relation(fields: [decisionMakerId], references: [id], onDelete: Cascade)
 
   userId          Int?
   organizationId  Int?
@@ -179,9 +179,9 @@ model Comment {
   id           Int           @id @default(autoincrement())
   content      String
   createdAt    DateTime      @default(now())
-  post         Post          @relation(fields: [postId], references: [id])
-  user         User?         @relation(fields: [userId], references: [id])
-  organization Organization? @relation(fields: [organizationId], references: [id])
+  post         Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user         User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   postId         Int
   userId         Int?
@@ -191,9 +191,9 @@ model Comment {
 model Like {
   id           Int           @id @default(autoincrement())
   createdAt    DateTime      @default(now())
-  post         Post          @relation(fields: [postId], references: [id])
-  user         User?         @relation(fields: [userId], references: [id])
-  organization Organization? @relation(fields: [organizationId], references: [id])
+  post         Post          @relation(fields: [postId], references: [id], onDelete: Cascade)
+  user         User?         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  organization Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 
   postId         Int
   userId         Int?
