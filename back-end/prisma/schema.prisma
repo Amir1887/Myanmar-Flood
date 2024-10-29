@@ -404,7 +404,7 @@ enum ReportType {
 model VolunteerApplication {
   id                 Int               @id @default(autoincrement())
   userId             Int               @unique
-  user               User              @relation(fields: [userId], references: [id])
+  user               User              @relation(fields: [userId], references: [id], onDelete: Cascade)
   skills             String // Skills of the volunteer (comma-separated or JSON)
   education          String //  Education background of the volunteer
   preferredAreas     String? // Optional: Areas where the volunteer wants to help (comma-separated)
