@@ -28,7 +28,7 @@ router.post("/user", async (req, res) => {
         phoneNumber, 
         imageUrl,
         email,
-        passwordProvided: password
+        passwordProvided: password,
         location,
         isInNeed,
         createdAt,

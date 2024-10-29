@@ -37,6 +37,9 @@ model User {
   VolunteerApplication VolunteerApplication[]
   PushSubscription     PushSubscription[]
   Task                 Task[]
+  Post                 Post[]
+  Comment              Comment[]
+  Like                 Like[]
 }
 
 model PushSubscription {
@@ -147,6 +150,54 @@ model Mozela {
   readMoreLink String?
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
+}
+
+model Post {
+  id            Int                    @id @default(autoincrement())
+  content       String
+  imageUrl      String? // Optional field for image uploads
+  createdAt     DateTime               @default(now())
+  updatedAt     DateTime               @updatedAt
+  user          User?                  @relation(fields: [userId], references: [id])
+  organization  Organization?          @relation(fields: [organizationId], references: [id])
+  orgMember     OrganizationMember?    @relation(fields: [orgMemberId], references: [id])
+  higherOrg     HighLevelOrganization? @relation(fields: [higherOrgId], references: [id])
+  decisionMaker DecisionMaker?         @relation(fields: [decisionMakerId], references: [id])
+
+  userId          Int?
+  organizationId  Int?
+  orgMemberId     Int?
+  higherOrgId     Int?
+  decisionMakerId Int?
+
+  // Relations
+  comments Comment[]
+  likes    Like[]
+}
+
+model Comment {
+  id           Int           @id @default(autoincrement())
+  content      String
+  createdAt    DateTime      @default(now())
+  post         Post          @relation(fields: [postId], references: [id])
+  user         User?         @relation(fields: [userId], references: [id])
+  organization Organization? @relation(fields: [organizationId], references: [id])
+
+  postId         Int
+  userId         Int?
+  organizationId Int?
+}
+
+model Like {
+  id           Int           @id @default(autoincrement())
+  createdAt    DateTime      @default(now())
+  post         Post          @relation(fields: [postId], references: [id])
+  user         User?         @relation(fields: [userId], references: [id])
+  organization Organization? @relation(fields: [organizationId], references: [id])
+
+  postId         Int
+  userId         Int?
+  organizationId Int?
 }
 
 model DamageAssessment {
@@ -366,6 +417,9 @@ model Organization {
   OrganizationResponse  OrganizationResponse[]
   Order                 Order[]
   VolunteerApplication  VolunteerApplication[]
+  Post                  Post[]
+  Comment               Comment[]
+  Like                  Like[]
 }
 
 model OrganizationMember {
@@ -380,6 +434,7 @@ model OrganizationMember {
   organization      Organization       @relation("OrganizationMembers", fields: [organizationId], references: [id], onDelete: Cascade) // Match relation name  
   damageAssessments DamageAssessment[] // Reverse relation to track damage assessments submitted by this member  
   createdAt         DateTime           @default(now())
+  Post              Post[]
 }
 
 model Report {
@@ -457,6 +512,7 @@ model HighLevelOrganization {
   subordinateOrgs Organization[] // Subordinate organizations (hospitals, NGOs, etc.)
   createdAt       DateTime        @default(now())
   Order           Order[]
+  Post            Post[]
 }
 
 model DecisionMaker {
@@ -471,6 +527,7 @@ model DecisionMaker {
   highLevelOrg   HighLevelOrganization? @relation(fields: [highLevelOrgId], references: [id])
   orders         Order[] // Orders issued by this decision maker
   createdAt      DateTime               @default(now())
+  Post           Post[]
 }
 
 model Visualization {
@@ -563,8 +620,6 @@ enum MemberRole {
   MANAGER
   VOLUNTEER
 }
-
-
 
 enum SubmitterRole {
   DOCTOR
