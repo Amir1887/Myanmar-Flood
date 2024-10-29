@@ -2,6 +2,7 @@ import React from 'react';
 import { SignedIn, SignedOut, UserButton, useUser } from '@clerk/clerk-react';
 import { Link } from 'react-router-dom';
 import { useUserType } from '../context/UserContext';
+import { Card, CardContent, Typography, Box } from '@mui/material';
 import Volunteering from './Volunteering/VolunteeringUserSide';
 import VolunteeringToOrgSide from './Volunteering/VolunteeringToOrgSide';
 
@@ -53,6 +54,45 @@ const ProfilePage = () => {
         <p className="text-lg">{user.primaryEmailAddress.emailAddress}</p>
       </div>
     </div>
+
+    {(contextUserType && allUserData)? (
+      <div>
+              <Card variant="outlined" sx={{ maxWidth: 600, margin: 'auto', mt: 4 }}>
+      <CardContent>
+        <Typography variant="h4" component="div" gutterBottom color="primary">
+          User Details
+        </Typography>
+        <Box>
+          <Typography variant="body1"><strong>Name:</strong> {allUserData.name || "N/A"}</Typography>
+          <Typography variant="body1"><strong>Email:</strong> {allUserData.email}</Typography>
+          <Typography variant="body1"><strong>Location:</strong> {allUserData.location || "N/A"}</Typography>
+          <Typography variant="body1"><strong>Role:</strong> {allUserData.role}</Typography>
+          <Typography variant="body1"><strong>Phone Number:</strong> {allUserData.phoneNumber || "N/A"}</Typography>
+          <Typography variant="body1"><strong>In Need of Help:</strong> {allUserData.isInNeed ? "Yes" : "No"}</Typography>
+          <Typography variant="body1"><strong>Privacy Agreement:</strong> {allUserData.privacyAgreement ? "Agreed" : "Not Agreed"}</Typography>
+        </Box>
+      </CardContent>
+    </Card>
+      </div>
+    ):null}
+    {(contextUserType && allOrgData)? (
+      <div>
+   <Card variant="outlined" sx={{ maxWidth: 600, margin: 'auto', mt: 4 }}>
+      <CardContent>
+        <Typography variant="h4" component="div" gutterBottom color="secondary">
+          Organization Details
+        </Typography>
+        <Box>
+          <Typography variant="body1"><strong>Name:</strong> {allOrgData.name || "N/A"}</Typography>
+          <Typography variant="body1"><strong>Email:</strong> {allOrgData.email}</Typography>
+          <Typography variant="body1"><strong>Location:</strong> {allOrgData.location || "N/A"}</Typography>
+          <Typography variant="body1"><strong>Phone Number:</strong> {allOrgData.phoneNumber || "N/A"}</Typography>
+          <Typography variant="body1"><strong>Created At:</strong> {allOrgData.createdAt ? new Date(allOrgData.createdAt).toLocaleDateString() + ' ' + new Date(allOrgData.createdAt).toLocaleTimeString() : "N/A"}</Typography>
+        </Box>
+      </CardContent>
+    </Card>
+      </div>
+    ):null}
     {contextUserType === "user" && <Volunteering userId={userId}/>}
     {contextUserType === "organization" && <VolunteeringToOrgSide organizationId={organizationId}/>}
     </div>
