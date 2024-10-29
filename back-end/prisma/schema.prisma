@@ -198,7 +198,12 @@ model Like {
   postId         Int
   userId         Int?
   organizationId Int?
+
+  // Prevent same user or organization from liking the same post multiple times
+  @@unique([postId, userId], map: "unique_like_per_user")
+  @@unique([postId, organizationId], map: "unique_like_per_org")
 }
+
 
 model DamageAssessment {
   id                   Int                 @id @default(autoincrement())
