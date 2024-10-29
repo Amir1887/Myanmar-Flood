@@ -513,7 +513,7 @@ model Order {
   targetType TargetType // Specifies the type of target within the organization (e.g., doctor, volunteer)
 
   organizationId Int // The organization responsible for handling the order
-  organization   Organization @relation(fields: [organizationId], references: [id]) // Relating the order to a specific organization
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade) // Relating the order to a specific organization
 
   highLevelOrgId Int? // Reference to the high-level organization issuing the order
   highLevelOrg   HighLevelOrganization? @relation(fields: [highLevelOrgId], references: [id])
@@ -656,7 +656,7 @@ model SubmittedEmergency {
 model OrganizationResponse {
   id              Int                @id @default(autoincrement())
   organizationId  Int // Organization responding to the emergency
-  organization    Organization       @relation(fields: [organizationId], references: [id])
+  organization    Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   emergencyId     Int // Emergency being responded to
   emergency       SubmittedEmergency @relation(fields: [emergencyId], references: [id])
   responseDetails String // Details of the organization's response
