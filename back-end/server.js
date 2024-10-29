@@ -162,6 +162,10 @@ app.use('/', postMozelaRoutesRouter);
 app.use('/', postreliefWebRoutessRouter);
 app.use('/', postPostsRouter);
 app.use('/', getPostsRouter);
+app.use('/', getLikesRouter);
+app.use('/', postLikesRouter);
+app.use('/', postCommentsRouter);
+app.use('/', getCommentsRouter);
 
 app.listen(port, () => {
     console.log(`Server running on port ${port}`);
