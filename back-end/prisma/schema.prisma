@@ -20,10 +20,9 @@ model User {
   imageUrl             String?
   email                String                 @unique
   phoneNumber          String? // Optional phone number contact
-  passwordProvided     Boolean
+  passwordProvided     Boolean?
   role                 Role                   @default(USER)
-  latitude             Float? // User's latitude
-  longitude            Float? // User's longitude// User's address or affected area
+  location             String
   isInNeed             Boolean                @default(false) // Indicates if the user is in need of help
   privacyAgreement     Boolean                @default(false) // Track if the user has agreed to privacy terms
   createdAt            DateTime               @default(now())
