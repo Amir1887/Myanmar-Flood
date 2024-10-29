@@ -418,7 +418,7 @@ model VolunteerApplication {
   reviewedAt         DateTime? // Optional: When the application was reviewed
   notes              String? // Optional: Notes from the reviewer
   organizationId     Int?
-  organization       Organization?     @relation(fields: [organizationId], references: [id])
+  organization       Organization?     @relation(fields: [organizationId], references: [id], onDelete: Cascade)
 }
 
 enum ApplicationStatus {
