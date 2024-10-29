@@ -334,7 +334,7 @@ model Donation {
   donorName    String // Name of the donor
   amount       Float // Donation amount
   userId       Int // Recipient user (if applicable)
-  user         User     @relation(fields: [userId], references: [id])
+  user         User     @relation(fields: [userId], references: [id], onDelete: Cascade)
   purpose      String // Purpose of the donation (e.g., clean water, food, shelter)
   impactReport String? // Optional: Report back to the donor on how the donation helped
   createdAt    DateTime @default(now())
