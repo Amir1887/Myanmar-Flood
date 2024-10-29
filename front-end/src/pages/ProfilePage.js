@@ -93,8 +93,6 @@ const ProfilePage = () => {
     </Card>
       </div>
     ):null}
-    {contextUserType === "user" && <Volunteering userId={userId}/>}
-    {contextUserType === "organization" && <VolunteeringToOrgSide organizationId={organizationId}/>}
     </div>
   );
 };

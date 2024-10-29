@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { useUserType } from "../../context/UserContext";
-import { Card, CardContent, Typography, Box } from '@mui/material';
+import { Link } from 'react-router-dom';
 
 function UserForm() {
   const { handleRoleSelection, contextUserType, allUserData, allOrgData, loading, error } = useUserType(); // Use context's handleRoleSelection
@@ -42,53 +42,18 @@ function UserForm() {
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error}</p>;
 
-    // Render the user data if available
-// User Details Component
-if (contextUserType && allUserData) {
-  return (
-    <Card variant="outlined" sx={{ maxWidth: 600, margin: 'auto', mt: 4 }}>
-      <CardContent>
-        <Typography variant="h4" component="div" gutterBottom color="primary">
-          User Details
-        </Typography>
-        <Box>
-          <Typography variant="body1"><strong>Name:</strong> {allUserData.name || "N/A"}</Typography>
-          <Typography variant="body1"><strong>Email:</strong> {allUserData.email}</Typography>
-          <Typography variant="body1"><strong>Location:</strong> {allUserData.location || "N/A"}</Typography>
-          <Typography variant="body1"><strong>Role:</strong> {allUserData.role}</Typography>
-          <Typography variant="body1"><strong>Phone Number:</strong> {allUserData.phoneNumber || "N/A"}</Typography>
-          <Typography variant="body1"><strong>In Need of Help:</strong> {allUserData.isInNeed ? "Yes" : "No"}</Typography>
-          <Typography variant="body1"><strong>Privacy Agreement:</strong> {allUserData.privacyAgreement ? "Agreed" : "Not Agreed"}</Typography>
-        </Box>
-      </CardContent>
-    </Card>
-  );
-}
 
-if (contextUserType && allOrgData) {
-  return (
-    <Card variant="outlined" sx={{ maxWidth: 600, margin: 'auto', mt: 4 }}>
-      <CardContent>
-        <Typography variant="h4" component="div" gutterBottom color="secondary">
-          Organization Details
-        </Typography>
-        <Box>
-          <Typography variant="body1"><strong>Name:</strong> {allOrgData.name || "N/A"}</Typography>
-          <Typography variant="body1"><strong>Email:</strong> {allOrgData.email}</Typography>
-          <Typography variant="body1"><strong>Location:</strong> {allOrgData.location || "N/A"}</Typography>
-          <Typography variant="body1"><strong>Phone Number:</strong> {allOrgData.phoneNumber || "N/A"}</Typography>
-          <Typography variant="body1"><strong>Created At:</strong> {allOrgData.createdAt ? new Date(allOrgData.createdAt).toLocaleDateString() + ' ' + new Date(allOrgData.createdAt).toLocaleTimeString() : "N/A"}</Typography>
-        </Box>
-      </CardContent>
-    </Card>
-  );
-}
 
-  
-    // Render the form if user data is not fully available or needs to be updated
+
 
   return (
-    <form onSubmit={handleSubmit} className="mb-6 p-4 bg-gray-50 rounded-lg shadow-inner">
+    <div>
+    {contextUserType ?(
+      <Link to="/dashboard/profile" className="text-blue-600 hover:underline">
+      See all your details
+    </Link>
+    ) :(
+      <form onSubmit={handleSubmit} className="mb-6 p-4 bg-gray-50 rounded-lg shadow-inner">
       {/* User Type Selection */}
       <select
         className="w-full p-2 mb-4 border border-gray-300 rounded-lg"
@@ -238,6 +203,8 @@ if (contextUserType && allOrgData) {
         Submit
       </button>
     </form>
+    )}
+  </div>
   );
 }
 
