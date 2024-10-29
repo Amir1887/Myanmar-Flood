@@ -357,6 +357,7 @@ model Organization {
   phoneNumber           String?                  // Phone number contact  
   location              String                   // Organization's location or operational area  
   passwordEnabled       Boolean?
+  RelatedhighLevelOrg   String?
   resources             Resource[]               // Resources distributed by the organization  
   members               OrganizationMember[]      @relation("OrganizationMembers")  
   highLevelOrgId        Int?                     // Optional link to the high-level organization  
