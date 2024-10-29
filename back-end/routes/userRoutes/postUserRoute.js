@@ -7,9 +7,11 @@ router.post("/user", async (req, res) => {
   try {
     const {
       name,
+      username,
+      phoneNumber, 
+      imageUrl,
       email,
       password,
-      role,
       location,
       isInNeed,
       createdAt,
@@ -22,9 +24,11 @@ router.post("/user", async (req, res) => {
     const newUserData = await prisma.user.create({
       data: {
         name,
+        username,
+        phoneNumber, 
+        imageUrl,
         email,
-        password,
-        role: role || "USER",
+        passwordProvided: password
         location,
         isInNeed,
         createdAt,
