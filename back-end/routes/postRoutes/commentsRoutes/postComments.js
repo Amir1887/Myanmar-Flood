@@ -6,7 +6,7 @@ const router = express.Router();
 router.post("/comments", async (req, res) => {
   try {
     const {
-   
+        content, createdAt, postId, userId, organizationId
     } = req.body;
 
     // Log request body for debugging
@@ -14,7 +14,7 @@ router.post("/comments", async (req, res) => {
 
     const newCommentData = await prisma.comment.create({
       data: {
-
+        content, createdAt, postId, userId, organizationId
       },
     });
 

@@ -6,7 +6,7 @@ const router = express.Router();
 router.post("/likes", async (req, res) => {
   try {
     const {
-
+        createdAt, postId, userId, organizationId
     } = req.body;
 
     // Log request body for debugging
@@ -14,7 +14,7 @@ router.post("/likes", async (req, res) => {
 
     const newlikeData = await prisma.like.create({
       data: {
-
+        createdAt, postId, userId, organizationId
       },
     });
 
