@@ -6,7 +6,15 @@ const router = express.Router();
 router.post("/posts", async (req, res) => {
   try {
     const {
-
+      content,
+      imageUrl,
+      createdAt,
+      updatedAt,
+      userId,
+      organizationId,
+      orgMemberId,
+      higherOrgId,
+      decisionMakerId,
     } = req.body;
 
     // Log request body for debugging
@@ -14,19 +22,25 @@ router.post("/posts", async (req, res) => {
 
     const newPostData = await prisma.post.create({
       data: {
-
+        content,
+        imageUrl,
+        createdAt,
+        updatedAt,
+        userId,
+        organizationId,
+        orgMemberId,
+        higherOrgId,
+        decisionMakerId,
       },
     });
 
     res.status(201).json(newPostData);
   } catch (error) {
     console.error("Error inserting new Post Data: ", error);
-    res
-      .status(500)
-      .json({
-        error: "Failed to insert newPostData ",
-        details: error.message,
-      });
+    res.status(500).json({
+      error: "Failed to insert newPostData ",
+      details: error.message,
+    });
   }
 });
 
