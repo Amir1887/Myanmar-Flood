@@ -9,12 +9,24 @@ const UsereContext = createContext();
 // Create a provider component
 export const UsereProvider = ({ children }) => {
   const { user } = useUser();
+  console.log("clerk", user);
   const [contextUserType, setContextUserType] = useState(null);
   const [allUserData, setAllUserData] = useState(null);
   const [allOrgData, setAllOrgData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [roleSelection, setRoleSelection] = useState(null); // State to store role selection
+
+      // Prepare user data from Clerk
+      const clerkData = {
+        username: user.username,
+        name: user.fullName,
+        email: user.emailAddresses[0].emailAddress,
+        createdAt: user.createdAt,
+        imageUrl: user.imageUrl,
+        password: user.passwordEnabled,
+      };
+      console.log("clerck data ", clerkData);
 
   useEffect(() => {
     let isMounted = true; // Track component mounted state
@@ -30,11 +42,14 @@ export const UsereProvider = ({ children }) => {
           if (res.data.type === "unknown") {
             // If user is unknown, ask for role selection
             setRoleSelection(true);
+            setLoading(false);
           } else {
             setContextUserType(res.data.type);
             setAllUserData(res.data.userData);
             setAllOrgData(res.data.orgData);
+            setRoleSelection(false); // Hide role selection if user type is known
             fetchDataBasedOnUserType(res.data.type); // Fetch data based on user type
+            setLoading(false);
           }
         } catch (err) {
           console.error('Error checking user type:', err);
@@ -43,7 +58,10 @@ export const UsereProvider = ({ children }) => {
         }
       }
     };
-
+    console.log("Role Selection after fetching user type:", roleSelection);  
+    console.log("Context User Type after fetching:", contextUserType);  
+    console.log("All User Data after fetch:", allUserData);  
+    console.log("All Org Data after fetch:", allOrgData); 
     // Function to fetch data based on user type
     const fetchDataBasedOnUserType = async (type) => {
       let endpoint;
@@ -110,16 +128,7 @@ export const UsereProvider = ({ children }) => {
           throw new Error('Invalid role selected');
       }
 
-      // Prepare user data from Clerk
-      const clerkData = {
-        username: user.username,
-        name: user.fullName,
-        email: user.emailAddresses[0].emailAddress,
-        createdAt: user.createdAt,
-        imageUrl: user.imageUrl,
-        password: user.passwordEnabled,
-      };
-      console.log("clerck data ", clerkData);
+  
 
       // Merge clerkData with roleData
       const dataToSend = { ...roleData, ...clerkData };
