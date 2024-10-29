@@ -20,7 +20,7 @@ model User {
   imageUrl             String?
   email                String                 @unique
   phoneNumber          String? // Optional phone number contact
-  password             String
+  passwordProvided     Boolean
   role                 Role                   @default(USER)
   latitude             Float? // User's latitude
   longitude            Float? // User's longitude// User's address or affected area
