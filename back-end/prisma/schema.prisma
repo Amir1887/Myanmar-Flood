@@ -37,8 +37,8 @@ model User {
   SubmittedEmergency   SubmittedEmergency[]
   UserConsent          UserConsent?
   VolunteerApplication VolunteerApplication[]
-  Volunteer            Volunteer[]
   PushSubscription     PushSubscription[]
+  Task                 Task[]
 }
 
 model PushSubscription {
@@ -46,7 +46,7 @@ model PushSubscription {
   endpoint  String   @unique // The unique endpoint URL for the subscription
   keys      Json // Stores the keys object which contains publicKey and auth
   userId    Int? // Optional relation to a User model (if you want to link subscriptions to users)
-  user      User?    @relation(fields: [userId], references: [id]) // Optional relationship to the User model
+  user      User?    @relation(fields: [userId], references: [id], onDelete: Cascade) // Optional relationship to the User model
   createdAt DateTime @default(now()) // Timestamp for when the subscription was created
   updatedAt DateTime @updatedAt // Timestamp for when the subscription was last updated
 }
@@ -54,7 +54,7 @@ model PushSubscription {
 model UserConsent {
   id           Int         @id @default(autoincrement())
   userId       Int         @unique
-  user         User        @relation(fields: [userId], references: [id]) //Who submitted or recorded the consent
+  user         User        @relation(fields: [userId], references: [id], onDelete: Cascade) //Who submitted or recorded the consent
   consentGiven Boolean     @default(false) // Whether consent is given for using sensitive data
   consentDate  DateTime    @default(now()) // Date when consent was given
   consentType  ConsentType // Enum for types of consent (general, health-related, etc.)
@@ -72,7 +72,7 @@ enum ConsentType {
 model UserPreference {
   id     Int  @id @default(autoincrement())
   userId Int  @unique
-  user   User @relation(fields: [userId], references: [id])
+  user   User @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   notificationMethod NotificationMethod // Enum for better consistency (email, SMS, app notification)
   alertFrequency     AlertFrequency // Enum for frequency (immediate, daily, weekly)
@@ -156,7 +156,7 @@ model DamageAssessment {
   floodDataId          Int // Relates the assessment to specific flood data
   floodData            FloodData           @relation(fields: [floodDataId], references: [id])
   userId               Int? // Optional: If a regular user submits the assessment
-  user                 User?               @relation(fields: [userId], references: [id])
+  user                 User?               @relation(fields: [userId], references: [id], onDelete: Cascade)
   organizationMemberId Int? // Optional: If an organization member submits the assessment
   organizationMember   OrganizationMember? @relation(fields: [organizationMemberId], references: [id])
   severity             String // Severity level of the damage (e.g., minor, severe, etc.)
@@ -170,7 +170,7 @@ model DamageAssessment {
 model HealthData {
   id                Int              @id @default(autoincrement())
   userId            Int
-  user              User             @relation(fields: [userId], references: [id])
+  user              User             @relation(fields: [userId], references: [id], onDelete: Cascade)
   waterAccess       Boolean // Does the user have access to clean water?
   waterQuality      String? // Optional: Water quality assessment (e.g., "safe", "contaminated")
   diseaseRisk       String // Risk of disease (e.g., cholera, malaria)
@@ -294,14 +294,14 @@ model Resource {
   quantity                Int // Amount of resource
   status                  ResourceStatus         @default(PENDING)
   priorityLevel           PriorityLevel // New: Level of priority for resource allocation
-  distributedTo           User?                  @relation(fields: [userId], references: [id])
+  distributedTo           User?                  @relation(fields: [userId], references: [id], onDelete: Cascade)
   userId                  Int?
   floodDataId             Int
   floodData               FloodData              @relation(fields: [floodDataId], references: [id])
   communityResilienceId   Int? // Optional relation to CommunityResilience
   communityResilience     CommunityResilience?   @relation(fields: [communityResilienceId], references: [id])
   organizationId          Int? // Optional relation to the organization distributing the resource
-  organization            Organization?          @relation(fields: [organizationId], references: [id])
+  organization            Organization?          @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   createdAt               DateTime               @default(now())
   Feedback                Feedback[]
   EmergencyResponsePlan   EmergencyResponsePlan? @relation(fields: [emergencyResponsePlanId], references: [id])
@@ -348,47 +348,46 @@ model CommunityResilience {
   createdAt     DateTime   @default(now())
 }
 
-model Organization {  
-  id                    Int                     @id @default(autoincrement())  
-  name                  String                   // Name of the organization  
-  username              String?                  // Name of the organization  
-  imageUrl              String?  
-  email                 String                   @unique // Make email unique   
-  phoneNumber           String?                  // Phone number contact  
-  location              String                   // Organization's location or operational area  
+model Organization {
+  id                    Int                     @id @default(autoincrement())
+  name                  String // Name of the organization  
+  username              String? // Name of the organization  
+  imageUrl              String?
+  email                 String                  @unique // Make email unique   
+  phoneNumber           String? // Phone number contact  
+  location              String // Organization's location or operational area  
   passwordEnabled       Boolean?
   RelatedhighLevelOrg   String?
-  resources             Resource[]               // Resources distributed by the organization  
-  members               OrganizationMember[]      @relation("OrganizationMembers")  
-  highLevelOrgId        Int?                     // Optional link to the high-level organization  
-  highLevelOrg          HighLevelOrganization?    @relation(fields: [highLevelOrgId], references: [id])  
-  createdAt             DateTime                 @default(now())  
-  Report                Report[]  
-  EmergencyResponsePlan EmergencyResponsePlan[]  
-  OrganizationResponse  OrganizationResponse[]  
-  Order                 Order[]  
-  VolunteerApplication  VolunteerApplication[]  
-}  
-
-model OrganizationMember {  
-  id                  Int                @id @default(autoincrement())  
-  name                String             // Name of the organization member  
-  username            String?  
-  imageUrl            String?  
-  email               String             @unique // Unique email for the organizer login  
-  password            String             // Password for the member to log in  
-  role                MemberRole         // Define the role within the organization (e.g., ORGANIZER, MANAGER, etc.)  
-  organizationId      Int                // Link to the organization  
-  organization        Organization       @relation("OrganizationMembers", fields: [organizationId], references: [id], onDelete: Cascade) // Match relation name  
-  damageAssessments   DamageAssessment[] // Reverse relation to track damage assessments submitted by this member  
-  createdAt           DateTime           @default(now())  
+  resources             Resource[] // Resources distributed by the organization  
+  members               OrganizationMember[]    @relation("OrganizationMembers")
+  highLevelOrgId        Int? // Optional link to the high-level organization  
+  highLevelOrg          HighLevelOrganization?  @relation(fields: [highLevelOrgId], references: [id], onDelete: Cascade)
+  createdAt             DateTime                @default(now())
+  Report                Report[]
+  EmergencyResponsePlan EmergencyResponsePlan[]
+  OrganizationResponse  OrganizationResponse[]
+  Order                 Order[]
+  VolunteerApplication  VolunteerApplication[]
 }
 
+model OrganizationMember {
+  id                Int                @id @default(autoincrement())
+  name              String // Name of the organization member  
+  username          String?
+  imageUrl          String?
+  email             String             @unique // Unique email for the organizer login  
+  password          String // Password for the member to log in  
+  role              MemberRole // Define the role within the organization (e.g., ORGANIZER, MANAGER, etc.)  
+  organizationId    Int // Link to the organization  
+  organization      Organization       @relation("OrganizationMembers", fields: [organizationId], references: [id], onDelete: Cascade) // Match relation name  
+  damageAssessments DamageAssessment[] // Reverse relation to track damage assessments submitted by this member  
+  createdAt         DateTime           @default(now())
+}
 
 model Report {
   id             Int           @id @default(autoincrement())
   reportType     ReportType // Type of report (e.g., damage, resource distribution, disease outbreak)
-  generatedBy    Organization? @relation(fields: [organizationId], references: [id]) // Organization that generated the report
+  generatedBy    Organization? @relation(fields: [organizationId], references: [id], onDelete: Cascade) // Organization that generated the report
   data           Json // Report data in JSON format
   createdAt      DateTime      @default(now())
   organizationId Int?
@@ -429,31 +428,15 @@ enum ApplicationStatus {
   REJECTED // Application has been rejected
 }
 
-model Volunteer {
-  id            Int           @id @default(autoincrement())
-  user          User          @relation(fields: [userId], references: [id])
-  userId        Int // Link to the user who is a volunteer
-  role          VolunteerRole // Role of the volunteer (medical, logistics, etc.)
-  availability  Boolean       @default(true)
-  assignedTasks Task[]
-  createdAt     DateTime      @default(now())
-}
-
-enum VolunteerRole {
-  MEDICAL
-  LOGISTICS
-  GENERAL
-}
-
 model Task {
   id          Int        @id @default(autoincrement())
   description String // Task description
   floodDataId Int? // Related flood event (if applicable)
   floodData   FloodData? @relation(fields: [floodDataId], references: [id])
-  assignedTo  Volunteer? @relation(fields: [volunteerId], references: [id]) // Volunteer assigned to the task
+  assignedTo  User?      @relation(fields: [userId], references: [id], onDelete: Cascade) // Volunteer assigned to the task
   status      TaskStatus @default(PENDING) // Task status
   createdAt   DateTime   @default(now())
-  volunteerId Int?
+  userId      Int?
 }
 
 enum TaskStatus {
@@ -551,7 +534,7 @@ enum TargetType {
 model Feedback {
   id            Int            @id @default(autoincrement())
   userId        Int
-  user          User           @relation(fields: [userId], references: [id])
+  user          User           @relation(fields: [userId], references: [id], onDelete: Cascade)
   feedbackType  FeedbackType // E.g., RESOURCE, GENERAL  
   resourceId    Int?
   resource      Resource?      @relation(fields: [resourceId], references: [id])
@@ -630,7 +613,7 @@ model EmergencyResponsePlan {
   emergencyType        EmergencyType // Type of emergency (e.g., flood, earthquake, disease outbreak)
   resourcesNeeded      Resource[] // Resources allocated for the plan  
   responsibleOrgId     Int? // Organization responsible for executing the plan
-  responsibleOrg       Organization?        @relation(fields: [responsibleOrgId], references: [id])
+  responsibleOrg       Organization?        @relation(fields: [responsibleOrgId], references: [id], onDelete: Cascade)
   contactPerson        String // Contact person for coordination
   contactEmail         String // Contact person's email
   status               PlanStatus           @default(PENDING) // Status of the plan (e.g., pending, active, completed)
@@ -647,7 +630,7 @@ model SubmittedEmergency {
   emergencyType        EmergencyType // Type of emergency being reported
   description          String // Detailed description of the emergency
   submitterId          Int // User submitting the emergency
-  submitter            User                   @relation(fields: [submitterId], references: [id])
+  submitter            User                   @relation(fields: [submitterId], references: [id], onDelete: Cascade)
   submissionStatus     SubmissionStatus       @default(PENDING) // Status of the submitted emergency
   createdAt            DateTime               @default(now())
   associatedPlanId     Int? // Link to an EmergencyResponsePlan if associated
@@ -660,7 +643,7 @@ model OrganizationResponse {
   organizationId  Int // Organization responding to the emergency
   organization    Organization       @relation(fields: [organizationId], references: [id], onDelete: Cascade)
   emergencyId     Int // Emergency being responded to
-  emergency       SubmittedEmergency @relation(fields: [emergencyId], references: [id])
+  emergency       SubmittedEmergency @relation(fields: [emergencyId], references: [id], onDelete: Cascade)
   responseDetails String // Details of the organization's response
   responseStatus  ResponseStatus     @default(PENDING) // Status of the response
   createdAt       DateTime           @default(now())
