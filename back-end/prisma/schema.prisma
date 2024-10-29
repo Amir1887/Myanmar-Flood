@@ -348,39 +348,40 @@ model CommunityResilience {
   createdAt     DateTime   @default(now())
 }
 
-model Organization {
-  id                    Int                     @id @default(autoincrement())
-  name                  String // Name of the organization
-  username              String? // Name of the organization
-  imageUrl              String?
-  email                 String                  @unique // Make email unique 
-  phoneNumber           String? //  phone number contact
-  location              String // Organization's location or operational area
-  resources             Resource[] // Resources distributed by the organization
-  members               OrganizationMember[] // Members (organizers) of the organization
-  highLevelOrgId        Int? // Optional link to the high-level organization
-  highLevelOrg          HighLevelOrganization?  @relation(fields: [highLevelOrgId], references: [id])
-  createdAt             DateTime                @default(now())
-  Report                Report[]
-  EmergencyResponsePlan EmergencyResponsePlan[]
-  OrganizationResponse  OrganizationResponse[]
-  Order                 Order[]
-  VolunteerApplication  VolunteerApplication[]
+model Organization {  
+  id                    Int                     @id @default(autoincrement())  
+  name                  String                   // Name of the organization  
+  username              String?                  // Name of the organization  
+  imageUrl              String?  
+  email                 String                   @unique // Make email unique   
+  phoneNumber           String?                  // Phone number contact  
+  location              String                   // Organization's location or operational area  
+  resources             Resource[]               // Resources distributed by the organization  
+  members               OrganizationMember[]      @relation("OrganizationMembers")  
+  highLevelOrgId        Int?                     // Optional link to the high-level organization  
+  highLevelOrg          HighLevelOrganization?    @relation(fields: [highLevelOrgId], references: [id])  
+  createdAt             DateTime                 @default(now())  
+  Report                Report[]  
+  EmergencyResponsePlan EmergencyResponsePlan[]  
+  OrganizationResponse  OrganizationResponse[]  
+  Order                 Order[]  
+  VolunteerApplication  VolunteerApplication[]  
+}  
+
+model OrganizationMember {  
+  id                  Int                @id @default(autoincrement())  
+  name                String             // Name of the organization member  
+  username            String?  
+  imageUrl            String?  
+  email               String             @unique // Unique email for the organizer login  
+  password            String             // Password for the member to log in  
+  role                MemberRole         // Define the role within the organization (e.g., ORGANIZER, MANAGER, etc.)  
+  organizationId      Int                // Link to the organization  
+  organization        Organization       @relation("OrganizationMembers", fields: [organizationId], references: [id], onDelete: Cascade) // Match relation name  
+  damageAssessments   DamageAssessment[] // Reverse relation to track damage assessments submitted by this member  
+  createdAt           DateTime           @default(now())  
 }
 
-model OrganizationMember {
-  id                Int                @id @default(autoincrement())
-  name              String // Name of the organization member
-  username          String?
-  imageUrl          String?
-  email             String             @unique // Unique email for the organizer login
-  password          String // Password for the member to log in
-  role              MemberRole // Define the role within the organization (e.g., ORGANIZER, MANAGER, etc.)
-  organizationId    Int // Link to the organization
-  organization      Organization       @relation(fields: [organizationId], references: [id])
-  damageAssessments DamageAssessment[] // Reverse relation to track damage assessments submitted by this member
-  createdAt         DateTime           @default(now())
-}
 
 model Report {
   id             Int           @id @default(autoincrement())
