@@ -356,6 +356,7 @@ model Organization {
   email                 String                   @unique // Make email unique   
   phoneNumber           String?                  // Phone number contact  
   location              String                   // Organization's location or operational area  
+  passwordEnabled       Boolean?
   resources             Resource[]               // Resources distributed by the organization  
   members               OrganizationMember[]      @relation("OrganizationMembers")  
   highLevelOrgId        Int?                     // Optional link to the high-level organization  
