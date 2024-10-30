@@ -165,6 +165,23 @@ function Header() {
                 ))}
               </Menu>
 
+
+              {/* Updates*/}
+              <Button
+                color="inherit"
+                component={Link}  // Use Link to navigate to /dashboard/updates
+                to="/dashboard/updates"
+                sx={{
+                  "&:hover": {
+                    backgroundColor: "secondary.main",
+                    color: "white",
+                  },
+                }}
+              >
+                Updates
+              </Button>
+
+
               {authLinks}
             </div>
           )}
