@@ -5,18 +5,16 @@ const router = express.Router();
 
 router.post("/comments-org", async (req, res) => {
   try {
-    const {
-      commentInfo, PostId, orgId
-    } = req.body;
+    const { commentInfo, PostId, orgId } = req.body;
 
     // Log request body for debugging
     console.log("Request Body From comments: ", req.body);
 
     const newCommentData = await prisma.comment.create({
       data: {
-        content: commentInfo, 
-        postId: PostId, 
-        organizationId: orgId
+        content: commentInfo,
+        postId: PostId,
+        organizationId: orgId,
       },
     });
 
@@ -32,20 +30,20 @@ router.post("/comments-org", async (req, res) => {
 
 router.post("/comments-user", async (req, res) => {
   try {
-    const {
-        content, createdAt, postId, userId
-    } = req.body;
+    const { commentInfo, userId, postId } = req.body;
 
     // Log request body for debugging
     console.log("Request Body From comments: ", req.body);
 
-    // const newCommentData = await prisma.comment.create({
-    //   data: {
-    //     content, createdAt, postId, userId, organizationId
-    //   },
-    // });
+    const newCommentData = await prisma.comment.create({
+      data: {
+        content: commentInfo,
+        postId: postId,
+        userId: userId,
+      },
+    });
 
-    // res.status(201).json(newCommentData);
+    res.status(201).json(newCommentData);
   } catch (error) {
     console.error("Error inserting new comment Data: ", error);
     res.status(500).json({
