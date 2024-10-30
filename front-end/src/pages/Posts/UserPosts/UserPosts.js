@@ -1,13 +1,14 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
+import useFileUpload from "../CustomHooks/useFileUpload";
 
 
-function UserPosts({file, uploading, preview, onFileChange, setUploading}) {
+function UserPosts() {
+  const { file, uploading, preview, onFileChange, setUploading } = useFileUpload();
     const [photoUrl, setPhotoUrl] = useState("");
 
   //upload photo
   const onUpload = async () => {
-
     const formData = new FormData();
     formData.append("photo", file);
 
@@ -31,6 +32,7 @@ function UserPosts({file, uploading, preview, onFileChange, setUploading}) {
       alert("Error uploading file.");
     }
     setUploading(false);
+
   };
 
   // if (loading) return <div>Loading...</div>;

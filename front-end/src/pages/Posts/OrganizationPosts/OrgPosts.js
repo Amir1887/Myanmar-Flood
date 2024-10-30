@@ -1,6 +1,8 @@
 import React from 'react'
+import useFileUpload from '../CustomHooks/useFileUpload';
 
-function OrgPosts({file, uploading, preview, onFileChange, setUploading}) {
+function OrgPosts() {
+  const { file, uploading, preview, onFileChange, setUploading } = useFileUpload();
 
     //upload photo
     const onUpload = async () => {
