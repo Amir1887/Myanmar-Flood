@@ -4,7 +4,7 @@ import { useState } from "react";
 function useFileUpload() {
   const [file, setFile] = useState(null);
   const [preview, setPreview] = useState("");
-  const [postContnet, setpostContnet] = useState("");
+
   
   const acceptedImageTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
   
@@ -20,7 +20,7 @@ function useFileUpload() {
     }
   };
 
-  return { file, preview, onFileChange };
+  return { file, preview, onFileChange, setPreview, setFile };
 }
 
 export default useFileUpload;

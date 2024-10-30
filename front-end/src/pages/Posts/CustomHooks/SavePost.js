@@ -2,34 +2,29 @@ import React, { useState } from "react";
 import axios from "axios";
 import useFileUpload from './useFileUpload';
 
-function SavePost() {
-    const [photoUrl, setPhotoUrl] = useState("");
-    const [postContnet, setpostContnet] = useState("");
+function SavePost({ postContent, file, setPreview, setFile }) {
     const [uploading, setUploading] = useState(false);
-    const { file } = useFileUpload();
     const onUpload = async () => {
         const formData = new FormData();
         formData.append("photo", file);
-    
+        formData.append("content", postContent);// Add the post content to the form data
+      
         setUploading(true);
         try {
-          const response = await axios.post(`http://localhost:4000/posts`, formData, {
+          await axios.post("http://localhost:4000/posts", formData, {
             headers: { "Content-Type": "multipart/form-data" },
           });
-          console.log("here is the res after uploading",response);
-    
-
-    
-          alert("File uploaded successfully!");
+          alert("Post uploaded successfully!");
+          setFile(null);
+          setPreview("");
         } catch (error) {
-          console.error("Error uploading file:", error);
-          alert("Error uploading file.");
+          console.error("Error uploading post:", error);
+          alert("Error uploading post.");
         }
         setUploading(false);
-    
       };
     
-      return {onUpload, photoUrl, uploading, setpostContnet, postContnet};
+      return { onUpload, uploading};
   return (
     <div>
       
