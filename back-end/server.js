@@ -2,6 +2,7 @@ const express = require('express');
 const cors = require('cors');
 require('dotenv').config();
 const bodyParser = require('body-parser');
+const path = require("path");
 
 const getFloodsRouter = require('./routes/floodRoutes/getFloodsRoute');
 const postFloodsRouter = require('./routes/floodRoutes/postFloodsRoute');
@@ -90,6 +91,10 @@ app.use(cors({
   origin: 'http://localhost:3000', 
   credentials: true,
 }));
+
+// Serve files in the "uploadedPosts" folder
+app.use('/uploadedPosts', express.static(path.join(__dirname, '../uploadedPosts')));
+
 // Increase the payload limit to handle larger requests
 app.use(bodyParser.json({ limit: '50mb' }));
 app.use(bodyParser.urlencoded({ limit: '50mb', extended: true }));
