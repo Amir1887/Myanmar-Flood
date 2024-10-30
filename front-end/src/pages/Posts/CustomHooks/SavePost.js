@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import useFileUpload from './useFileUpload';
 
-function SavePost({ postContent, file, setPreview, setFile }) {
+async function SavePost({ postContent, file,  onSuccess }) {
     const [uploading, setUploading] = useState(false);
     const onUpload = async () => {
         const formData = new FormData();
@@ -15,8 +15,9 @@ function SavePost({ postContent, file, setPreview, setFile }) {
             headers: { "Content-Type": "multipart/form-data" },
           });
           alert("Post uploaded successfully!");
-          setFile(null);
-          setPreview("");
+
+        // Call the onSuccess callback to reset states in parent
+         await onSuccess();
         } catch (error) {
           console.error("Error uploading post:", error);
           alert("Error uploading post.");

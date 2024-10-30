@@ -6,12 +6,23 @@ import PostForm from '../PostForm';
 function OrgPosts() {
   const [postContent, setPostContent] = useState("");
   const { file, preview, onFileChange, setPreview, setFile} = useFileUpload();
-  const {  onUpload, uploading } = SavePost({ postContent, file, setPreview, setFile });
+
+
+  // Reset state after successful upload
+ const handleUploadSuccess = () => {
+    setFile(null);  // Clear file
+    setPreview(""); // Clear preview
+    setPostContent(""); // Clear content
+  };
+
+
+  const {  onUpload, uploading } = SavePost({ postContent, file,  onSuccess: handleUploadSuccess });
 
 
   return (
     <PostForm
       title="Organization Posts"
+      postContent={postContent}
       onContentChange={(e) => setPostContent(e.target.value)}
       onUpload={onUpload}
       preview={preview}

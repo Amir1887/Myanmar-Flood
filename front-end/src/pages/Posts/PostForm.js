@@ -1,6 +1,6 @@
 import React from 'react'
 
-function PostForm({ title, onContentChange, onUpload, preview, onFileChange, uploading, file }) {
+function PostForm({ title, onContentChange, onUpload, preview, onFileChange, uploading, file, postContent }) {
     return (
         <div>
           <h1>{title}</h1>
@@ -20,7 +20,7 @@ function PostForm({ title, onContentChange, onUpload, preview, onFileChange, upl
             <input id="file-upload" type="file" className="hidden" onChange={onFileChange} />
           </div>
           {preview && <img src={preview} alt="Preview" style={{ width: "300px" }} />}
-          <button onClick={onUpload} disabled={uploading || !file}>
+          <button onClick={onUpload} disabled={uploading || !postContent}>
             {uploading ? "Uploading..." : "Upload Post"}
           </button>
         </div>
