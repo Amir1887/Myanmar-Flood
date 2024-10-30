@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import useFileUpload from '../CustomHooks/useFileUpload';
-import SavePost from '../CustomHooks/SavePost';
 import PostForm from '../PostForm';
+import useSavePost from "../CustomHooks/SavePost";
 
 function OrgPosts() {
   const [postContent, setPostContent] = useState("");
@@ -16,7 +16,7 @@ function OrgPosts() {
   };
 
 
-  const {  onUpload, uploading } = SavePost({ postContent, file,  onSuccess: handleUploadSuccess });
+  const {  onUpload, uploading } = useSavePost({ postContent, file, onSuccess: handleUploadSuccess });
 
 
   return (

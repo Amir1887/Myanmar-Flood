@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import UserSide from "./gettingReq/UserSide";
 
 function UserPostsAll({userId}) {
     // State for post content
@@ -100,6 +101,7 @@ function UserPostsAll({userId}) {
         >
           {uploading ? "Uploading..." : "Upload Post"}
         </button>
+        <UserSide/>
       </div>
     );
 }

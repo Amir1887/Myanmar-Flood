@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from "axios";
+import OrgSide from "./gettingReq/OrgSide";
 
 // All-in-One component to test the form and upload functionality
 
@@ -103,6 +104,7 @@ function OrganizationPosts({orgId}) {
       >
         {uploading ? "Uploading..." : "Upload Post"}
       </button>
+      <OrgSide/>
     </div>
   );
 }
