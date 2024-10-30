@@ -11,7 +11,6 @@ import RootLayout from "./layouts/root-layout";
 
 import { UsereProvider } from "./context/UserContext";
 import HomePage from "./pages/General/HomePage";
-import AboutPage from "./pages/General/AboutPage";
 import ContactPage from "./pages/General/ContactPage";
 import SignInPage from "./pages/General/SignInPage";
 import SignUpPage from "./pages/General/SignUpPage";
@@ -26,6 +25,8 @@ import { registerServiceWorker, SubscribeUserToPush } from "./services/pushNotif
 import AllblogPosts from "./pages/blogPosts/AllblogPosts";
 import Alert from "./pages/Alerts/Alert";
 import Weatherhistory from "./pages/WeatherHistory/Weatherhistory";
+import AllVolunteering from "./pages/Volunteering/AllVolunteering";
+import AllPosts from "./pages/Posts/AllPosts";
 
 
 
@@ -44,14 +45,17 @@ const router = createBrowserRouter([
       </UserLocationProvider>
     ) }, // Root-level route
       { path: "/contact", element: <ContactPage /> },
-      { path: "/about", element: <AboutPage /> },
       { path: "/sign-in/*", element: <SignInPage /> },
       { path: "/sign-up/*", element: <SignUpPage /> },
 
       // Dashboard Layout with nested routes (needing login)
       {
         path: "/dashboard",
-        element: <DashboardLayout />,
+        element:(
+          <UsereProvider>
+           <DashboardLayout />
+           </UsereProvider>
+          ),
         children: [
           { path: "home", element:(
             <UserLocationProvider>
@@ -62,8 +66,15 @@ const router = createBrowserRouter([
             <UsereProvider>
           <ProfilePage />
           </UsereProvider>
-        )},  // Accessible as /dashboard/profile
+        )}, 
+        
+        { path: "Volunteering", element:(
+          <UsereProvider>
+           <AllVolunteering /> 
+           </UsereProvider>
+          )},
           { path: 'blog-post', element: <AllblogPosts/>}, 
+          { path: 'updates', element: <AllPosts/>}, 
           { path: 'alerts', element: <Alert/>}, 
           { path: 'weather-history', element: <Weatherhistory/>}, 
           { path: 'user-form', element: (
