@@ -1,30 +1,40 @@
 import React from 'react'
 import useFileUpload from '../CustomHooks/useFileUpload';
+import SavePost from '../CustomHooks/SavePost';
 
 function OrgPosts() {
-  const { file, uploading, preview, onFileChange, setUploading } = useFileUpload();
+  const { file, preview, onFileChange} = useFileUpload();
+  const {  onUpload, photoUrl, uploading, setpostContnet, postContnet } = SavePost();
 
-    //upload photo
-    const onUpload = async () => {
+  function HandlePostContent(e){
+    setpostContnet(e.target.value)
+  }
 
-
-    };
     return (
       <div>
         <h1>Organization posts</h1>
-        <input type="text" placeholder="what updates you want to share?" required/>
+        <div>
+        <label>Adding new update</label>
+        <input
+          type="text"
+          placeholder="what updates you want to share?"
+          onChange={HandlePostContent}
+          required
+        />
+      </div>
         <div className="mb-4">
           <label
             htmlFor="file-upload"
             className="cursor-pointer inline-block p-3 text-white bg-blue-500 rounded-xl font-semibold hover:bg-blue-600"
           >
-            {preview ? "Change Photo" : "Choose Photo"}
+            {preview ? "Change Photo" : "Add Photo"}
           </label>
           <input
             id="file-upload"
             type="file"
             className="hidden" // Hide the default file input
             onChange={onFileChange}
+            value={postContnet}
           />
         </div>
   

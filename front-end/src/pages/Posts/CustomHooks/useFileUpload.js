@@ -3,8 +3,8 @@ import { useState } from "react";
 
 function useFileUpload() {
   const [file, setFile] = useState(null);
-  const [uploading, setUploading] = useState(false);
   const [preview, setPreview] = useState("");
+  const [postContnet, setpostContnet] = useState("");
   
   const acceptedImageTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
   
@@ -20,7 +20,7 @@ function useFileUpload() {
     }
   };
 
-  return { file, uploading, preview, onFileChange, setUploading };
+  return { file, preview, onFileChange };
 }
 
 export default useFileUpload;
