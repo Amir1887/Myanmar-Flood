@@ -101,7 +101,7 @@ function UserPostsAll({userId}) {
         >
           {uploading ? "Uploading..." : "Upload Post"}
         </button>
-        <UserSide/>
+        <UserSide userId={userId}/>
       </div>
     );
 }

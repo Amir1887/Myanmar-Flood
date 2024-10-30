@@ -104,7 +104,7 @@ function OrganizationPosts({orgId}) {
       >
         {uploading ? "Uploading..." : "Upload Post"}
       </button>
-      <OrgSide/>
+      <OrgSide orgId={orgId}/>
     </div>
   );
 }
