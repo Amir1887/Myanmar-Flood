@@ -9,7 +9,7 @@ function PostComment({PostId, orgId}) {
       const onUpload = async () => {
         console.log("Starting upload...");
         if (!commentInfo) {
-          alert("Please add  a post.");
+          alert("Please add  a comment.");
           return;
         }
     
