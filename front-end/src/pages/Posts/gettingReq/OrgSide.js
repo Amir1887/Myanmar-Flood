@@ -1,33 +1,13 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import usePosts from "../CustomHooks/usePosts";
 import { Box, CircularProgress, Typography, Card, CardContent, CardMedia, Button  } from "@mui/material";
 import PostComment from "../comments/PostComment";
 
 function OrgSide({orgId}) {
-  const [orgPosts, setOrgPosts] = useState([]);
-  const [loading, setLoading] = useState(true); // To handle loading state
-  const [error, setError] = useState(null); // To handle errors
+ const { posts, loading, error } = usePosts();
   const [showComments, setShowComments] = useState({}); // To handle visibility of comments
  
-
-  useEffect(() => {
-    const getPost = async () => {
-      try {
-        const response = await axios.get(`http://localhost:4000/posts/grouped`);
-        console.log("all posts grouped:", response.data.organizationPosts);
-        if (response.data.organizationPosts) {
-          setOrgPosts(response.data.organizationPosts);
-        }
-      } catch (error) {
-        console.error("Error fetching the posts:", error);
-        setError("Failed to fetch posts.");
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    getPost();
-  }, []);
 
   const toggleComments = (postId) => {
     setShowComments((prevShowComments) => ({
@@ -57,7 +37,7 @@ function OrgSide({orgId}) {
       <Typography variant="h4" gutterBottom>
         Organization Posts
       </Typography>
-      {orgPosts.map((post) => (
+      {posts.organizationPosts.map((post) => (
         <Card key={post.id} sx={{ mb: 2, p: 2 }}>
           <CardContent>
             <Typography variant="h6">{post.content}</Typography>
@@ -87,13 +67,14 @@ function OrgSide({orgId}) {
                     {comment.content}
                   </Typography>
                   <Typography variant="caption" color="textSecondary">
-                    - {new Date(comment.createdAt).toLocaleDateString()}
+                    - {comment.user ? comment.user.name : comment.organization?.name || "Unknown"}
+                    , {new Date(comment.createdAt).toLocaleDateString()}
                   </Typography>
                 </Box>
               ))}
             </CardContent>
           )}
-          <PostComment  PostId={post.id} orgId={orgId}/>
+          <PostComment PostId={post.id} orgId={orgId} />
         </Card>
       ))}
     </div>
