@@ -1,51 +1,46 @@
-const { PrismaClient } = require('@prisma/client');
+const { PrismaClient } = require("@prisma/client");
 const prisma = new PrismaClient();
-const express = require('express'); 
+const express = require("express");
 const router = express.Router();
 
-
-
-
-router.get('/posts', async (req, res) => {
-  const postData = await prisma.post.findMany({
-    include: {
-      comments: true, // Include all comments related to each post
-      likes: true     // Include all likes related to each post
-    }
-  });
-  res.json(postData);
-  console.log(" post data", postData);
-});
-
-router.get('/posts/grouped', async (req, res) => {
+router.get("/posts/grouped", async (req, res) => {
   try {
-    // Fetch all posts related to organizations
+    // Fetch organization posts with comments and user/org details for each comment
     const organizationPosts = await prisma.post.findMany({
       where: {
         organizationId: {
-          not: null // Ensures we only get posts associated with organizations
-        }
+          not: null,
+        },
       },
       include: {
-        comments: true,
+        comments: {
+          include: {
+            user: true,           // Include user details if comment was made by a user
+            organization: true,    // Include organization details if comment was made by an organization
+          },
+        },
         likes: true,
-      }
+      },
     });
 
-    // Fetch all posts related to users
+    // Fetch user posts with comments and user/org details for each comment
     const userPosts = await prisma.post.findMany({
       where: {
         userId: {
-          not: null // Ensures we only get posts associated with users
-        }
+          not: null,
+        },
       },
       include: {
-        comments: true,
+        comments: {
+          include: {
+            user: true,
+            organization: true,
+          },
+        },
         likes: true,
-      }
+      },
     });
 
-    // Return both groups of posts in a single response
     res.json({ organizationPosts, userPosts });
     console.log("Grouped posts by organization and user:", { organizationPosts, userPosts });
   } catch (error) {
