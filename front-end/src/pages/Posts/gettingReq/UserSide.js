@@ -1,33 +1,13 @@
 import axios from "axios";
 import React, { useEffect, useState } from "react";
+import usePosts from "../CustomHooks/usePosts";
 import { Box, CircularProgress, Typography, Card, CardContent, CardMedia, Button  } from "@mui/material";
 import CommentUserPost from "../comments/CommentUserPost";
 
 function UserSide({userId}) {
-    const [orgPosts, setOrgPosts] = useState([]);
-    const [loading, setLoading] = useState(true); // To handle loading state
-    const [error, setError] = useState(null); // To handle errors
+    const { posts, loading, error } = usePosts();
     const [showComments, setShowComments] = useState({}); // To handle visibility of comments
   
-    useEffect(() => {
-      const getPost = async () => {
-        try {
-          const response = await axios.get(`http://localhost:4000/posts/grouped`);
-          console.log("all posts grouped:", response.data.userPosts);
-          if (response.data.userPosts) {
-            setOrgPosts(response.data.userPosts);
-          }
-        } catch (error) {
-          console.error("Error fetching the posts:", error);
-          setError("Failed to fetch posts.");
-        } finally {
-          setLoading(false);
-        }
-      };
-  
-      getPost();
-    }, []);
-
     const toggleComments = (postId) => {
         setShowComments((prevShowComments) => ({
           ...prevShowComments,
@@ -54,9 +34,9 @@ function UserSide({userId}) {
     return (
       <div>
         <Typography variant="h4" gutterBottom>
-          Organization Posts
+          User Posts
         </Typography>
-        {orgPosts.map((post) => (
+        {posts.userPosts.map((post) => (
           <Card key={post.id} sx={{ mb: 2, p: 2 }}>
             <CardContent>
               <Typography variant="h6">{post.content}</Typography>
@@ -89,6 +69,10 @@ function UserSide({userId}) {
                   </Typography>
                   <Typography variant="caption" color="textSecondary">
                     - {new Date(comment.createdAt).toLocaleDateString()}
+                  </Typography>
+                  <Typography variant="caption" color="textSecondary">
+                    - {comment.user ? comment.user.name : comment.organization?.name || "Unknown"}
+                    , {new Date(comment.createdAt).toLocaleDateString()}
                   </Typography>
                 </Box>
               ))}
