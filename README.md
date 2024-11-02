@@ -11,9 +11,7 @@ This project is focused on developing tech solutions to improve disaster respons
 - **Prisma: An ORM for database modeling and querying with PostgreSQL.
 - **Tailwind CSS: A utility-first CSS framework for styling the frontend.
 - **Clerk: An authentication and user management service to handle user sign-up, sign-in, and access control.
-- **Retool**: A platform to build internal tools and dashboards for visualizing collected data.  
-- **Azure Web App**: PaaS by Azure to deploy the Express application.  
-- **Azure Static Web Apps**: PaaS by Azure to deploy static assets (React App).  
+  
 
 ## Prerequisites for Local Deployment  
 ---------------------------------------  
@@ -21,7 +19,7 @@ Before you begin, ensure you have the following requirements met:
 - **Node.js**: Install Node.js from [nodejs.org](https://nodejs.org/).  
 - **PostgreSQL**: Set up a PostgreSQL database locally or using a cloud provider.
 - **Prisma: Install Prisma CLI globally or locally in your project. 
-- **Docker (optional)**: Install Docker from [docker.com](https://www.docker.com/) for containerized deployment.  
+
 
 ## Installation  
 ---------------  
@@ -194,11 +192,7 @@ export default function SignInPage() {
 
    The frontend should be running at http://localhost:3000.  
 
-## Deploying to Azure  
----------------  
-1. Deploy the Express backend using Azure Web App.  
-2. Deploy the React frontend using Azure Static Web Apps.  
-3. Connect both services to ensure seamless communication between frontend and backend.
+
 
 ## Prisma Commands Cheat Sheet  
 ---------------  
