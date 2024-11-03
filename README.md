@@ -8,9 +8,10 @@ This project is focused on developing tech solutions to improve disaster respons
 - **Express.js**: A web application framework for Node.js.  
 - **React**: A JavaScript library for building user interfaces.  
 - **Node.js**: A JavaScript runtime for server-side programming.
-- **Prisma: An ORM for database modeling and querying with PostgreSQL.
-- **Tailwind CSS: A utility-first CSS framework for styling the frontend.
-- **Clerk: An authentication and user management service to handle user sign-up, sign-in, and access control.
+- **Prisma**: An ORM for database modeling and querying with PostgreSQL.
+- **Tailwind CSS**: A utility-first CSS framework for styling the frontend.
+- **Material Ui** : for modern design
+- **Clerk**: An authentication and user management service to handle user sign-up, sign-in, and access control.
   
 
 ## Prerequisites for Local Deployment  
