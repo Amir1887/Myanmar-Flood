@@ -2,6 +2,11 @@
 
 This project is focused on developing tech solutions to improve disaster response for Myanmar's flood crisis that started on 9 September 2024. The app will assist in real-time damage assessment, needs analysis, and provide a dashboard for decision-makers and aid organizations.  
 
+# What it does
+```bash
+The platform generates a localized flood simulation by combining GLOFAS forecast data with other sources to provide more accurate results. Users can view emergency-level information on potential floods, including visualized severity levels through infographics. This setup allows users to understand and prepare for the possible impacts of floods with greater clarity.
+ ```
+
 ## Technology Stack  
 -------------------------------------  
 **Backend:**     
@@ -19,6 +24,13 @@ This project is focused on developing tech solutions to improve disaster respons
     - **Clerk**: An authentication and user management service to handle user sign-up, sign-in, and access control.
   ```
 
+## API and Extrnal sources used: 
+------------------------------------- 
+```bash
+-Flood Data: GLOFAS API – Accessed via Rasdaman for building flood animations and interactive visualizations with varied elevation thresholds
+ -Weather Data: Open-Meteo API -Maps: MapTiler API for robust mapping layers. -Push Notifications: Web-Push library for real-time alerts.
+-Reports and Alerts: Aggregated from ReliefWeb, Department of Meteorology and Hydrology (Myanmar), and MIMU (Myanmar Information Management Unit) to provide a unified source for disaster
+ ```
 ## Prerequisites for Local Deployment  
 ---------------------------------------  
 Before you begin, ensure you have the following requirements met:  
