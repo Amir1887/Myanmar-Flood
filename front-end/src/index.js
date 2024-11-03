@@ -16,7 +16,7 @@ import SignInPage from "./pages/General/SignInPage";
 import SignUpPage from "./pages/General/SignUpPage";
 import ProfilePage from "./pages/ProfilePage"
 import UserForm from "./pages/User/UserForm";
-import FloodForecast from "./pages/FloodData/FloodForecast";
+// import FloodForecast from "./pages/FloodData/FloodForecast";
 import FloodMap from "./pages/FloodData/FloodMap/FloodMap";
 import WeatherComponent from "./pages/Weather/WeatherComponent";
 import { SearchProvider } from "./context/SearchContext";
@@ -74,7 +74,11 @@ const router = createBrowserRouter([
            </UsereProvider>
           )},
           { path: 'blog-post', element: <AllblogPosts/>}, 
-          { path: 'updates', element: <AllPosts/>}, 
+          { path: 'updates', element:(
+            <UsereProvider>
+             <AllPosts/>
+             </UsereProvider>
+            )}, 
           { path: 'alerts', element: <Alert/>}, 
           { path: 'weather-history', element: <Weatherhistory/>}, 
           { path: 'user-form', element: (
@@ -82,7 +86,7 @@ const router = createBrowserRouter([
           <UserForm /> 
           </UsereProvider>
         )},  // Accessible as /dashboard/profile
-        { path: "flood", element: <FloodForecast /> },
+        // { path: "flood", element: <FloodForecast /> },
         { path: "flood-map", element:(
            <SearchProvider>
               <FloodMap /> 
