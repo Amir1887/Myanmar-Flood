@@ -1,78 +1,131 @@
-import React, { useState, useEffect } from 'react';  
-import { useUserLocation } from '../../context/UserLocationContext';  
+import React, { useState, useEffect } from 'react';
+import { useUserLocation } from '../../context/UserLocationContext';
+import { Box, Button, Modal, Typography, CircularProgress } from '@mui/material';
 
-const LocationSelector = () => {  
-  const { setUserLocation, userLocation } = useUserLocation();  
-  const [locationError, setLocationError] = useState(null);  
-  const [isRequestingLocation, setIsRequestingLocation] = useState(false);  
-  const [showLocationPrompt, setShowLocationPrompt] = useState(true); // State to control the modal visibility
+const LocationSelector = () => {
+  const { setUserLocation, userLocation } = useUserLocation();
+  const [locationError, setLocationError] = useState(null);
+  const [isRequestingLocation, setIsRequestingLocation] = useState(false);
+  const [showLocationPrompt, setShowLocationPrompt] = useState(false);
 
-  const requestLocation = () => {  
-    setIsRequestingLocation(true);  
-    setLocationError(null); // Reset any previous errors  
+  const requestLocation = () => {
+    setIsRequestingLocation(true);
+    setLocationError(null);
 
-    if ("geolocation" in navigator) {  
-      navigator.geolocation.getCurrentPosition(  
-        (position) => {  
-          const { latitude, longitude } = position.coords;  
-          setUserLocation({ latitude, longitude });  
-          setIsRequestingLocation(false); // Reset the requesting state  
-          setShowLocationPrompt(false); // Hide the modal after success  
-        },  
-        (error) => {  
-          setLocationError("Location access denied. Please enable location services.");  
-          console.error("Error getting location: ", error);  
-          setIsRequestingLocation(false); // Reset the requesting state  
-        }  
-      );  
-    } else {  
-      setLocationError("Geolocation is not supported by your browser.");  
-      setIsRequestingLocation(false); // Reset the requesting state  
-    }  
-  };  
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition(
+        (position) => {
+          const { latitude, longitude } = position.coords;
+          setUserLocation({ latitude, longitude });
+          setIsRequestingLocation(false);
+          setShowLocationPrompt(false);
+        },
+        (error) => {
+          setLocationError("Location access denied. Please enable location services.");
+          setIsRequestingLocation(false);
+        }
+      );
+    } else {
+      setLocationError("Geolocation is not supported by your browser.");
+      setIsRequestingLocation(false);
+    }
+  };
 
-  // Conditional rendering based on state  
-  let statusMessage;  
-  if (locationError) {  
-    statusMessage = <p className="text-red-500">{locationError}</p>;  
-  } else if (userLocation) {  
-    statusMessage = (  
-      <p className="text-green-500">  
-        Location successfully obtained: {userLocation.latitude}, {userLocation.longitude}  
-      </p>  
-    );  
-  } else if (isRequestingLocation) {  
-    statusMessage = <p>Attempting to detect your location...</p>;  
-  } else {  
-    statusMessage = <p>Please allow access to your location.</p>;  
-  }  
+  useEffect(() => {
+    if (userLocation) {
+      const { latitude, longitude } = userLocation;
+      fetch("http://localhost:4000/weather-data-from-api", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ latitude, longitude }),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Failed to fetch weather data");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          console.log("Weather data fetched successfully:", data);
+        })
+        .catch((error) => {
+          console.error("Error sending location data to backend:", error);
+        });
+    }
+  }, [userLocation]);
 
-  return (  
-    <div className="p-4">  
-      {showLocationPrompt && (  
-        <div className="fixed inset-0 flex items-center justify-center bg-gray-800 bg-opacity-50">  
-          <div className="bg-white p-6 rounded-lg shadow-lg text-center">  
-            <h2 className="text-xl font-bold mb-4">Location Access Needed</h2>  
-            {statusMessage}  
-            {!userLocation && !isRequestingLocation && (  
-              <button   
-                onClick={requestLocation}   
-                className="mt-4 bg-blue-500 text-white rounded-lg p-2"  
-              >  
-                Allow Location Access  
-              </button>  
-            )}  
-            <button   
-              onClick={() => setShowLocationPrompt(false)}   
-              className="mt-4 bg-gray-500 text-white rounded-lg p-2"  
-            >  
-              Dismiss  
-            </button>  
-          </div>  
-        </div>  
-      )}  
-    </div>  
-  );  
-};  
+  let statusMessage;
+  if (locationError) {
+    statusMessage = <Typography color="error">{locationError}</Typography>;
+  } else if (userLocation) {
+    statusMessage = (
+      <Typography color="success.main">
+        Location successfully obtained: {userLocation.latitude}, {userLocation.longitude}
+      </Typography>
+    );
+  } else if (isRequestingLocation) {
+    statusMessage = (
+      <Box display="flex" alignItems="center">
+        <CircularProgress size={20} />
+        <Typography ml={1}>Attempting to detect your location...</Typography>
+      </Box>
+    );
+  } else {
+    statusMessage = <Typography>Please allow access to your location.</Typography>;
+  }
+
+  return (
+    <Box p={2}>
+      {showLocationPrompt && (
+        <Modal
+          open={showLocationPrompt}
+          onClose={() => setShowLocationPrompt(false)}
+          aria-labelledby="location-modal-title"
+          aria-describedby="location-modal-description"
+        >
+          <Box
+            sx={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              bgcolor: 'background.paper',
+              boxShadow: 24,
+              p: 4,
+              borderRadius: 2,
+              maxWidth: 400,
+              textAlign: 'center',
+            }}
+          >
+            <Typography id="location-modal-title" variant="h6" mb={2}>
+              Location Access Needed
+            </Typography>
+            {statusMessage}
+            {!userLocation && !isRequestingLocation && (
+              <Button
+                variant="contained"
+                color="primary"
+                onClick={requestLocation}
+                sx={{ mt: 2, mr: 1 }}
+              >
+                Allow Location Access
+              </Button>
+            )}
+            <Button
+              variant="outlined"
+              color="secondary"
+              onClick={() => setShowLocationPrompt(false)}
+              sx={{ mt: 2 }}
+            >
+              Dismiss
+            </Button>
+          </Box>
+        </Modal>
+      )}
+    </Box>
+  );
+};
 
 export default LocationSelector;
