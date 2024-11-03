@@ -119,8 +119,9 @@ function Volunteering({ userId }) {
           <Typography><strong>Motivation:</strong> {application.motivation}</Typography>
           <Typography><strong>Certifications:</strong> {application.certifications}</Typography>
           <Typography><strong>Notes:</strong> {application.notes || "No Notes"}</Typography>
-          <Typography><strong>Reviewed By:</strong> {application.organization.name}</Typography>
-          <Typography><strong>Reviewer Email:</strong> {application.organization.email}</Typography>
+          <Typography><strong>Reviewed By:</strong> {application && application.organization ? application.organization.name : "Not Reviewed yet"}</Typography>  
+          <Typography><strong>Reviewer Email:</strong> {application && application.organization ? application.organization.email : "No Reviewer Email"}</Typography>
+
         </Box>
       ) : (
         <form onSubmit={handleSubmit}>

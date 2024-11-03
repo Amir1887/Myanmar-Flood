@@ -1,5 +1,5 @@
 import React from 'react';
-
+import { Box, Typography, Paper } from "@mui/material";
 function WeatherDataSummary({ weatherData }) {
     const latestHour = weatherData?.hourly?.time.length - 1;
 
@@ -16,7 +16,7 @@ function WeatherDataSummary({ weatherData }) {
     const surfacePressure = weatherData?.hourly?.surface_pressure?.[latestHour];
 
     return (
-        <div className="bg-gray-100 p-4 rounded-lg shadow-md mt-4">
+        <Paper elevation={3} sx={{ p: 2, maxHeight: 400, overflowY: "auto", mt: 2 }}>
             <h3 className="text-lg font-semibold text-gray-800 mb-2">Current Weather Data</h3>
             {weatherData && latestHour >= 0 ? (
                 <ul className="list-disc list-inside">
@@ -34,7 +34,7 @@ function WeatherDataSummary({ weatherData }) {
             ) : (
                 <p className="text-gray-500">Loading...</p>
             )}
-        </div>
+        </Paper>
     );
 }
 
