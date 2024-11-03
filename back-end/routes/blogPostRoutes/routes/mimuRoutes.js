@@ -8,11 +8,11 @@ router.post('/mimu/bulk', async (req, res) => {
 
 
     for (const resource of resources) {
-    const { url, title, uploadedDate, pdfLink, summary  } = resource;
+    const { url, title, uploadedDate, pdfLink  } = resource;
 
 // Validation Before Storing Data
-if (!title || !uploadedDate || !pdfLink || !summary || summary.length < 50) {
-    console.log('Invalid resource or summary, skipping:', resource);
+if (!title || !uploadedDate || !pdfLink ) {
+    console.log('Invalid resource , skipping:', resource);
     continue;  // Skip this resource if validation fails
 }
 
@@ -35,7 +35,7 @@ if (!title || !uploadedDate || !pdfLink || !summary || summary.length < 50) {
                 title,
                 uploadedDate,
                 pdfLink,
-                summary
+                // summary: pdfData
             }
         });
 
@@ -45,6 +45,13 @@ if (!title || !uploadedDate || !pdfLink || !summary || summary.length < 50) {
         console.error('Error saving Mimu data:', error);
     }
 }
+});
+
+
+router.get("/mimu/bulk", async (req, res) => {
+    const mimu = await prisma.mimu.findMany();
+    res.json(mimu);
+    console.log("All mimu data", mimu);
 });
 
 module.exports = router;
