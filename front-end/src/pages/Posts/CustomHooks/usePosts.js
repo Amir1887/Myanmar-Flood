@@ -11,6 +11,7 @@ function usePosts() {
     const fetchPosts = async () => {
       try {
         const response = await axios.get("http://localhost:4000/posts/grouped");
+        console.log("all fetched posts data from custom hook:", response);
         setPosts(response.data);
       } catch (error) {
         console.error("Error fetching posts:", error);

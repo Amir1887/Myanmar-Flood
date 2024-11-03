@@ -11,6 +11,7 @@ import {
   Legend,
 } from "chart.js";
 
+import { Box, Typography, Paper } from "@mui/material";
 // Register Chart.js components
 ChartJS.register(
   CategoryScale,
@@ -108,7 +109,7 @@ const WeatherGraph = ({ weatherData }) => {
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-6 bg-white shadow-lg rounded-lg">
+    <Paper elevation={3} sx={{ p: 3, maxHeight: 450, overflowY: "auto", mt: 3 }}>
       <h2 className="text-2xl font-semibold text-gray-800 mb-4">Weather Graph</h2>
   
       {/* Checkboxes for selecting which data to display */}
@@ -143,7 +144,7 @@ const WeatherGraph = ({ weatherData }) => {
       ) : (
         <p className="text-gray-500 text-center">No available chart data</p>
       )}
-    </div>
+    </Paper>
   );
   
 };

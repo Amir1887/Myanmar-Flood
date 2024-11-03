@@ -9,7 +9,6 @@ const UsereContext = createContext();
 // Create a provider component
 export const UsereProvider = ({ children }) => {
   const { user } = useUser();
-  console.log("clerk", user);
   const [contextUserType, setContextUserType] = useState(null);
   const [allUserData, setAllUserData] = useState(null);
   const [allOrgData, setAllOrgData] = useState(null);
@@ -17,16 +16,7 @@ export const UsereProvider = ({ children }) => {
   const [error, setError] = useState(null);
   const [roleSelection, setRoleSelection] = useState(null); // State to store role selection
 
-      // Prepare user data from Clerk
-      const clerkData = {
-        username: user.username,
-        name: user.fullName,
-        email: user.emailAddresses[0].emailAddress,
-        createdAt: user.createdAt,
-        imageUrl: user.imageUrl,
-        password: user.passwordEnabled,
-      };
-      console.log("clerck data ", clerkData);
+
 
   useEffect(() => {
     let isMounted = true; // Track component mounted state
@@ -105,47 +95,10 @@ export const UsereProvider = ({ children }) => {
     };
   }, [user]);
 
-  const handleRoleSelection = async (roleData) => {
-    try {
-      let apiEndpoint;
-      switch (roleData.role) {
-        case 'User':
-          apiEndpoint = 'http://localhost:4000/user';
-          break;
-        case 'Organization':
-          apiEndpoint = 'http://localhost:4000/organization';
-          break;
-        case 'OrganizationMember':
-          apiEndpoint = 'http://localhost:4000/organization-member';
-          break;
-        case 'HighLevelOrganization':
-          apiEndpoint = 'http://localhost:4000/high-level-organization';
-          break;
-        case 'DecisionMaker':
-          apiEndpoint = 'http://localhost:4000/decision-maker';
-          break;
-        default:
-          throw new Error('Invalid role selected');
-      }
 
-  
-
-      // Merge clerkData with roleData
-      const dataToSend = { ...roleData, ...clerkData };
-
-      // Make POST request with role and user data
-      const res = await axios.post(apiEndpoint, dataToSend);
-      setContextUserType(roleData.role); // Set the selected role as userType
-      setLoading(false);
-      setRoleSelection(false); // Hide role selection form after successful submission
-    } catch (err) {
-      console.error('Error creating user based on role:', err);
-      setError(err.response?.data?.message || "Failed to create user with selected role");
-    }
-  };
 
   return (
-    <UsereContext.Provider value={{ contextUserType, setContextUserType, allUserData, allOrgData,  loading, error, roleSelection, handleRoleSelection }}>
+    <UsereContext.Provider value={{ contextUserType, setContextUserType, allUserData, allOrgData,  loading, setLoading,  error, setError,  roleSelection, setRoleSelection }}>
       {children}
     </UsereContext.Provider>
   );
@@ -155,3 +108,5 @@ export const UsereProvider = ({ children }) => {
 export const useUserType = () => {
   return useContext(UsereContext);
 };
+
+

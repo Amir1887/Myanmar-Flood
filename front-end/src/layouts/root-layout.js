@@ -7,8 +7,8 @@ const PUBLISHABLE_KEY = process.env.REACT_APP_CLERK_PUBLISHABLE_KEY;
 
 // default to /dashboard
 const clerkConfig = {
-  signInRedirectUrl: process.env.REACT_APP_SIGN_IN_REDIRECT_URL || '/dashboard',
-  signInFallbackRedirectUrl: process.env.REACT_APP_SIGN_IN_FALLBACK_REDIRECT_URL || '/dashboard',
+  signInRedirectUrl: process.env.REACT_APP_SIGN_IN_REDIRECT_URL || '/dashboard/home',
+  signInFallbackRedirectUrl: process.env.REACT_APP_SIGN_IN_FALLBACK_REDIRECT_URL || '/dashboard/home',
 };
 
 

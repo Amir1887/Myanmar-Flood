@@ -69,7 +69,7 @@ const ClickHandler = ({ setPopupData }) => {
             setPopupData({
               lat,
               lng,
-              message: "No flood data available for this location.",
+              // message: "No flood data available for this location.",
             });
           }
         } else {
@@ -144,8 +144,8 @@ const FloodMap = () => {
   return (
     <div style={{ position: "relative" }}>
       <SearchMap  />
-      {isLoading && <p>Loading...</p>}
-      {error && <p>{error}</p>}
+      {/* {isLoading && <p>Loading...</p>}
+      {error && <p>{error}</p>} */}
 
       {/* MapContainer Configuration */}
       <MapContainer

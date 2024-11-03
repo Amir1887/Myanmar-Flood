@@ -41,7 +41,8 @@ function ReliefWebPosts() {
 
   return (
     <div className="container mx-auto p-4">
-      <h1 className="text-3xl font-bold text-center mb-8">Flood Highlights from ReliefWeb</h1>
+      <h1 className="text-3xl font-bold text-center mb-3">Flood Highlights from ReliefWeb</h1>
+      <h5 className="font-bold text-center mb-8 text-gray-600">Summary is made by AI (it can make mistakes).</h5>
       {reliefWebPosts && reliefWebPosts.length > 0 ? (
         <div className=" gap-6">
           {reliefWebPosts.map((post, index) => (

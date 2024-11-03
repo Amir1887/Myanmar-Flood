@@ -48,6 +48,7 @@ function Header() {
     { text: "Flood Maps", path: "/dashboard/flood-map" },
     { text: "Current Weather", path: "/dashboard/weather" },
     { text: "Weather History", path: "/dashboard/weather-history" },
+    { text: "Alerts", path: "/dashboard/alerts" },
     { text: "Blog Posts", path: "/dashboard/blog-post" },
   ];
 
@@ -76,7 +77,7 @@ function Header() {
         sx={{
           backgroundColor: "primary.main",
           minHeight: "50px",
-          maxWidth: "500px",
+          maxWidth: "550px",
           margin: "0 auto",
           left: 0,
           right: 0,

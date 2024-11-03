@@ -1,34 +1,74 @@
-import React, { useState } from 'react';
-import MozelaPosts from './MozelaPosts';
-import ReliefWebPosts from './ReliefWebPosts';
+import React, { useState } from 'react';  
+import MozelaPosts from './MozelaPosts';  
+import ReliefWebPosts from './ReliefWebPosts';  
+import MimuPosts from './MimuPosts';  
+import { Container, Typography, Button, AppBar, Toolbar } from '@mui/material';  
 
-function AllBlogPosts() {
-    // Step 1: Define a state variable to keep track of which component to render
-    const [currentComponent, setCurrentComponent] = useState(null);
+function AllBlogPosts() {  
+    const [currentComponent, setCurrentComponent] = useState(null);  
 
-    // Step 2: Create functions to update the state
-    function loadMozela() {
-        setCurrentComponent(<MozelaPosts />);
-    }
+    // Functions to load each component  
+    function loadMozela() {  
+        setCurrentComponent(<MozelaPosts />);  
+    }  
 
-    function loadReliefWeb() {
-        setCurrentComponent(<ReliefWebPosts />);
-    }
-    
-    return (
-        <div>
-            <h1>All Blog Posts</h1>
-            
-            {/* Step 3: Button onClick handlers to set the current component */}
-            <button onClick={loadMozela}>All Mozela Posts</button>
-            <button onClick={loadReliefWeb}>All Relief Web Posts</button>
+    function loadReliefWeb() {  
+        setCurrentComponent(<ReliefWebPosts />);  
+    }  
 
-            {/* Render the current component */}
-            <div>
-                {currentComponent}
-            </div>
-        </div>
-    );
-}
+    function loadMimu() {  
+        setCurrentComponent(<MimuPosts />);  
+    }  
+
+    return (  
+        <Container>  
+            {/* Header with AppBar */}  
+            <AppBar   
+                position="static"   
+                color="primary"   
+                style={{ marginTop: '20px', width: '40%', marginLeft: 'auto', marginRight: 'auto' }}  
+            > 
+                <Toolbar style={{ justifyContent: 'center' }}> {/* Center the content in the Toolbar */} 
+                    <Typography variant="h4" align="center"> {/* Center the text within Typography */}   
+                        All Blog Posts  
+                    </Typography>  
+                </Toolbar>  
+            </AppBar>  
+
+            {/* Button Container */}  
+            <div style={{ margin: '20px 0', textAlign: 'center' }}>  
+                <Button   
+                    variant="contained"   
+                    color="secondary"   
+                    onClick={loadMozela}   
+                    style={{ margin: '0 10px' }}  
+                >  
+                    Daily Alerts  
+                </Button>  
+                <Button   
+                    variant="contained"   
+                    color="secondary"   
+                    onClick={loadReliefWeb}  
+                    style={{ margin: '0 10px' }}  
+                >  
+                    Situation Reports  
+                </Button>  
+                <Button   
+                    variant="contained"   
+                    color="secondary"   
+                    onClick={loadMimu}  
+                    style={{ margin: '0 10px' }}  
+                >  
+                    Detailed Updates  
+                </Button>  
+            </div>  
+
+            {/* Render the current component */}  
+            <div>  
+                {currentComponent}  
+            </div>  
+        </Container>  
+    );  
+}  
 
 export default AllBlogPosts;

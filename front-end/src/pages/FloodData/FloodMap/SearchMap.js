@@ -1,28 +1,21 @@
-import React, { useState } from "react";
-import "./FloodMap.css";
+import React, { useState } from 'react';
+import './FloodMap.css';
+import { useSearch } from '../../../context/SearchContext';
 
-function SearchMap({ onSearch  }) {
-  const [query, setQuery] = useState("");
+const SearchMap = () => {
+  const { handleSearch } = useSearch(); 
+  const [query, setQuery] = useState('');
 
-  const handleSearch = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    if (!query) return;
-
-    // Use OpenStreetMap Nominatim for geocoding
-    const url = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(query)}&format=json&limit=1`;
-    const response = await fetch(url);
-    const data = await response.json();
-
-    if (data.length > 0) {
-      const { lat, lon } = data[0];
-      onSearch({ lat: parseFloat(lat), lng: parseFloat(lon) });
-    } else {
-      alert("Location not found.");
+    if (query.trim()) { 
+      handleSearch(query.trim());
+      setQuery(''); 
     }
   };
 
   return (
-    <form onSubmit={handleSearch} className="search-form">
+    <form onSubmit={handleSubmit} className="search-form">
       <input
         type="text"
         value={query}
@@ -36,6 +29,5 @@ function SearchMap({ onSearch  }) {
     </form>
   );
 };
-
 
 export default SearchMap;

@@ -5,14 +5,13 @@ const SearchContext = createContext();
 
 // Create a provider component  
 export const SearchProvider = ({ children }) => {  
-    const [query, setQuery] = useState('');
     const [location, setLocation] = useState(null);
     const [isLoading, setIsLoading] = useState(false); // Start with false
     const [error, setError] = useState(null);
 
     const handleSearch = async (searchQuery) => {
         setIsLoading(true); // Set loading to true when search starts
-        setQuery(searchQuery);
+    
     
         try {
             // Use OpenStreetMap Nominatim for geocoding
@@ -41,7 +40,7 @@ export const SearchProvider = ({ children }) => {
     };
 
     return (  
-        <SearchContext.Provider value={{ query, location, handleSearch, isLoading, error }}>  
+        <SearchContext.Provider value={{   location, handleSearch, isLoading, error }}>  
             {children}  
         </SearchContext.Provider>  
     );  
