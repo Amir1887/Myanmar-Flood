@@ -3,6 +3,8 @@ import axios from "axios";
 import { useUserType } from "../../context/UserContext";
 import { Link } from "react-router-dom";
 import { useUser } from "@clerk/clerk-react";
+import { Box, Button, TextField, Typography, Select, MenuItem, AppBar,  Toolbar } from "@mui/material";
+import ProfilePage from "../ProfilePage";
 function UserForm() {
   const {
     contextUserType,
@@ -17,11 +19,11 @@ function UserForm() {
     setRoleSelection,
   } = useUserType(); // Use context's handleRoleSelection
   const { user } = useUser();
-  // console.log("frontend role", roleSelection);
-  // console.log("frontend role", roleSelection);
-  // console.log("frontend contextUserType", contextUserType);
-  // console.log("frontend allUserData", allUserData);
-  // console.log("frontend allOrgData", allOrgData);
+  console.log("frontend role", roleSelection);
+  console.log("frontend role", roleSelection);
+  console.log("frontend contextUserType", contextUserType);
+  console.log("frontend allUserData", allUserData);
+  console.log("frontend allOrgData", allOrgData);
 
   // Prepare user data from Clerk
   const clerkData = {
@@ -32,7 +34,7 @@ function UserForm() {
     imageUrl: user.imageUrl,
     password: user.passwordEnabled,
   };
-  // console.log("clerck data ", clerkData);
+  console.log("clerck data ", clerkData);
   const [userType, setUserType] = useState(""); // Initialize userType
   const [userData, setUserData] = useState({
     phoneNumber: "",
@@ -114,179 +116,219 @@ function UserForm() {
   if (error) return <p>Error: {error}</p>;
 
   return (
-    <div>
+    <>
+    <Box display="flex" flexDirection="column" alignItems="center" justifyContent="center">
       {roleSelection && (
-        <form
-          onSubmit={handleSubmit}
-          className="mb-6 p-4 bg-gray-50 rounded-lg shadow-inner"
-        >
-          {/* User Type Selection */}
-          <select
-            className="w-full p-2 mb-4 border border-gray-300 rounded-lg"
-            value={userType}
-            onChange={(e) => setUserType(e.target.value)}
-          >
-            <option value="">Select User Type</option>
-            <option value="User">Ordinary User</option>
-            <option value="Organization">Organization</option>
-            <option value="OrganizationMember">Organization Member</option>
-            <option value="HighLevelOrganization">
-              High Level Organization
-            </option>
-            <option value="DecisionMaker">Decision Maker</option>
-          </select>
+        <Box maxWidth={500} width="100%" textAlign="center">
+      {/* Header with AppBar */}
+      <AppBar
+        position="static"
+        color="primary"
+        style={{
+          marginTop: "20px",
+          width: "80%",
+          marginLeft: "auto",
+          marginRight: "auto",
+        }}
+      >
+        <Toolbar style={{ justifyContent: "center" }}>
+          {" "}
+          {/* Center the content in the Toolbar */}
+          <Typography variant="h4" align="center">
+            {" "}
+            {/* Center the text within Typography */}
+            Complete Your SignIn
+          </Typography>
+        </Toolbar>
+      </AppBar>
+          <form onSubmit={handleSubmit} style={{ maxWidth: '100%' }}>
+            <Select
+              fullWidth
+              value={userType}
+              onChange={(e) => setUserType(e.target.value)}
+              displayEmpty
+              sx={{ mb: 3, mt: 3 }}
+            >
+              <MenuItem value="">
+                <em>How Do You Like To Proceed?</em>
+              </MenuItem>
+              <MenuItem value="User">Ordinary User</MenuItem>
+              <MenuItem value="Organization">Organization</MenuItem>
+              <MenuItem value="OrganizationMember" disabled>
+                Organization Member
+              </MenuItem>
+              <MenuItem value="HighLevelOrganization" disabled>
+                High Level Organization
+              </MenuItem>
+              <MenuItem value="DecisionMaker" disabled>
+                Decision Maker
+              </MenuItem>
+            </Select>
 
-          {/* UserType-based inputs */}
-          {userType === "User" && (
-            <>
-              <input
-                type="text"
-                name="location"
-                className="w-full p-2 mb-4 border border-gray-300 rounded-lg"
-                placeholder="Location"
-                value={userData.location}
-                onChange={handleChange}
-              />
-              <div className="mb-4">
-                <label className="inline-flex items-center">
+            {/* Render inputs based on the selected userType */}
+            {userType === "User" && (
+              <>
+                <TextField
+                  fullWidth
+                  name="location"
+                  label="Location"
+                  value={userData.location}
+                  onChange={handleChange}
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  fullWidth
+                  name="phoneNumber"
+                  label="Phone Number"
+                  value={userData.phoneNumber}
+                  onChange={handleChange}
+                  sx={{ mb: 2 }}
+                />
+                <Box display="flex" alignItems="center" sx={{ mb: 2 }}>
                   <input
                     type="checkbox"
                     name="isInNeed"
-                    className="form-checkbox"
                     checked={userData.isInNeed}
                     onChange={handleChange}
                   />
-                  <span className="ml-2">
+                  <Typography variant="body1" sx={{ ml: 1 }}>
                     Are you currently in need of help?
-                  </span>
-                </label>
-              </div>
-              <div className="mb-4">
-                <label className="inline-flex items-center">
+                  </Typography>
+                </Box>
+                <Box display="flex" alignItems="center" sx={{ mb: 2 }}>
                   <input
                     type="checkbox"
                     name="privacyAgreement"
-                    className="form-checkbox"
                     checked={userData.privacyAgreement}
                     onChange={handleChange}
                   />
-                  <span className="ml-2">
+                  <Typography variant="body1" sx={{ ml: 1 }}>
                     Agree to privacy terms and conditions?
-                  </span>
-                </label>
-              </div>
-            </>
-          )}
+                  </Typography>
+                </Box>
+              </>
+            )}
+            {userType === "Organization" && (
+              <>
+                <TextField
+                  fullWidth
+                  name="phoneNumber"
+                  label="Phone Number"
+                  value={userData.phoneNumber}
+                  onChange={handleChange}
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  fullWidth
+                  name="location"
+                  label="Location"
+                  value={userData.location}
+                  onChange={handleChange}
+                  sx={{ mb: 2 }}
+                />
+                <TextField
+                  fullWidth
+                  name="highLevelOrg"
+                  label="Related High-Level Organization"
+                  value={userData.highLevelOrg}
+                  onChange={handleChange}
+                  sx={{ mb: 2 }}
+                />
+              </>
+            )}
 
-          {userType === "Organization" && (
-            <>
-              <input
-                type="text"
-                name="phoneNumber"
-                className="w-full p-2 mb-4 border border-gray-300 rounded-lg"
-                placeholder="Phone Number"
-                value={userData.phoneNumber}
-                onChange={handleChange}
-              />
-              <input
-                type="text"
-                name="location"
-                className="w-full p-2 mb-4 border border-gray-300 rounded-lg"
-                placeholder="Location"
-                value={userData.location}
-                onChange={handleChange}
-              />
-              <input
-                type="text"
-                name="highLevelOrg"
-                className="w-full p-2 mb-4 border border-gray-300 rounded-lg"
-                placeholder="Related High-Level Organization"
-                value={userData.highLevelOrg}
-                onChange={handleChange}
-              />
-            </>
-          )}
 
-          {userType === "OrganizationMember" && (
-            <>
-              <input
-                type="text"
-                name="role"
-                className="w-full p-2 mb-4 border border-gray-300 rounded-lg"
-                placeholder="Role in Organization"
-                value={userData.role}
-                onChange={handleChange}
-              />
-              <input
-                type="text"
-                name="organization"
-                className="w-full p-2 mb-4 border border-gray-300 rounded-lg"
-                placeholder="Organization"
-                value={userData.organization}
-                onChange={handleChange}
-              />
-            </>
-          )}
 
-          {userType === "DecisionMaker" && (
-            <>
-              <input
-                type="text"
-                name="role"
-                className="w-full p-2 mb-4 border border-gray-300 rounded-lg"
-                placeholder="Decision Maker Role"
-                value={userData.role}
-                onChange={handleChange}
-              />
-              <input
-                type="text"
-                name="highLevelOrg"
-                className="w-full p-2 mb-4 border border-gray-300 rounded-lg"
-                placeholder="High-Level Organization"
-                value={userData.highLevelOrg}
-                onChange={handleChange}
-              />
-            </>
-          )}
 
-          {userType === "HighLevelOrganization" && (
-            <>
-              <input
-                type="text"
-                name="name"
-                className="w-full p-2 mb-4 border border-gray-300 rounded-lg"
-                placeholder="High Level Organization Name"
-                value={userData.name}
-                onChange={handleChange}
-              />
-              <input
-                type="text"
-                name="region"
-                className="w-full p-2 mb-4 border border-gray-300 rounded-lg"
-                placeholder="Operating Region"
-                value={userData.region}
-                onChange={handleChange}
-              />
-            </>
-          )}
+{/* {userType === "HighLevelOrganization" && (
+  <>
+    <TextField
+      fullWidth
+      name="name"
+      label="High Level Organization Name"
+      variant="outlined"
+      value={userData.name}
+      onChange={handleChange}
+      sx={{ mb: 2 }}
+    />
+    <TextField
+      fullWidth
+      name="region"
+      label="Operating Region"
+      variant="outlined"
+      value={userData.region}
+      onChange={handleChange}
+      sx={{ mb: 2 }}
+    />
+  </>
+)}
 
-          {/* Submit Button */}
-          <button
-            type="submit"
-            className="w-full p-2 bg-blue-500 text-white rounded-lg"
-          >
-            Submit
-          </button>
-        </form>
+{userType === "OrganizationMember" && (
+  <>
+    <TextField
+      fullWidth
+      name="role"
+      label="Role in Organization"
+      variant="outlined"
+      value={userData.role}
+      onChange={handleChange}
+      sx={{ mb: 2 }}
+    />
+    <TextField
+      fullWidth
+      name="organization"
+      label="Organization"
+      variant="outlined"
+      value={userData.organization}
+      onChange={handleChange}
+      sx={{ mb: 2 }}
+    />
+  </>
+)}
+
+{userType === "DecisionMaker" && (
+  <>
+    <TextField
+      fullWidth
+      name="role"
+      label="Decision Maker Role"
+      variant="outlined"
+      value={userData.role}
+      onChange={handleChange}
+      sx={{ mb: 2 }}
+    />
+    <TextField
+      fullWidth
+      name="highLevelOrg"
+      label="High-Level Organization"
+      variant="outlined"
+      value={userData.highLevelOrg}
+      onChange={handleChange}
+      sx={{ mb: 2 }}
+    />
+  </>
+)} */}
+
+
+            <Button
+              type="submit"
+              variant="contained"
+              color="primary"
+              fullWidth
+              sx={{ mt: 3 }}
+            >
+              Submit
+            </Button>
+          </form>
+        </Box>
       )}
 
-      {contextUserType && (
-        <Link to="/dashboard/profile" className="text-blue-600 hover:underline">
-          See all your details
-        </Link>
-      )}
-    </div>
+  
+    </Box>
+    {contextUserType && <ProfilePage />}
+    </>
   );
 }
+
 
 export default UserForm;
