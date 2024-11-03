@@ -4,7 +4,7 @@ This project is focused on developing tech solutions to improve disaster respons
 
 ## Technology Stack  
 -------------------------------------  
-**FrontEnd:**
+**Backend:**
     - **PostgreSQL**: A SQL database for storing application data.  
     - **Express.js**: A web application framework for Node.js.  
     - **Node.js**: A JavaScript runtime for server-side programming.
