@@ -77,7 +77,19 @@ Before you begin, ensure you have the following requirements met:
     REACT_APP_CLERK_PUBLISHABLE_KEY=..............
     REACT_APP_SIGN_IN_REDIRECT_URL=................
     REACT_APP_SIGN_IN_FALLBACK_REDIRECT_URL=................
-    ```  
+    ```
+
+# Getting Started with Create React App
+
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+## Available Scripts
+
+In the frontend directory, you can run:
+
+### `npm start` 
+OR
+### `yarn start` 
 
 ## Using Tailwind CSS 
 ---------------  
