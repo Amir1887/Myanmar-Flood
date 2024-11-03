@@ -1,109 +1,133 @@
 import React, { useState } from "react";
+import {
+  TextField,
+  Button,
+  Typography,
+  Box,
+  Avatar,
+  CircularProgress,
+} from "@mui/material";
 import axios from "axios";
 import UserSide from "./gettingReq/UserSide";
 
-function UserPostsAll({userId}) {
-    // State for post content
-    const [postContent, setPostContent] = useState("");
-    // State for file and file preview
-    const [file, setFile] = useState(null);
-    const [preview, setPreview] = useState("");
-    // State for upload status
-    const [uploading, setUploading] = useState(false);
-  
-    // Handle file input change and generate a preview
-    const onFileChange = (e) => {
-      const selectedFile = e.target.files[0];
-      const acceptedImageTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
-  
-      if (selectedFile && acceptedImageTypes.includes(selectedFile.type)) {
-        setFile(selectedFile);
-        setPreview(URL.createObjectURL(selectedFile));
-      } else {
-        alert("Please upload a valid image file.");
-        setFile(null);
-        setPreview("");
-      }
-    };
-  
-    // Handle form submission and file upload
-    const onUpload = async () => {
-      console.log("Starting upload...");
-      if (!postContent) {
-        alert("Please add  a post ");
-        return;
-      }
-  
-      const formData = new FormData();
-      formData.append("photo", file); // append file
-      formData.append("content", postContent); // append post content
-      formData.append("userId", userId);
-  
-  
-      console.log("sent data", formData);
-      console.log("sent file", file);
-      console.log("sent postContent", postContent);
-  
-      setUploading(true);
-      try {
-        // Sending data to the backend
-        const response = await axios.post("http://localhost:4000/posts", formData, {
+function UserPostsAll({ userId, orgId, contextUserType, currentSection }) {
+  const [postContent, setPostContent] = useState("");
+  const [file, setFile] = useState(null);
+  const [preview, setPreview] = useState("");
+  const [uploading, setUploading] = useState(false);
+
+  const onFileChange = (e) => {
+    const selectedFile = e.target.files[0];
+    const acceptedImageTypes = [
+      "image/jpeg",
+      "image/png",
+      "image/gif",
+      "image/webp",
+    ];
+
+    if (selectedFile && acceptedImageTypes.includes(selectedFile.type)) {
+      setFile(selectedFile);
+      setPreview(URL.createObjectURL(selectedFile));
+    } else {
+      alert("Please upload a valid image file.");
+      setFile(null);
+      setPreview("");
+    }
+  };
+
+  const onUpload = async () => {
+    if (!postContent) {
+      alert("Please add a post.");
+      return;
+    }
+
+    const formData = new FormData();
+    formData.append("photo", file);
+    formData.append("content", postContent);
+    formData.append("userId", userId);
+
+    setUploading(true);
+    try {
+      const response = await axios.post(
+        "http://localhost:4000/posts",
+        formData,
+        {
           headers: { "Content-Type": "multipart/form-data" },
-        });
-  
-        console.log("Upload successful", response.data);
-        alert("Post uploaded successfully!");
-  
-        // Clear form after successful upload
-        setFile(null);
-        setPreview("");
-        setPostContent("");
-      } catch (error) {
-        console.error("Error uploading post:", error);
-        alert("Error uploading post.");
-      } finally {
-        setUploading(false);
-      }
-    };
-    return (
-      <div style={{ maxWidth: "600px", margin: "0 auto", textAlign: "center" }}>
-        <h1>User Post Upload</h1>
-  
-        {/* Input for post content */}
-        <input
-          type="text"
-          placeholder="What updates do you want to share?"
-          value={postContent}
-          onChange={(e) => setPostContent(e.target.value)}
-          required
-          style={{ marginBottom: "20px", width: "100%", padding: "10px" }}
-        />
-  
-        {/* File upload and preview */}
-        <div className="mb-4">
-          <label
-            htmlFor="file-upload"
-            className="cursor-pointer inline-block p-3 text-white bg-blue-500 rounded-xl font-semibold hover:bg-blue-600"
+        }
+      );
+      alert("Post uploaded successfully!");
+      setFile(null);
+      setPreview("");
+      setPostContent("");
+    } catch (error) {
+      alert("Error uploading post.");
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <Box
+      sx={{ maxWidth: "600px", margin: "0 auto", textAlign: "center", p: 2 }}
+    >
+      {contextUserType === "user" && (
+        <>
+          <Typography variant="h5" fontWeight="bold" mb={2}>
+            Share New Updates Now !
+          </Typography>
+          <TextField
+            fullWidth
+            variant="outlined"
+            placeholder="What updates do you want to share?"
+            value={postContent}
+            onChange={(e) => setPostContent(e.target.value)}
+            sx={{ mb: 2 }}
+          />
+          <Box display="flex" flexDirection="column" alignItems="center" mb={2}>
+            <label htmlFor="file-upload">
+              <Button
+                variant="contained"
+                component="span"
+                color="primary"
+                sx={{ textTransform: "none" }}
+              >
+                {preview ? "Change Photo" : "Add Photo"}
+              </Button>
+            </label>
+            <input
+              id="file-upload"
+              type="file"
+              hidden
+              onChange={onFileChange}
+            />
+            {preview && (
+              <Avatar
+                src={preview}
+                alt="Preview"
+                sx={{ width: 120, height: 120, borderRadius: 1, mt: 2 }}
+              />
+            )}
+          </Box>
+          <Button
+            onClick={onUpload}
+            disabled={uploading || !postContent || !file}
+            variant="contained"
+            color="secondary"
+            fullWidth
+            sx={{ py: 1.2, fontWeight: "bold" }}
           >
-            {preview ? "Change Photo" : "Add Photo"}
-          </label>
-          <input id="file-upload" type="file" className="hidden" onChange={onFileChange} />
-        </div>
-  
-        {/* Image preview */}
-        {preview && <img src={preview} alt="Preview" style={{ width: "300px", marginBottom: "20px" }} />}
-  
-        {/* Upload button */}
-        <button
-          onClick={onUpload}
-          disabled={uploading || !postContent || !file}
-          className="border font-semibold hover:border-blue-400 p-3 rounded-xl mb-4"
-        >
-          {uploading ? "Uploading..." : "Upload Post"}
-        </button>
-        <UserSide userId={userId}/>
-      </div>
-    );
+            {uploading ? <CircularProgress size={24} /> : "Update Now"}
+          </Button>
+        </>
+      )}
+      <UserSide
+        userId={userId}
+        orgId={orgId}
+        contextUserType={contextUserType}
+        currentSection={currentSection}
+      />
+    </Box>
+  );
 }
 
-export default UserPostsAll
+export default UserPostsAll;
