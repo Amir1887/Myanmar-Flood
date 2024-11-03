@@ -4,17 +4,20 @@ This project is focused on developing tech solutions to improve disaster respons
 
 ## Technology Stack  
 -------------------------------------  
-**##Backend:**
-    - **PostgreSQL**: A SQL database for storing application data.  
-    - **Express.js**: A web application framework for Node.js.  
-    - **Node.js**: A JavaScript runtime for server-side programming.
-    - **Prisma**: An ORM for database modeling and querying with PostgreSQL.
-**##FrontEnd:**
+**Backend:**     
+```bash  
+            - **PostgreSQL**: A SQL database for storing application data.  
+            - **Express.js**: A web application framework for Node.js.  
+            - **Node.js**: A JavaScript runtime for server-side programming.
+            - **Prisma**: An ORM for database modeling and querying with PostgreSQL.
+ ```
+**FrontEnd:**
+```bash  
     - **React**: A JavaScript library for building user interfaces.  
     - **Tailwind CSS**: A utility-first CSS framework for styling the frontend.
     - **Material Ui** : for modern design
     - **Clerk**: An authentication and user management service to handle user sign-up, sign-in, and access control.
-  
+  ```
 
 ## Prerequisites for Local Deployment  
 ---------------------------------------  
