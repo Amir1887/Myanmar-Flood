@@ -24,7 +24,7 @@ This project is focused on developing tech solutions to improve disaster respons
 Before you begin, ensure you have the following requirements met:  
 - **Node.js**: Install Node.js from [nodejs.org](https://nodejs.org/).  
 - **PostgreSQL**: Set up a PostgreSQL database locally or using a cloud provider.
-- **Prisma: Install Prisma CLI globally or locally in your project. 
+- **Prisma**: Install Prisma CLI globally or locally in your project. 
 
 
 ## Installation  
