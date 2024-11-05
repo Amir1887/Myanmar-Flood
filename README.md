@@ -2,23 +2,41 @@
 
 This project is focused on developing tech solutions to improve disaster response for Myanmar's flood crisis that started on 9 September 2024. The app will assist in real-time damage assessment, needs analysis, and provide a dashboard for decision-makers and aid organizations.  
 
+# What it does
+```bash
+The platform generates a localized flood simulation by combining GLOFAS forecast data with other sources to provide more accurate results. Users can view emergency-level information on potential floods, including visualized severity levels through infographics. This setup allows users to understand and prepare for the possible impacts of floods with greater clarity.
+ ```
+
 ## Technology Stack  
 -------------------------------------  
-- **PostgreSQL**: A SQL database for storing application data.  
-- **Express.js**: A web application framework for Node.js.  
-- **React**: A JavaScript library for building user interfaces.  
-- **Node.js**: A JavaScript runtime for server-side programming.
-- **Prisma: An ORM for database modeling and querying with PostgreSQL.
-- **Tailwind CSS: A utility-first CSS framework for styling the frontend.
-- **Clerk: An authentication and user management service to handle user sign-up, sign-in, and access control.
-  
+**Backend:**     
+```bash  
+            - **PostgreSQL**: A SQL database for storing application data.  
+            - **Express.js**: A web application framework for Node.js.  
+            - **Node.js**: A JavaScript runtime for server-side programming.
+            - **Prisma**: An ORM for database modeling and querying with PostgreSQL.
+ ```
+**FrontEnd:**
+```bash  
+    - **React**: A JavaScript library for building user interfaces.  
+    - **Tailwind CSS**: A utility-first CSS framework for styling the frontend.
+    - **Material Ui** : for modern design
+    - **Clerk**: An authentication and user management service to handle user sign-up, sign-in, and access control.
+  ```
 
+## API and Extrnal sources used: 
+------------------------------------- 
+```bash
+-Flood Data: GLOFAS API – Accessed via Rasdaman for building flood animations and interactive visualizations with varied elevation thresholds
+ -Weather Data: Open-Meteo API -Maps: MapTiler API for robust mapping layers. -Push Notifications: Web-Push library for real-time alerts.
+-Reports and Alerts: Aggregated from ReliefWeb, Department of Meteorology and Hydrology (Myanmar), and MIMU (Myanmar Information Management Unit) to provide a unified source for disaster
+ ```
 ## Prerequisites for Local Deployment  
 ---------------------------------------  
 Before you begin, ensure you have the following requirements met:  
 - **Node.js**: Install Node.js from [nodejs.org](https://nodejs.org/).  
 - **PostgreSQL**: Set up a PostgreSQL database locally or using a cloud provider.
-- **Prisma: Install Prisma CLI globally or locally in your project. 
+- **Prisma**: Install Prisma CLI globally or locally in your project. 
 
 
 ## Installation  
@@ -71,7 +89,19 @@ Before you begin, ensure you have the following requirements met:
     REACT_APP_CLERK_PUBLISHABLE_KEY=..............
     REACT_APP_SIGN_IN_REDIRECT_URL=................
     REACT_APP_SIGN_IN_FALLBACK_REDIRECT_URL=................
-    ```  
+    ```
+
+# Getting Started with Create React App
+
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+
+## Available Scripts
+
+In the frontend directory, you can run:
+
+### `npm start` 
+OR
+### `yarn start` 
 
 ## Using Tailwind CSS 
 ---------------  
