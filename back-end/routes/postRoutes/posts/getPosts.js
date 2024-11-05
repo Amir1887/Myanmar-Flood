@@ -5,7 +5,7 @@ const router = express.Router();
 
 router.get("/posts/grouped", async (req, res) => {
   try {
-    // Fetch organization posts with comments and user/org details for each comment
+    // Fetch organization posts with comments, user/org details for each comment, and post author
     const organizationPosts = await prisma.post.findMany({
       where: {
         organizationId: {
@@ -13,6 +13,7 @@ router.get("/posts/grouped", async (req, res) => {
         },
       },
       include: {
+        organization: true,  // Include organization details if the post is authored by an organization
         comments: {
           include: {
             user: true,           // Include user details if comment was made by a user
@@ -23,7 +24,7 @@ router.get("/posts/grouped", async (req, res) => {
       },
     });
 
-    // Fetch user posts with comments and user/org details for each comment
+    // Fetch user posts with comments, user/org details for each comment, and post author
     const userPosts = await prisma.post.findMany({
       where: {
         userId: {
@@ -31,6 +32,7 @@ router.get("/posts/grouped", async (req, res) => {
         },
       },
       include: {
+        user: true,  // Include user details if the post is authored by a user
         comments: {
           include: {
             user: true,
