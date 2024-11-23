@@ -2,6 +2,12 @@
 
 This project is focused on developing tech solutions to improve disaster response for Myanmar's flood crisis that started on 9 September 2024. The app will assist in real-time damage assessment, needs analysis, and provide a dashboard for decision-makers and aid organizations.  
 
+This project had won Myanmar Flood Response hackathon which you can find here:
+https://devpost.com/software/myanmar-flood-platform
+
+and here the link of the hackathon:
+https://myanmar-flood-response.devpost.com/
+
 # What it does
 ```bash
 The platform generates a localized flood simulation by combining GLOFAS forecast data with other sources to provide more accurate results. Users can view emergency-level information on potential floods, including visualized severity levels through infographics. This setup allows users to understand and prepare for the possible impacts of floods with greater clarity.
