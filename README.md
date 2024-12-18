@@ -1,11 +1,11 @@
 # Myanmar-Flood  
 
-This project is focused on developing tech solutions to improve disaster response for Myanmar's flood crisis that started on 9 September 2024. The app will assist in real-time damage assessment, needs analysis, and provide a dashboard for decision-makers and aid organizations.  
+This project is focused on developing tech solutions to improve disaster response to Myanmar's flood crisis, which started on September 9, 2024. The app will assist in real-time damage assessment and needs analysis and provide a dashboard for decision-makers and aid organizations.  
 
-This project had won Myanmar Flood Response hackathon which you can find here:
+This project won the Myanmar Flood Response hackathon which you can find here:
 https://devpost.com/software/myanmar-flood-platform
 
-and here the link of the hackathon:
+and here is the link to the hackathon:
 https://myanmar-flood-response.devpost.com/
 
 # What it does
@@ -30,7 +30,7 @@ The platform generates a localized flood simulation by combining GLOFAS forecast
     - **Clerk**: An authentication and user management service to handle user sign-up, sign-in, and access control.
   ```
 
-## API and Extrnal sources used: 
+## API and External sources used: 
 ------------------------------------- 
 ```bash
 -Flood Data: GLOFAS API – Accessed via Rasdaman for building flood animations and interactive visualizations with varied elevation thresholds
@@ -114,8 +114,8 @@ OR
 This project uses Tailwind CSS for responsive, utility-first styling. To modify the design system or extend styles, check tailwind.config.js and add your custom styles or themes.
 
 Tailwind Setup:
-1.Tailwind is already installed as part of the front-end dependencies.
-2.Custom colors and themes are defined in tailwind.config.js. Feel free to modify and extend this file based on your taste.
+1. Tailwind is already installed as part of the front-end dependencies.
+2. Custom colours and themes are defined in tailwind.config.js. Please feel free to modify and extend this file based on what you think.
 ```bash  
     module.exports = {
   content: ["./src/**/*.{js,jsx,ts,tsx}", "./public/index.html"],
@@ -151,8 +151,8 @@ Clerk is used to handle user authentication, sign-up, sign-in, and access contro
     REACT_APP_SIGN_IN_REDIRECT_URL=................
     REACT_APP_SIGN_IN_FALLBACK_REDIRECT_URL=................
   ``` 
-3.Wrap your application in the ClerkProvider: 
-in my application I put it in root-layout.js but You can put it in index.js 
+3. Wrap your application in the ClerkProvider: 
+in my application, I put it in root-layout.js but You can put it in index.js 
  ```bash  
 import {  Outlet, useNavigate } from 'react-router-dom';
 import { ClerkProvider } from '@clerk/clerk-react';
@@ -236,7 +236,7 @@ export default function SignInPage() {
      ```bash  
     npx prisma generate    
     ```  
-3.Run Migrations:  
+3. Run Migrations:  
  ```bash  
   npx prisma migrate dev --name <migration_name>  
   ``` 
